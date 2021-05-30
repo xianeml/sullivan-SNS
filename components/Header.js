@@ -70,7 +70,7 @@ export default function Header() {
                 <AddCircleOutlineIcon />
               </IconButton>
             </Link>
-            <Link href="/myfeed">
+            <Link href="/myfeeds">
               <IconButton
                 edge="end"
                 aria-label="account of user"
