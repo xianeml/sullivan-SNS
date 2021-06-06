@@ -61,14 +61,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 const loginfuntion=() => {
   const provider = new firebase.auth.GoogleAuthProvider();
-  const uid = uuidv4();
   firebase.auth().signInWithPopup(provider)
   .then(function (result){
     console.log('result.credential.accessToken',result.credential.accessToken);
     console.log('result.user',result.user);
     alert("login sucessed:"+result.user);
     const userContent ={
-      uid:uid,
+      uid:result.user.uid,
       displayName:result.user.displayName,
       profilUrl: result.user.photoURL,
       webpage:"" ,
