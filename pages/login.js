@@ -13,6 +13,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import db from "../firestores/db";
+import {v4 as uuidv4, v4} from 'uuid'; // uid 생성 함수
 
 function Copyright() {
   return (
@@ -59,11 +61,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 const loginfuntion=() => {
   const provider = new firebase.auth.GoogleAuthProvider();
+  const uid = uuidv4();
   firebase.auth().signInWithPopup(provider)
   .then(function (result){
     console.log('result.credential.accessToken',result.credential.accessToken);
     console.log('result.user',result.user);
     alert("login sucessed:"+result.user);
+    const userContent ={
+      uid:uid,
+      displayName:result.user.displayName,
+      profilUrl: result.user.photoURL,
+      webpage:"" ,
+      caption:"" ,
+      likeFeeds:"",
+      feedList:"",
+  
+    }
+    db.collection('user')
+    .doc(result.user.uid)
+    .set(userContent)
+    .then( res =>{
+      console.log("db에들어감");
+    }
+    )
+    .catch(error=>{
+      console.log(error);
+    })
     // myStore.use = {
     //   displayName: result.user.displayName,
     //   photoURL:result.user.photoURL,
