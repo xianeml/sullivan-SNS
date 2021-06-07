@@ -38,6 +38,16 @@ const useStyles = makeStyles((theme) => ({
 const myFeed = () => {
   const classes = useStyles();
 
+  const [popupOpen, setPopupOpen] = React.useState(false);
+
+  const openProfileUpdatePopup = () => {
+    setPopupOpen(true);
+  };
+
+  const closeProfileUpdatePopup = () => {
+    setPopupOpen(false);
+  };
+
   function FormRow() {
     return (
       <>
@@ -120,14 +130,22 @@ const myFeed = () => {
                 www.sullivan-sns.com
               </Typography>
             </Grid>
-            <Button variant='outlined' color='primary' onClick={() => {}}>
+            <Button
+              variant='outlined'
+              color='primary'
+              onClick={openProfileUpdatePopup}
+            >
               프로필 수정하기
             </Button>
+            <ProfileUpdatePopup
+              open={popupOpen}
+              closeHandler={closeProfileUpdatePopup}
+            />
           </Grid>
         </Grid>
       </Grid>
       <Divider variant='middle' light className={classes.divider} />
-      <Grid container spacing={3} className={classes.container} zeroMinWidth>
+      <Grid container spacing={3} className={classes.container}>
         <FormRow />
       </Grid>
     </div>

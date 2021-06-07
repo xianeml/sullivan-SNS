@@ -27,23 +27,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ProfileUpdatePopup() {
+export default function ProfileUpdatePopup({ open, closeHandler }) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
   const handleClose = () => {
-    setOpen(false);
+    closeHandler();
   };
 
   return (
     <div>
-      <Button variant='outlined' color='primary' onClick={handleClickOpen}>
-        프로필 수정하기
-      </Button>
       <Dialog
         fullWidth
         maxWidth='md'
