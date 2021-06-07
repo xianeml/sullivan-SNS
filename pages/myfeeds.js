@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Avatar from '../components/Avatar';
 import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
-import { Divider, Grid, Link } from '@material-ui/core';
+import { Divider, Grid, Link, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
@@ -14,73 +14,121 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     margin: theme.spacing(10, 0),
   },
-  root: {
-    flexGrow: 1,
-  },
   paper: {
-    padding: theme.spacing(1), //grid padding
+    padding: theme.spacing(20, 2), //grid padding
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
+  profile: {
+    paddingTop: '2rem',
+  },
+  container: {
+    [theme.breakpoints.down('lg')]: {
+      padding: theme.spacing(0, 30),
+    },
+    [theme.breakpoints.down('md')]: {
+      padding: theme.spacing(0, 2),
+    },
+    [theme.breakpoints.down('sm')]: {
+      padding: 0,
+    },
+  },
 }));
-
-
 
 const myFeed = () => {
   const classes = useStyles();
+
   function FormRow() {
-    return ( //return renders the grid
-      <React.Fragment>
-        <Grid item xs={4}>
+    return (
+      <>
+        <Grid item md={4} sm={6} xs={12}>
+          <Paper className={classes.paper} min>
+            item
+          </Paper>
+        </Grid>
+        <Grid item md={4} sm={6} xs={12}>
           <Paper className={classes.paper}>item</Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4} sm={6} xs={12}>
           <Paper className={classes.paper}>item</Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4} sm={6} xs={12}>
           <Paper className={classes.paper}>item</Paper>
         </Grid>
-      </React.Fragment>
+        <Grid item md={4} sm={6} xs={12}>
+          <Paper className={classes.paper}>item</Paper>
+        </Grid>
+        <Grid item md={4} sm={6} xs={12}>
+          <Paper className={classes.paper}>item</Paper>
+        </Grid>
+      </>
     );
   }
+
   return (
-    <div style={{ padding: 20 }}>
+    <div className={classes.root}>
       <Grid
-        container direction='column'
+        container
+        direction='row'
         justify='center'
         alignItems='center'
+        className={classes.profile}
+        spacing={4}
       >
-        <Avatar />
-      
-      {/*<Grid
-        container direction='column'
-        justify='center'
-        alignItems='center'
-      >*/}
-        <Grid container direction='column'>
-            <Grid container direction='row' justify='center' alignItems='center'>
-              계정 아이디(DB 연동 예정)
+        <Grid item>
+          <Avatar size={2} />
+        </Grid>
+        <Grid item>
+          <Grid container direction='column'>
+            <Grid item>
+              <Typography variant='h6' component='h2' paragraph>
+                계정 아이디(DB 연동 예정)
+              </Typography>
             </Grid>
-            <Grid container direction='row' justify='center' alignItems='center'>
-              프로필 설명(DB 연동 예정)
+            <Grid item>
+              <Grid container direction='row' spacing={2}>
+                <Grid item>
+                  <Typography variant='body1' component='h2' paragraph>
+                    게시물 200
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant='body1' component='h2' paragraph>
+                    팔로워 200
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant='body1' component='h2' paragraph>
+                    팔로우 200
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
-            <Button variant="contained" color="primary" onClick={()=>{}}>
+            <Grid item>
+              <Typography variant='subtitle2' component='h2'>
+                사용자 이름
+              </Typography>
+              <Typography variant='caption' component='h2'>
+                프로필 설명
+              </Typography>
+              <Typography
+                variant='subtitle2'
+                color='primary'
+                component='h2'
+                gutterBottom
+              >
+                www.sullivan-sns.com
+              </Typography>
+            </Grid>
+            <Button variant='outlined' color='primary' onClick={() => {}}>
               프로필 수정하기
             </Button>
-        </Grid>        
-      {/*</Grid>*/}
+          </Grid>
+        </Grid>
       </Grid>
-      <Divider variant='middle' light className={classes.divider}/>
-      <Grid container spacing={1}>
-        <Grid container item xs={12} spacing={3}>
-          <FormRow />
-        </Grid>
-        <Grid container item xs={12} spacing={3}>
-          <FormRow />
-        </Grid>
-        <Grid container item xs={12} spacing={3}>
-          <FormRow />
-        </Grid>
+      <Divider variant='middle' light className={classes.divider} />
+      <Grid container spacing={3} className={classes.container} zeroMinWidth>
+        <FormRow />
       </Grid>
     </div>
   );

@@ -1,11 +1,11 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex",
-    "& > *": {
+    display: 'flex',
+    '& > *': {
       margin: theme.spacing(1),
     },
   },
@@ -21,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(13),
     height: theme.spacing(13),
   },
+  xlarge: {
+    width: theme.spacing(18),
+    height: theme.spacing(18),
+  },
 }));
 
 export default function ImageAvatars({ size }) {
@@ -29,20 +33,26 @@ export default function ImageAvatars({ size }) {
     <div className={classes.root}>
       {size === 0 ? (
         <Avatar
-          alt="Remy Sharp"
-          src="/static/images/avatar/1.jpg"
+          alt='Remy Sharp'
+          src='/static/images/avatar/1.jpg'
           className={classes.small}
         />
       ) : size === 1 ? (
         <Avatar
-          alt="Remy Sharp"
-          src="/static/images/avatar/1.jpg"
+          alt='Remy Sharp'
+          src='/static/images/avatar/1.jpg'
           className={classes.medium}
+        />
+      ) : size === 2 ? (
+        <Avatar
+          alt='Remy Sharp'
+          src='/static/images/avatar/1.jpg'
+          className={classes.xlarge}
         />
       ) : (
         <Avatar
-          alt="Remy Sharp"
-          src="/static/images/avatar/1.jpg"
+          alt='Remy Sharp'
+          src='/static/images/avatar/1.jpg'
           className={classes.large}
         />
       )}
