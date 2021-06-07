@@ -6,7 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
+import Link from 'next/link'
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -15,6 +15,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import db from "../firestores/db";
 import {v4 as uuidv4, v4} from 'uuid'; // uid 생성 함수
+import UserStore from '../firestores/UserStore';
+import UserStores from '../firestores/UserStore';
+import { observer } from 'mobx-react';
+import Index from '.';
 
 function Copyright() {
   return (
@@ -59,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
  
 
 }));
+
 const loginfuntion=() => {
   const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider)
@@ -66,7 +71,7 @@ const loginfuntion=() => {
     console.log('result.credential.accessToken',result.credential.accessToken);
     console.log('result.user',result.user);
     alert("login sucessed:"+result.user);
-    const userContent ={
+    UserStores.userinfo ={
       uid:result.user.uid,
       displayName:result.user.displayName,
       profilUrl: result.user.photoURL,
@@ -78,7 +83,7 @@ const loginfuntion=() => {
     }
     db.collection('user')
     .doc(result.user.uid)
-    .set(userContent)
+    .set(UserStore.userinfo)
     .then( res =>{
       console.log("db에들어감");
     }
@@ -100,12 +105,12 @@ const loginfuntion=() => {
 
 };
 
-const login = () => {
-  
+const login = observer(({login}) => {
   const classes = useStyles();
   return (
-  
-<Container  component="main" maxWidth="xs">
+    <div>
+    { UserStores.userinfo==null&&(
+      <Container  component="main" maxWidth="xs">
       <CssBaseline />
   
       <div className={classes.paper}>
@@ -152,10 +157,17 @@ const login = () => {
       </div>
 
     </Container>
-     
-    
- 
-  );
-};
-
+  
+      )}
+    { UserStores.userinfo !=null&&(
+      <Link href="/">
+      <h1> clik here {UserStores.userinfo.displayName} 이 반갑 습니다.(홈 페이지 이동) </h1> 
+    </Link>
+      )}
+      </div>
+  )
+    }
+);
+  
+  
 export default login;

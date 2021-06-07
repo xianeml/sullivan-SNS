@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import { observer } from 'mobx-react';
+import UserStores from '../firestores/UserStore';
 import {
   makeStyles,
   AppBar,
@@ -24,7 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Header() {
+const Header = observer(({Header}) =>{
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -77,6 +79,12 @@ export default function Header() {
                 color="inherit"
               >
                 <AccountCircle />
+                {UserStores.userinfo!=null&&(
+                  <Typography variant="h6" noWrap>
+                  {UserStores.userinfo.displayName} 님 반갑습니다
+                </Typography>
+                 
+                  )}
               </IconButton>
             </Link>
             <IconButton
@@ -97,3 +105,5 @@ export default function Header() {
     </div>
   );
 }
+)
+export default Header;
