@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Feed from "../components/Feed";
+import axios from "axios";
 
 const index = () => {
-  const [comments, setComments] = React.useState([
+  const [comments, setComments] = useState([
     {
       id: 1,
       username: "aeuna",
@@ -24,13 +25,35 @@ const index = () => {
       comment: "나도 가고 싶어요!",
     },
   ]);
+  const [feeds, setFeeds] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchFeeds = async () => {
+      try {
+        const response = await axios.get(`/api/feeds`);
+        setFeeds(response.data.feeds);
+      } catch (e) {
+        console.log(e);
+      }
+      setLoading(false);
+    };
+
+    fetchFeeds();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
   return (
-    <>
-      <Feed comments={comments} setComments={setComments} />
-      <Feed comments={comments} setComments={setComments} />
-      <Feed comments={comments} setComments={setComments} />
-    </>
+    <div>
+      {feeds.map((feed) => (
+        <Feed
+          // key={feed.id}
+          feed={feed}
+          comments={comments}
+          setComments={setComments}
+        />
+      ))}
+    </div>
   );
 };
 

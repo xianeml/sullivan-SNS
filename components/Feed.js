@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
   },
   root: {
     marginTop: "55px",
-    maxWidth: "800px",
+    width: "800px",
   },
   media: {
     height: 0,
@@ -48,13 +48,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Feed({ comments, setComments }) {
+export default function Feed({ feed, comments, setComments }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [liked, setLiked] = React.useState(false);
   const [inputs, setInputs] = React.useState({
     comment: "",
   });
+
+  const { content, like, photourl, author, tag, create_at } = feed;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -89,8 +91,8 @@ export default function Feed({ comments, setComments }) {
       <Card className={classes.root}>
         <CardHeader
           avatar={<Avatar size={1} />}
-          title="aeuna"
-          subheader="May 14, 2020"
+          title={author.displayName}
+          // subheader={create_at}
         />
         <CardMedia
           className={classes.media}
@@ -99,9 +101,7 @@ export default function Feed({ comments, setComments }) {
         />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s.... (데이터 들어오면 몇자 이내로 자를 예정!)
+            {content}
           </Typography>
           <Link href="/">
             <Typography variant="body1">더보기</Typography>
@@ -111,6 +111,7 @@ export default function Feed({ comments, setComments }) {
           <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
             {liked ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
           </IconButton>
+          <Typography>{like}</Typography>
           <IconButton
             aria-label="comment"
             onClick={handleExpandClick}
