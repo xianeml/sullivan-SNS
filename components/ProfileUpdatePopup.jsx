@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Avatar from './Avatar';
+import Avatar from './common/Avatar';
 import { Divider, Grid, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
