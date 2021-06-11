@@ -62,12 +62,7 @@ export default function ProfileUpdatePopup({
               alignItems='center'
             >
               <Avatar />
-              <Link
-                component='label'
-                variant='contained'
-                className={classes.link}
-                underline='none'
-              >
+              <Link component='label' className={classes.link} underline='none'>
                 프로필 사진 바꾸기
                 <input type='file' hidden />
               </Link>

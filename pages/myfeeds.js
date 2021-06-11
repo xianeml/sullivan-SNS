@@ -67,9 +67,7 @@ const myFeed = () => {
     return (
       <>
         <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper} min>
-            item
-          </Paper>
+          <Paper className={classes.paper}>item</Paper>
         </Grid>
         <Grid item md={4} sm={6} xs={12}>
           <Paper className={classes.paper}>item</Paper>
