@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import Avatar from '../components/Avatar';
+import Avatar from '../components/common/Avatar';
 import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
-import { Divider, Grid, Link, Typography } from '@material-ui/core';
+import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
+import Snackbar from '../components/common/Snackbar';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -36,16 +37,30 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const myFeed = () => {
+  // 스타일 적용
   const classes = useStyles();
 
-  const [popupOpen, setPopupOpen] = React.useState(false);
+  // 프로필 업데이트 팝업
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);
   };
-
   const closeProfileUpdatePopup = () => {
     setPopupOpen(false);
+  };
+
+  // 스낵바 알림창
+  const [resultMessageOpen, setResultMessageOpen] = useState(false);
+
+  const openResultMessage = () => {
+    setResultMessageOpen(true);
+  };
+  const closeResultMessage = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setResultMessageOpen(false);
   };
 
   function FormRow() {
@@ -140,6 +155,13 @@ const myFeed = () => {
             <ProfileUpdatePopup
               open={popupOpen}
               closeHandler={closeProfileUpdatePopup}
+              openResultMessageHandler={openResultMessage}
+            />
+            <Snackbar
+              open={resultMessageOpen}
+              closeHandler={closeResultMessage}
+              message={'프로필이 수정되었습니다.'}
+              durationProps={1000}
             />
           </Grid>
         </Grid>

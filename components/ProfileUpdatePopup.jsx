@@ -27,11 +27,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ProfileUpdatePopup({ open, closeHandler }) {
+export default function ProfileUpdatePopup({
+  open,
+  closeHandler,
+  openResultMessageHandler,
+}) {
   const classes = useStyles();
 
   const handleClose = () => {
     closeHandler();
+  };
+
+  const handleSave = () => {
+    // 프로필 업데이트 로직 작성
+    handleClose();
+    openResultMessageHandler();
   };
 
   return (
@@ -126,11 +136,7 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
           <Button onClick={handleClose} size='large'>
             취소
           </Button>
-          <Button
-            className={classes.primary}
-            onClick={handleClose}
-            size='large'
-          >
+          <Button className={classes.primary} onClick={handleSave} size='large'>
             저장
           </Button>
         </DialogActions>

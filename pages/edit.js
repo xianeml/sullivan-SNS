@@ -3,7 +3,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import { Grid, OutlinedInput, TextField } from '@material-ui/core';
+import { Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import db from '../firestores/db';
@@ -60,7 +60,6 @@ const edit = () => {
       .doc(uid)
       .set(feedData)
       .then((res) => {
-        console.log('업로드 성공');
         router.push('/myfeeds');
       })
       .catch((err) => console.log(err));
