@@ -5,8 +5,10 @@ import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
 import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
+import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
 import UserStores from '../firestores/UserStore';
+
 const useStyles = makeStyles((theme) => ({
   primary: {
     color: '#2196f3',
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const myFeed = observer(({myFeed}) => {
+const myFeed = observer(({ myFeed }) => {
   const classes = useStyles();
 
   // 프로필 업데이트 팝업
@@ -104,17 +106,16 @@ const myFeed = observer(({myFeed}) => {
           <Grid container direction='column'>
             <Grid item>
               {/* 로그인 되어 있을 경우 사용자 이름 display */}
-              {UserStores.userinfo!=null&&(
+              {UserStores.userinfo != null && (
                 <Typography variant='h6' component='h2' paragraph>
-                   {UserStores.userinfo.displayName}
-                </Typography>
-                  )}
-              {UserStores.userinfo==null&&(
-                <Typography variant='h6' component='h2' paragraph>
-                  로그인 안되어 있음 
+                  {UserStores.userinfo.displayName}
                 </Typography>
               )}
-              
+              {UserStores.userinfo == null && (
+                <Typography variant='h6' component='h2' paragraph>
+                  로그인 안되어 있음
+                </Typography>
+              )}
             </Grid>
             <Grid item>
               <Grid container direction='row' spacing={2}>
@@ -136,9 +137,6 @@ const myFeed = observer(({myFeed}) => {
               </Grid>
             </Grid>
             <Grid item>
-              <Typography variant='subtitle2' component='h2'>
-                사용자 이름
-              </Typography>
               <Typography variant='caption' component='h2'>
                 프로필 설명
               </Typography>
