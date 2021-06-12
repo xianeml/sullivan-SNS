@@ -27,18 +27,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ImageAvatars({ size, src }) {
+export default function ImageAvatars({ size, photoUrl, displayName }) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
       {size === 0 ? (
-        <Avatar alt="Remy Sharp" src={src} className={classes.small} />
+        <Avatar alt={displayName} src={photoUrl} className={classes.small} />
       ) : size === 1 ? (
-        <Avatar alt="Remy Sharp" src={src} className={classes.medium} />
+        <Avatar alt={displayName} src={photoUrl} className={classes.medium} />
       ) : size === 2 ? (
-        <Avatar alt="Remy Sharp" src={src} className={classes.xlarge} />
+        <Avatar alt={displayName} src={photoUrl} className={classes.xlarge} />
       ) : (
-        <Avatar alt="Remy Sharp" src={src} className={classes.large} />
+        <Avatar alt={displayName} src={photoUrl} className={classes.large} />
       )}
     </div>
   );

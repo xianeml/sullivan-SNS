@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
-import Avatar from '../components/Avatar';
+import Avatar from '../components/common/Avatar';
 import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
-import { Divider, Grid, Link, Typography } from '@material-ui/core';
+import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-
+import Snackbar from '../components/common/Snackbar';
+import { observer } from 'mobx-react';
+import Snackbar from '../components/common/Snackbar';
+import UserStores from '../firestores/UserStore';
 const useStyles = makeStyles((theme) => ({
   primary: {
     color: '#2196f3',
@@ -35,26 +38,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const myFeed = () => {
+const myFeed = observer(({ myFeed }) => {
   const classes = useStyles();
-
-  const [popupOpen, setPopupOpen] = React.useState(false);
+  const [user, setUser] = useState({
+    displayName: UserStore.userinfo.displayName,
+    photoUrl: UserStore.userinfo.photoUrl,
+    caption: UserStore.userinfo.caption,
+    webpage: UserStore.userinfo.webpage,
+  });
+  // 프로필 업데이트 팝업
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);
   };
-
   const closeProfileUpdatePopup = () => {
     setPopupOpen(false);
+  };
+
+  // 스낵바 알림창
+  const [resultMessageOpen, setResultMessageOpen] = useState(false);
+
+  const openResultMessage = () => {
+    setResultMessageOpen(true);
+  };
+  const closeResultMessage = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setResultMessageOpen(false);
   };
 
   function FormRow() {
     return (
       <>
         <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper} min>
-            item
-          </Paper>
+          <Paper className={classes.paper}>item</Paper>
         </Grid>
         <Grid item md={4} sm={6} xs={12}>
           <Paper className={classes.paper}>item</Paper>
@@ -86,14 +105,26 @@ const myFeed = () => {
         spacing={4}
       >
         <Grid item>
-          <Avatar size={2} />
+          <Avatar
+            size={2}
+            displayName={user.displayName}
+            photoUrl={user.photoUrl}
+          />
         </Grid>
         <Grid item>
           <Grid container direction='column'>
             <Grid item>
-              <Typography variant='h6' component='h2' paragraph>
-                계정 아이디(DB 연동 예정)
-              </Typography>
+              {/* 로그인 되어 있을 경우 사용자 이름 display */}
+              {UserStore.userinfo != null && (
+                <Typography variant='h6' component='h2' paragraph>
+                  {UserStore.userinfo.displayName}
+                </Typography>
+              )}
+              {UserStore.userinfo == null && (
+                <Typography variant='h6' component='h2' paragraph>
+                  로그인 안되어 있음
+                </Typography>
+              )}
             </Grid>
             <Grid item>
               <Grid container direction='row' spacing={2}>
@@ -115,11 +146,8 @@ const myFeed = () => {
               </Grid>
             </Grid>
             <Grid item>
-              <Typography variant='subtitle2' component='h2'>
-                사용자 이름
-              </Typography>
               <Typography variant='caption' component='h2'>
-                프로필 설명
+                {user.caption}
               </Typography>
               <Typography
                 variant='subtitle2'
@@ -127,7 +155,7 @@ const myFeed = () => {
                 component='h2'
                 gutterBottom
               >
-                www.sullivan-sns.com
+                {user.website}
               </Typography>
             </Grid>
             <Button
@@ -140,6 +168,14 @@ const myFeed = () => {
             <ProfileUpdatePopup
               open={popupOpen}
               closeHandler={closeProfileUpdatePopup}
+              openResultMessageHandler={openResultMessage}
+              defaultUserInfo={user}
+            />
+            <Snackbar
+              open={resultMessageOpen}
+              closeHandler={closeResultMessage}
+              message={'프로필이 수정되었습니다.'}
+              durationProps={1000}
             />
           </Grid>
         </Grid>
@@ -150,6 +186,6 @@ const myFeed = () => {
       </Grid>
     </div>
   );
-};
+});
 
 export default myFeed;

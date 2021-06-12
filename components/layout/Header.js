@@ -1,7 +1,7 @@
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 import { observer } from 'mobx-react';
-import UserStores from '../firestores/UserStore';
+import UserStores from '../../firestores/UserStore';
 import {
   makeStyles,
   AppBar,
@@ -11,14 +11,14 @@ import {
   Badge,
   MenuItem,
   Menu,
-} from "@material-ui/core";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+} from '@material-ui/core';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 const useStyles = makeStyles(() => ({
   fix: {
-    position: "fixed",
+    position: 'fixed',
     top: 0,
   },
   grow: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Header = observer(({Header}) =>{
+const Header = observer(({ Header }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -40,14 +40,14 @@ const Header = observer(({Header}) =>{
     setAnchorEl(null);
   };
 
-  const menuId = "primary-account-menu";
+  const menuId = 'primary-account-menu';
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       id={menuId}
       keepMounted
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
@@ -60,41 +60,40 @@ const Header = observer(({Header}) =>{
     <div className={classes.grow}>
       <AppBar className={classes.fix}>
         <Toolbar>
-          <Link href="/">
-            <Typography variant="h6" noWrap>
+          <Link href='/'>
+            <Typography variant='h6' noWrap>
               Sullivan-SNS
             </Typography>
           </Link>
           <div className={classes.grow} />
           <div>
-            <Link href="/edit">
-              <IconButton aria-label="add feed" color="inherit">
+            <Link href='/edit'>
+              <IconButton aria-label='add feed' color='inherit'>
                 <AddCircleOutlineIcon />
               </IconButton>
             </Link>
-            <Link href="/myfeeds">
+            <Link href='/myfeeds'>
               <IconButton
-                edge="end"
-                aria-label="account of user"
-                color="inherit"
+                edge='end'
+                aria-label='account of user'
+                color='inherit'
               >
                 <AccountCircle />
-                {UserStores.userinfo!=null&&(
-                  <Typography variant="h6" noWrap>
-                  {UserStores.userinfo.displayName} 님 반갑습니다
-                </Typography>
-                 
-                  )}
+                {UserStores.userinfo != null && (
+                  <Typography variant='h6' noWrap>
+                    {UserStores.userinfo.displayName} 님 반갑습니다
+                  </Typography>
+                )}
               </IconButton>
             </Link>
             <IconButton
-              aria-label="show new notifications"
-              color="inherit"
+              aria-label='show new notifications'
+              color='inherit'
               aria-controls={menuId}
-              aria-haspopup="true"
+              aria-haspopup='true'
               onClick={handleNotificationMenuOpen}
             >
-              <Badge badgeContent={3} color="secondary">
+              <Badge badgeContent={3} color='secondary'>
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -104,6 +103,5 @@ const Header = observer(({Header}) =>{
       {renderMenu}
     </div>
   );
-}
-)
+});
 export default Header;

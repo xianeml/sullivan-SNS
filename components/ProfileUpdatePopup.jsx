@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Avatar from './Avatar';
+import Avatar from './common/Avatar';
 import { Divider, Grid, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import db from '../firestores/db';
+import firebase from '../firestores/firebase';
+import UserStore from '../firestores/UserStore';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -27,11 +30,68 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ProfileUpdatePopup({ open, closeHandler }) {
+export default function ProfileUpdatePopup({
+  open,
+  closeHandler,
+  openResultMessageHandler,
+  defaultUserInfo,
+}) {
   const classes = useStyles();
+
+  useEffect(() => {
+    console.log(defaultUserInfo);
+  }, []);
+
+  const [photoUrl, setPhotoUrl] = useState(defaultUserInfo.photoUrl);
+  const [displayName, setDisplayName] = useState(defaultUserInfo.displayName);
+  const [webpage, setWebpage] = useState(defaultUserInfo.webpage);
+  const [caption, setCaption] = useState(defaultUserInfo.caption);
+  const fileButton = useRef();
+
+  const getPhotoUrl = () => {
+    const file = fileButton.current.files[0];
+    // reference 안에 key값 수정해야함
+    const storageRef = firebase.storage().ref('mihyun123');
+    const task = storageRef.put(file);
+    task.then((snapshot) => {
+      const getUrl = snapshot.ref.getDownloadURL();
+      getUrl.then((url) => {
+        setPhotoUrl(url);
+      });
+    });
+  };
 
   const handleClose = () => {
     closeHandler();
+  };
+
+  async function submitHandler(event) {
+    // 프로필 업데이트 로직 작성
+    event.preventDefault();
+
+    const profileData = {
+      photoUrl,
+      displayName,
+      webpage,
+      caption,
+    };
+    try {
+      await updateUserProfile(profileData);
+      handleClose();
+      openResultMessageHandler();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const updateUserProfile = (profileData) => {
+    db.collection('user')
+      .doc(UserStore.userinfo.uid)
+      .update(profileData)
+      .then((res) => {
+        console.log('프로필 업뎃 성공');
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -44,22 +104,22 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
         aria-labelledby='form-dialog-title'
       >
         <DialogContent>
-          <form>
+          <form id='profileUpdate' onSubmit={submitHandler}>
             <Grid
               container
               direction='column'
               justify='center'
               alignItems='center'
             >
-              <Avatar />
-              <Link
-                component='label'
-                variant='contained'
-                className={classes.link}
-                underline='none'
-              >
+              <Avatar displayName={displayName} photoUrl={photoUrl} />
+              <Link component='label' className={classes.link} underline='none'>
                 프로필 사진 바꾸기
-                <input type='file' hidden />
+                <input
+                  type='file'
+                  hidden
+                  ref={fileButton}
+                  onChange={getPhotoUrl}
+                />
               </Link>
             </Grid>
             <Divider variant='middle' light />
@@ -72,13 +132,14 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
                 </Grid>
                 <Grid item md={10} xs={12}>
                   <TextField
-                    margin='dense'
                     id='userName'
                     type='text'
-                    variant='outlined'
+                    value={displayName}
                     placeholder='사용자 이름'
-                    disabled
+                    margin='dense'
+                    variant='outlined'
                     fullWidth
+                    onChange={(e) => setDisplayName(e.target.value)}
                   />
                 </Grid>
               </Grid>
@@ -90,13 +151,15 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
                 </Grid>
                 <Grid item md={10} xs={12}>
                   <TextField
-                    autoFocus
-                    margin='dense'
                     id='webPage'
                     type='text'
-                    variant='outlined'
+                    value={webpage}
                     placeholder='웹사이트'
+                    autoFocus
+                    margin='dense'
+                    variant='outlined'
                     fullWidth
+                    onChange={(e) => setWebpage(e.target.value)}
                   />
                 </Grid>
               </Grid>
@@ -108,14 +171,16 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
                 </Grid>
                 <Grid item md={10} xs={12}>
                   <TextField
-                    autoFocus
-                    margin='dense'
                     id='caption'
                     multiline
-                    variant='outlined'
+                    value={caption}
                     placeholder='소개'
+                    autoFocus
+                    margin='dense'
+                    variant='outlined'
                     rows='4'
                     fullWidth
+                    onChange={(e) => setCaption(e.target.value)}
                   />
                 </Grid>
               </Grid>
@@ -128,8 +193,9 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
           </Button>
           <Button
             className={classes.primary}
-            onClick={handleClose}
             size='large'
+            type='submit'
+            form='profileUpdate'
           >
             저장
           </Button>

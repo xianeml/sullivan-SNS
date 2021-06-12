@@ -2,10 +2,12 @@ import React from "react";
 import Grid from '@material-ui/core/Grid'
 import { Avatar, Paper,TextField,IconButton } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import DetailFeed from '../components/DetailFeed';
-import Comment from "../components/Comment";
+import DetailFeed from '../../../components/DetailFeed';
+import Comment from "../../../components/Comment";
 import SendIcon from "@material-ui/icons/Send";
 import GridList from '@material-ui/core/GridList';
+import { observer } from 'mobx-react';
+import { useRouter } from "next/router";
 const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
@@ -28,7 +30,9 @@ const useStyles = makeStyles((theme) => ({
   }));
   
   
-const detail = () => {
+  const detail = observer(({detail}) =>{
+    const router = useRouter();
+    const { id } = router.query;
     const classes = useStyles();
     const [inputs, setInputs] = React.useState({
     comment: "",
@@ -125,6 +129,6 @@ const detail = () => {
            </Grid>
    
   );
-};
+});
 
 export default detail;

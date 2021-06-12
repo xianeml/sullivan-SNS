@@ -20,7 +20,6 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ChatIcon from "@material-ui/icons/Chat";
-import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   feed: {
@@ -121,7 +120,7 @@ export default function Feed({ feed, comments, setComments }) {
     <div className={classes.feed}>
       <Card className={classes.root}>
         <CardHeader
-          avatar={<Avatar size={1} src={author.photoUrl} />}
+          avatar={<Avatar size={1} photoUrl={author.photoUrl} />}
           title={author.displayName}
           subheader={createAT}
         />
@@ -133,7 +132,7 @@ export default function Feed({ feed, comments, setComments }) {
           <Typography variant="body2" color="textSecondary" component="p">
             {tag}
           </Typography>
-          <Link href="/">
+          <Link href="/detail/[feedUid]" as="/detail/first">
             <Typography variant="body1">더보기</Typography>
           </Link>
         </CardContent>
