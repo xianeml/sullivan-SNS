@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Feed from "../components/Feed";
-import axios from "axios";
+import db from "../firestores/db";
 
 const index = () => {
   const [comments, setComments] = useState([
@@ -30,15 +30,34 @@ const index = () => {
 
   useEffect(() => {
     const fetchFeeds = async () => {
-      try {
-        const response = await axios.get(`/api/feeds`);
-        setFeeds(response.data.feeds);
-      } catch (e) {
-        console.log(e);
-      }
+      const feedsData = []; //받아온 데이터를 저장할 배열
+      await db
+        .collection("feed")
+        .get() // "feed" 컬렉션의 모든 다큐먼트를 갖는 프로미스 반환
+        .then((docs) => {
+          docs.forEach((doc) => {
+            feedsData.push({
+              content: doc.data().content,
+              like: doc.data().like,
+              photoUrl: doc.data().photoUrl,
+              author: {
+                displayName: doc.data().author.displayName,
+                photoURL: doc.data().author.photoURL,
+                uid: doc.data().author.uid,
+              },
+              location: doc.data().location,
+              tag: doc.data().tag,
+              uid: doc.data().uid,
+              create_at: doc.data().create_at.seconds,
+            });
+          });
+          setFeeds(feedsData);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       setLoading(false);
     };
-
     fetchFeeds();
   }, []);
 
@@ -46,12 +65,7 @@ const index = () => {
   return (
     <div>
       {feeds.map((feed) => (
-        <Feed
-          // key={feed.id}
-          feed={feed}
-          comments={comments}
-          setComments={setComments}
-        />
+        <Feed feed={feed} comments={comments} setComments={setComments} />
       ))}
     </div>
   );
