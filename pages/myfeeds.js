@@ -7,8 +7,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
-import Snackbar from '../components/common/Snackbar';
-import UserStores from '../firestores/UserStore';
+import UserStore from '../firestores/UserStore';
+
 const useStyles = makeStyles((theme) => ({
   primary: {
     color: '#2196f3',
@@ -51,6 +51,12 @@ const myFeed = observer(({ myFeed }) => {
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);
+    setUser({
+      displayName: UserStore.userinfo.displayName,
+      photoUrl: UserStore.userinfo.photoUrl,
+      caption: UserStore.userinfo.caption,
+      webpage: UserStore.userinfo.webpage,
+    });
   };
   const closeProfileUpdatePopup = () => {
     setPopupOpen(false);
@@ -155,7 +161,7 @@ const myFeed = observer(({ myFeed }) => {
                 component='h2'
                 gutterBottom
               >
-                {user.website}
+                {user.webpage}
               </Typography>
             </Grid>
             <Button
