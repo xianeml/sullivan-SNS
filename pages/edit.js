@@ -43,8 +43,7 @@ const edit = () => {
 
   const getPhotoUrl = () => {
     const file = fileButton.current.files[0];
-    // reference 안에 key값 수정해야함
-    const storageRef = firebase.storage().ref('mihyun123');
+    const storageRef = firebase.storage().ref(author.uid + '/' + uid);
     const task = storageRef.put(file);
     task.then((snapshot) => {
       const getUrl = snapshot.ref.getDownloadURL();
