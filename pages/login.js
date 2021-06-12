@@ -137,32 +137,6 @@ const login = observer(({ login }) => {
   const classes = useStyles();
   return (
     <div>
-<<<<<<< HEAD
-    { UserStores.userinfo==null&&(
-      <Container  component="main" maxWidth="xs">
-      <CssBaseline />
-  
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sullivan-SNS
-        </Typography>
-        <form className={classes.form} noValidate>
-          <Button fullWidth variant="contained"  size="small" color="primary" onClick={loginfuntion}>
-        <Avatar src="images/google.png" className={classes.avatar} />
-         <Typography component='p' variant='h6' >
-          Sign in with Google
-        </Typography>
-        </Button>
-        
-        <Box mt={8}>
-        <Copyright />
-      </Box>
-        </form>
-      </div>
-=======
       {UserStore.userinfo == null && (
         <Container component='main' maxWidth='xs'>
           <CssBaseline />
@@ -187,7 +161,6 @@ const login = observer(({ login }) => {
                   Sign in with Google
                 </Typography>
               </Button>
->>>>>>> origin
 
               <Box mt={8}>
                 <Copyright />
@@ -196,7 +169,6 @@ const login = observer(({ login }) => {
           </div>
         </Container>
       )}
-<<<<<<< HEAD
       {/* {UserStores.userinfo != null &&(
         <div>
           <Link href ="/"/>
@@ -210,20 +182,4 @@ const login = observer(({ login }) => {
   
 
 export default login;
-=======
-      {UserStore.userinfo != null && (
-        <>
-          <Link href='/'>
-            <h1>
-              clik here {UserStore.userinfo.displayName} 이 반갑 습니다.
-              (홈페이지 이동)
-            </h1>
-          </Link>
-        </>
-      )}
-    </div>
-  );
-});
-
-export default login;
->>>>>>> origin
+      
