@@ -103,8 +103,8 @@ export default function Feed({ comments, setComments }) {
             industry. Lorem Ipsum has been the industry's standard dummy text
             ever since the 1500s.... (데이터 들어오면 몇자 이내로 자를 예정!)
           </Typography>
-          <Link href='/'>
-            <Typography variant='body1'>더보기</Typography>
+          <Link href="/detail/[feedUid]" as ="/detail/first">
+            <Typography variant="body1">더보기</Typography>
           </Link>
         </CardContent>
         <CardActions disableSpacing>
