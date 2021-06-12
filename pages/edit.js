@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import { Grid, OutlinedInput, TextField } from '@material-ui/core';
+import { Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import db from '../firestores/db';
 import { v4 as uuidv4, v4 } from 'uuid';
+import firebase from '../firestores/firebase';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -17,13 +18,17 @@ const useStyles = makeStyles((theme) => ({
   label: {
     fontWeight: 'bold',
   },
+  imgPreview: {
+    width: '60%',
+  },
 }));
 
 const edit = () => {
   const classes = useStyles();
   const router = useRouter();
 
-  const [photoUrl, setPhotoUrl] = useState();
+  // 이미지 초기값은 프리뷰 이미지 등으로 세팅해두기
+  const [photoUrl, setPhotoUrl] = useState('');
   const [content, setContent] = useState();
   const [location, setLocation] = useState();
   const [tag, setTag] = useState();
@@ -32,6 +37,21 @@ const edit = () => {
     photoURL: 'url',
     uid: 'test',
   });
+  const fileButton = useRef();
+
+  const getPhotoUrl = () => {
+    const file = fileButton.current.files[0];
+    // reference 안에 key값 수정해야함
+    const storageRef = firebase.storage().ref('mihyun123');
+    const task = storageRef.put(file);
+    task.then((snapshot) => {
+      console.log('upload 성공!');
+      const getUrl = snapshot.ref.getDownloadURL();
+      getUrl.then((url) => {
+        setPhotoUrl(url);
+      });
+    });
+  };
 
   async function submitHandler(event) {
     event.preventDefault();
@@ -39,7 +59,7 @@ const edit = () => {
     // setAuthor() 현재 로그인한 사용자로 setState 추가하기
 
     const feedData = {
-      photoUrl: '',
+      photoUrl,
       content,
       location,
       tag,
@@ -60,7 +80,6 @@ const edit = () => {
       .doc(uid)
       .set(feedData)
       .then((res) => {
-        console.log('업로드 성공');
         router.push('/myfeeds');
       })
       .catch((err) => console.log(err));
@@ -71,7 +90,15 @@ const edit = () => {
       <Card variant='outlined'>
         <CardContent>
           <Grid container justify='center'>
-            사진 미리보기
+            {photoUrl ? (
+              <img
+                src={photoUrl}
+                alt='미리보기'
+                className={classes.imgPreview}
+              />
+            ) : (
+              '사진 미리보기'
+            )}
           </Grid>
         </CardContent>
       </Card>
@@ -85,7 +112,12 @@ const edit = () => {
                 </label>
               </Grid>
               <Grid item md={10} xs={12}>
-                <input id='file' type='file' />
+                <input
+                  id='file'
+                  type='file'
+                  ref={fileButton}
+                  onChange={getPhotoUrl}
+                />
               </Grid>
             </Grid>
             <Grid container direction='row' alignItems='center'>

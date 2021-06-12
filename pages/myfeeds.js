@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import Avatar from '../components/Avatar';
+import Avatar from '../components/common/Avatar';
 import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
-import { Divider, Grid, Link, Typography } from '@material-ui/core';
+import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { observer } from 'mobx-react';
@@ -39,23 +39,34 @@ const useStyles = makeStyles((theme) => ({
 const myFeed = observer(({myFeed}) => {
   const classes = useStyles();
 
-  const [popupOpen, setPopupOpen] = React.useState(false);
+  // 프로필 업데이트 팝업
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);
   };
-
   const closeProfileUpdatePopup = () => {
     setPopupOpen(false);
+  };
+
+  // 스낵바 알림창
+  const [resultMessageOpen, setResultMessageOpen] = useState(false);
+
+  const openResultMessage = () => {
+    setResultMessageOpen(true);
+  };
+  const closeResultMessage = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setResultMessageOpen(false);
   };
 
   function FormRow() {
     return (
       <>
         <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper} min>
-            item
-          </Paper>
+          <Paper className={classes.paper}>item</Paper>
         </Grid>
         <Grid item md={4} sm={6} xs={12}>
           <Paper className={classes.paper}>item</Paper>
@@ -150,6 +161,13 @@ const myFeed = observer(({myFeed}) => {
             <ProfileUpdatePopup
               open={popupOpen}
               closeHandler={closeProfileUpdatePopup}
+              openResultMessageHandler={openResultMessage}
+            />
+            <Snackbar
+              open={resultMessageOpen}
+              closeHandler={closeResultMessage}
+              message={'프로필이 수정되었습니다.'}
+              durationProps={1000}
             />
           </Grid>
         </Grid>

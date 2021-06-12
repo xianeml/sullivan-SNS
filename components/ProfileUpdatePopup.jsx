@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Avatar from './Avatar';
+import Avatar from './common/Avatar';
 import { Divider, Grid, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -27,11 +27,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ProfileUpdatePopup({ open, closeHandler }) {
+export default function ProfileUpdatePopup({
+  open,
+  closeHandler,
+  openResultMessageHandler,
+}) {
   const classes = useStyles();
 
   const handleClose = () => {
     closeHandler();
+  };
+
+  const handleSave = () => {
+    // 프로필 업데이트 로직 작성
+    handleClose();
+    openResultMessageHandler();
   };
 
   return (
@@ -52,12 +62,7 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
               alignItems='center'
             >
               <Avatar />
-              <Link
-                component='label'
-                variant='contained'
-                className={classes.link}
-                underline='none'
-              >
+              <Link component='label' className={classes.link} underline='none'>
                 프로필 사진 바꾸기
                 <input type='file' hidden />
               </Link>
@@ -126,11 +131,7 @@ export default function ProfileUpdatePopup({ open, closeHandler }) {
           <Button onClick={handleClose} size='large'>
             취소
           </Button>
-          <Button
-            className={classes.primary}
-            onClick={handleClose}
-            size='large'
-          >
+          <Button className={classes.primary} onClick={handleSave} size='large'>
             저장
           </Button>
         </DialogActions>
