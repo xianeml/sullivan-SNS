@@ -43,8 +43,9 @@ const myFeed = observer(({ myFeed }) => {
   const [user, setUser] = useState({
     displayName: UserStore.userinfo.displayName,
     photoUrl: UserStore.userinfo.photoUrl,
+    caption: UserStore.userinfo.caption,
+    webpage: UserStore.userinfo.webpage,
   });
-
   // 프로필 업데이트 팝업
   const [popupOpen, setPopupOpen] = useState(false);
 
@@ -146,7 +147,7 @@ const myFeed = observer(({ myFeed }) => {
             </Grid>
             <Grid item>
               <Typography variant='caption' component='h2'>
-                프로필 설명
+                {user.caption}
               </Typography>
               <Typography
                 variant='subtitle2'
@@ -154,7 +155,7 @@ const myFeed = observer(({ myFeed }) => {
                 component='h2'
                 gutterBottom
               >
-                www.sullivan-sns.com
+                {user.website}
               </Typography>
             </Grid>
             <Button
@@ -168,6 +169,7 @@ const myFeed = observer(({ myFeed }) => {
               open={popupOpen}
               closeHandler={closeProfileUpdatePopup}
               openResultMessageHandler={openResultMessage}
+              defaultUserInfo={user}
             />
             <Snackbar
               open={resultMessageOpen}
