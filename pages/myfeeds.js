@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Avatar from '../components/common/Avatar';
 import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
-import UserStores from '../firestores/UserStore';
+import UserStore from '../firestores/UserStore';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -40,6 +40,10 @@ const useStyles = makeStyles((theme) => ({
 
 const myFeed = observer(({ myFeed }) => {
   const classes = useStyles();
+  const [user, setUser] = useState({
+    displayName: UserStore.userinfo.displayName,
+    photoUrl: UserStore.userinfo.photoUrl,
+  });
 
   // 프로필 업데이트 팝업
   const [popupOpen, setPopupOpen] = useState(false);
@@ -100,18 +104,22 @@ const myFeed = observer(({ myFeed }) => {
         spacing={4}
       >
         <Grid item>
-          <Avatar size={2} />
+          <Avatar
+            size={2}
+            displayName={user.displayName}
+            photoUrl={user.photoUrl}
+          />
         </Grid>
         <Grid item>
           <Grid container direction='column'>
             <Grid item>
               {/* 로그인 되어 있을 경우 사용자 이름 display */}
-              {UserStores.userinfo != null && (
+              {UserStore.userinfo != null && (
                 <Typography variant='h6' component='h2' paragraph>
-                  {UserStores.userinfo.displayName}
+                  {UserStore.userinfo.displayName}
                 </Typography>
               )}
-              {UserStores.userinfo == null && (
+              {UserStore.userinfo == null && (
                 <Typography variant='h6' component='h2' paragraph>
                   로그인 안되어 있음
                 </Typography>

@@ -16,7 +16,6 @@ import Container from '@material-ui/core/Container';
 import db from '../firestores/db';
 import { v4 as uuidv4, v4 } from 'uuid'; // uid 생성 함수
 import UserStore from '../firestores/UserStore';
-import UserStores from '../firestores/UserStore';
 import { observer } from 'mobx-react';
 import Index from '.';
 
@@ -73,10 +72,10 @@ const loginfuntion = () => {
         result.credential.accessToken
       );
       console.log('result.user', result.user);
-      UserStores.userinfo = {
+      UserStore.userinfo = {
         uid: result.user.uid,
         displayName: result.user.displayName,
-        profilUrl: result.user.photoURL,
+        photoUrl: result.user.photoURL,
         webpage: '',
         caption: '',
         likeFeeds: '',
@@ -86,7 +85,7 @@ const loginfuntion = () => {
         .doc(result.user.uid)
         .set(UserStore.userinfo)
         .then((res) => {
-          console.log('db에들어감');
+          console.log(UserStore);
         })
         .catch((error) => {
           console.log(error);
@@ -102,7 +101,7 @@ const login = observer(({ login }) => {
   const classes = useStyles();
   return (
     <div>
-      {UserStores.userinfo == null && (
+      {UserStore.userinfo == null && (
         <Container component='main' maxWidth='xs'>
           <CssBaseline />
 
@@ -134,11 +133,11 @@ const login = observer(({ login }) => {
           </div>
         </Container>
       )}
-      {UserStores.userinfo != null && (
+      {UserStore.userinfo != null && (
         <>
           <Link href='/'>
             <h1>
-              clik here {UserStores.userinfo.displayName} 이 반갑 습니다.
+              clik here {UserStore.userinfo.displayName} 이 반갑 습니다.
               (홈페이지 이동)
             </h1>
           </Link>

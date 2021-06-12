@@ -36,7 +36,7 @@ const edit = () => {
   const [tag, setTag] = useState('');
   const author = {
     displayName: UserStore.userinfo.displayName,
-    photoURL: '',
+    photoUrl: UserStore.userinfo.photoUrl,
     uid: UserStore.userinfo.uid,
   };
   const fileButton = useRef();
