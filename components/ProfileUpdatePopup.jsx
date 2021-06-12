@@ -38,10 +38,6 @@ export default function ProfileUpdatePopup({
 }) {
   const classes = useStyles();
 
-  useEffect(() => {
-    console.log(defaultUserInfo);
-  }, []);
-
   const [photoUrl, setPhotoUrl] = useState(defaultUserInfo.photoUrl);
   const [displayName, setDisplayName] = useState(defaultUserInfo.displayName);
   const [webpage, setWebpage] = useState(defaultUserInfo.webpage);
@@ -79,6 +75,7 @@ export default function ProfileUpdatePopup({
       await updateUserProfile(profileData);
       handleClose();
       openResultMessageHandler();
+      // userstore update action 필요
     } catch (error) {
       console.log(error);
     }
