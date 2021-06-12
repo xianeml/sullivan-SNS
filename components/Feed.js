@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import Avatar from "./Avatar";
+import Avatar from "./common/Avatar";
 import Comment from "./Comment";
 import db from "../firestores/db";
 import {
