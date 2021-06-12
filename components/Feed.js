@@ -20,6 +20,7 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ChatIcon from "@material-ui/icons/Chat";
+import UserStore from "../firestores/UserStore";
 
 const useStyles = makeStyles(() => ({
   feed: {
@@ -63,8 +64,16 @@ export default function Feed({ feed, comments, setComments }) {
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
+  const userFeedLike = UserStore.userinfo.likeFeeds;
+  const isLike = false;
+  for (const feedId of userFeedLike) {
+    if (uid === feedId) {
+      isLike = true;
+      break;
+    }
+  }
   const [liked, setLiked] = React.useState({
-    status: false,
+    status: isLike,
     num: like,
   });
   const [inputs, setInputs] = React.useState({
@@ -77,10 +86,13 @@ export default function Feed({ feed, comments, setComments }) {
 
   const handleHeartClick = () => {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
-    setLiked({
-      status: !liked.status,
-      num: likeNum,
-    });
+    const updateFeedLike = [];
+    if (liked.status) {
+      updateFeedLike.filter((feedId) => feedId !== uid);
+    } else {
+      updateFeedLike = [...updateFeedLike, uid];
+    }
+    //feed likeNum 업데이트
     db.collection("feed")
       .doc(uid)
       .update({
@@ -89,6 +101,16 @@ export default function Feed({ feed, comments, setComments }) {
       .catch((err) => {
         console.log(err);
       });
+    //user likeFeeds 업데이트
+    db.collection("user")
+      .doc(UserStore.userinfo.uid)
+      .update({ likeFeeds: updateFeedLike })
+      .catch((err) => console.log(err));
+
+    setLiked({
+      status: !liked.status,
+      num: likeNum,
+    });
   };
 
   const handleTextChange = (e) => {
