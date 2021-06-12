@@ -4,9 +4,6 @@ import firebase from "./firebase";
 const db = firebase.firestore();
 const settings = {
   timesstampsInSnapshots: true,
-  enablePersistence: {
-    synchronizeTabs: true,
-  },
 };
 db.settings(settings);
 
