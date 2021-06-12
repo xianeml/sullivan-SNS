@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import db from '../firestores/db';
 import { v4 as uuidv4, v4 } from 'uuid';
 import firebase from '../firestores/firebase';
+import UserStore from '../firestores/UserStore';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -26,17 +27,18 @@ const useStyles = makeStyles((theme) => ({
 const edit = () => {
   const classes = useStyles();
   const router = useRouter();
+  const uid = uuidv4();
 
   // 이미지 초기값은 프리뷰 이미지 등으로 세팅해두기
   const [photoUrl, setPhotoUrl] = useState('');
-  const [content, setContent] = useState();
-  const [location, setLocation] = useState();
-  const [tag, setTag] = useState();
-  const [author, setAuthor] = useState({
-    displayName: 'mihyun',
-    photoURL: 'url',
-    uid: 'test',
-  });
+  const [content, setContent] = useState('');
+  const [location, setLocation] = useState('');
+  const [tag, setTag] = useState('');
+  const author = {
+    displayName: UserStore.userinfo.displayName,
+    photoURL: '',
+    uid: UserStore.userinfo.uid,
+  };
   const fileButton = useRef();
 
   const getPhotoUrl = () => {
@@ -45,7 +47,6 @@ const edit = () => {
     const storageRef = firebase.storage().ref('mihyun123');
     const task = storageRef.put(file);
     task.then((snapshot) => {
-      console.log('upload 성공!');
       const getUrl = snapshot.ref.getDownloadURL();
       getUrl.then((url) => {
         setPhotoUrl(url);
@@ -56,8 +57,6 @@ const edit = () => {
   async function submitHandler(event) {
     event.preventDefault();
 
-    // setAuthor() 현재 로그인한 사용자로 setState 추가하기
-
     const feedData = {
       photoUrl,
       content,
@@ -67,16 +66,43 @@ const edit = () => {
       create_at: new Date(),
     };
     try {
-      await uploadFeed(feedData);
+      await updateUserFeedList();
+      await createFeed(feedData);
     } catch (error) {
       console.log(error);
     }
   }
 
-  const uploadFeed = (feedData) => {
-    const uid = uuidv4();
+  const updateUserFeedList = () => {
+    // 1. 로그인한 사용자의 feedList 가져오기
+    let userFeedList;
+    db.collection('user')
+      .doc(UserStore.userinfo.uid)
+      .get()
+      .then((res) => {
+        userFeedList = res.data().feedList;
+      });
 
-    db.collection('test-feed')
+    // 2. 업데이트를 위한 새로운 feedList 만들기
+    let newFeedList;
+    if (userFeedList) {
+      newFeedList = [...userFeedList, { feedId: uid }];
+    } else {
+      newFeedList = [{ feedId: uid }];
+    }
+
+    // 3. 사용자의 feedList 업데이트하기
+    db.collection('user')
+      .doc(UserStore.userinfo.uid)
+      .update({ feedList: newFeedList })
+      .then((res) => {
+        console.log('선생 피드리스트 업뎃 성공!');
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const createFeed = (feedData) => {
+    db.collection('feed')
       .doc(uid)
       .set(feedData)
       .then((res) => {
