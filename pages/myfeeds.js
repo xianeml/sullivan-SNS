@@ -5,7 +5,8 @@ import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
 import { Divider, Grid, Link, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-
+import { observer } from 'mobx-react';
+import UserStores from '../firestores/UserStore';
 const useStyles = makeStyles((theme) => ({
   primary: {
     color: '#2196f3',
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const myFeed = () => {
+const myFeed = observer(({myFeed}) => {
   const classes = useStyles();
 
   const [popupOpen, setPopupOpen] = React.useState(false);
@@ -91,9 +92,18 @@ const myFeed = () => {
         <Grid item>
           <Grid container direction='column'>
             <Grid item>
-              <Typography variant='h6' component='h2' paragraph>
-                계정 아이디(DB 연동 예정)
-              </Typography>
+              {/* 로그인 되어 있을 경우 사용자 이름 display */}
+              {UserStores.userinfo!=null&&(
+                <Typography variant='h6' component='h2' paragraph>
+                   {UserStores.userinfo.displayName}
+                </Typography>
+                  )}
+              {UserStores.userinfo==null&&(
+                <Typography variant='h6' component='h2' paragraph>
+                  로그인 안되어 있음 
+                </Typography>
+              )}
+              
             </Grid>
             <Grid item>
               <Grid container direction='row' spacing={2}>
@@ -150,6 +160,6 @@ const myFeed = () => {
       </Grid>
     </div>
   );
-};
+});
 
 export default myFeed;
