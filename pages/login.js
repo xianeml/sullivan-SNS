@@ -81,7 +81,7 @@ const loginfuntion = () => {
       answer.forEach(element => {
         if(element.data().uid == result.user.uid){
          count = count + 1;
-         UserStores.userinfo ={
+         UserStore.userinfo ={
           uid:element.data().uid,
           displayName: element.data().displayName,
           profilUrl: element.data().photoURL,
@@ -97,7 +97,7 @@ const loginfuntion = () => {
       if (count == 0){
         console.log('새로운 사용자')
         // No user is signed in.
-        UserStores.userinfo ={
+        UserStore.userinfo ={
           uid:result.user.uid,
           displayName:result.user.displayName,
           profilUrl: result.user.photoURL,
