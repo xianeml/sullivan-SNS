@@ -18,6 +18,9 @@ import { v4 as uuidv4, v4 } from 'uuid'; // uid 생성 함수
 import UserStore from '../firestores/UserStore';
 import { observer } from 'mobx-react';
 import Index from '.';
+import {useRouter} from 'next/router';
+import redirect from 'nextjs-redirect';
+import { GetServerSideProps } from 'next'
 
 function Copyright() {
   return (
@@ -63,44 +66,103 @@ const useStyles = makeStyles((theme) => ({
 
 const loginfuntion = () => {
   const provider = new firebase.auth.GoogleAuthProvider();
-  firebase
-    .auth()
-    .signInWithPopup(provider)
-    .then(function (result) {
-      console.log(
-        'result.credential.accessToken',
-        result.credential.accessToken
-      );
-      console.log('result.user', result.user);
-      UserStore.userinfo = {
-        uid: result.user.uid,
-        displayName: result.user.displayName,
-        photoUrl: result.user.photoURL,
-        webpage: '',
-        caption: '',
-        likeFeeds: '',
-        feedList: [],
-      };
-      db.collection('user')
+  var count = 0;
+  firebase.auth().signInWithPopup(provider)
+  .then(function (result){
+
+    console.log('result.credential.accessToken',result.credential.accessToken);
+    console.log('result.user',result.user);
+    alert("login sucessed:"+result.user);
+    
+    db.collection('user')
+    .get()
+    // user db 중 uid 가 같은 것이 있나 탐색(같은 것이 있을 경우 이미 회원가입 된 유저)
+    .then(answer=>{
+      answer.forEach(element => {
+        if(element.data().uid == result.user.uid){
+         count = count + 1;
+         UserStores.userinfo ={
+          uid:element.data().uid,
+          displayName: element.data().displayName,
+          profilUrl: element.data().photoURL,
+          webpage:element.data().webpage ,
+          caption:element.data().caption ,
+          likeFeeds:element.data().likeFeeds,
+          feedList:element.data().feedList,
+        }
+         console.log("존재 하는 유저");
+        }
+      });
+     
+      if (count == 0){
+        console.log('새로운 사용자')
+        // No user is signed in.
+        UserStores.userinfo ={
+          uid:result.user.uid,
+          displayName:result.user.displayName,
+          profilUrl: result.user.photoURL,
+          webpage:"" ,
+          caption:"" ,
+          likeFeeds:"",
+          feedList:"",
+      
+        }
+        db.collection('user')
         .doc(result.user.uid)
         .set(UserStore.userinfo)
-        .then((res) => {
-          console.log(UserStore);
-        })
-        .catch((error) => {
+        .then( res =>{
+          console.log("db에들어감");
+        }
+        )
+        .catch(error=>{
           console.log(error);
-        });
+        })
+      
+      }
     })
-    .catch((error) => {
-      alert('login error:' + error.message);
+    .catch(error=>{
+      alert('error'+error.message)
       console.log(error);
-    });
+    }) 
+  })
+  .catch(error =>{
+    alert('login error:' +error.message);
+    console.log(error);
+  });
+  console.log(count)
+  
 };
 
 const login = observer(({ login }) => {
   const classes = useStyles();
   return (
     <div>
+<<<<<<< HEAD
+    { UserStores.userinfo==null&&(
+      <Container  component="main" maxWidth="xs">
+      <CssBaseline />
+  
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sullivan-SNS
+        </Typography>
+        <form className={classes.form} noValidate>
+          <Button fullWidth variant="contained"  size="small" color="primary" onClick={loginfuntion}>
+        <Avatar src="images/google.png" className={classes.avatar} />
+         <Typography component='p' variant='h6' >
+          Sign in with Google
+        </Typography>
+        </Button>
+        
+        <Box mt={8}>
+        <Copyright />
+      </Box>
+        </form>
+      </div>
+=======
       {UserStore.userinfo == null && (
         <Container component='main' maxWidth='xs'>
           <CssBaseline />
@@ -125,6 +187,7 @@ const login = observer(({ login }) => {
                   Sign in with Google
                 </Typography>
               </Button>
+>>>>>>> origin
 
               <Box mt={8}>
                 <Copyright />
@@ -133,6 +196,21 @@ const login = observer(({ login }) => {
           </div>
         </Container>
       )}
+<<<<<<< HEAD
+      {/* {UserStores.userinfo != null &&(
+        <div>
+          <Link href ="/"/>
+        </div>
+      )} */}
+    
+      </div>
+  )
+    }
+);
+  
+
+export default login;
+=======
       {UserStore.userinfo != null && (
         <>
           <Link href='/'>
@@ -148,3 +226,4 @@ const login = observer(({ login }) => {
 });
 
 export default login;
+>>>>>>> origin
