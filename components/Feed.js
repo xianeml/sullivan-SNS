@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Avatar from "./Avatar";
 import Comment from "./Comment";
+import db from "../firestores/db";
 import {
   Paper,
   TextField,
@@ -19,6 +20,7 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ChatIcon from "@material-ui/icons/Chat";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   feed: {
@@ -49,21 +51,45 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Feed({ feed, comments, setComments }) {
+  const {
+    content,
+    like = 0,
+    photoUrl,
+    author,
+    tag,
+    create_at,
+    uid,
+    location,
+  } = feed;
+
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
-  const [liked, setLiked] = React.useState(false);
+  const [liked, setLiked] = React.useState({
+    status: false,
+    num: like,
+  });
   const [inputs, setInputs] = React.useState({
     comment: "",
   });
-
-  const { content, like, photourl, author, tag, create_at } = feed;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
   const handleHeartClick = () => {
-    setLiked(!liked);
+    const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
+    setLiked({
+      status: !liked.status,
+      num: likeNum,
+    });
+    db.collection("feed")
+      .doc(uid)
+      .update({
+        like: likeNum,
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleTextChange = (e) => {
@@ -86,22 +112,26 @@ export default function Feed({ feed, comments, setComments }) {
     });
   };
 
+  var t = new Date(1970, 0, 1); // Epoch
+  t.setSeconds(create_at);
+  const createAT =
+    t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear();
+
   return (
     <div className={classes.feed}>
       <Card className={classes.root}>
         <CardHeader
-          avatar={<Avatar size={1} />}
+          avatar={<Avatar size={1} src={author.photoUrl} />}
           title={author.displayName}
-          // subheader={create_at}
+          subheader={createAT}
         />
-        <CardMedia
-          className={classes.media}
-          image="/images/test.jpeg"
-          title="food"
-        />
+        <CardMedia className={classes.media} image={photoUrl} title="food" />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
             {content}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {tag}
           </Typography>
           <Link href="/">
             <Typography variant="body1">더보기</Typography>
@@ -109,9 +139,15 @@ export default function Feed({ feed, comments, setComments }) {
         </CardContent>
         <CardActions disableSpacing>
           <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
-            {liked ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
+            {liked.status ? (
+              <FavoriteIcon color="secondary" />
+            ) : (
+              <FavoriteIcon />
+            )}
           </IconButton>
-          <Typography>{like}</Typography>
+          <Typography>
+            {liked.num <= 0 || !liked.num ? 0 : liked.num}
+          </Typography>
           <IconButton
             aria-label="comment"
             onClick={handleExpandClick}
