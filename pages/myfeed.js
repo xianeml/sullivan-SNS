@@ -6,6 +6,7 @@ import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
+import { useRouter } from 'next/router';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
 import Link from 'next/link';
@@ -51,17 +52,31 @@ const useStyles = makeStyles((theme) => ({
 
 const myFeed = observer(({ myFeed }) => {
   const classes = useStyles();
-  const [user, setUser] = useState({
-    uid: UserStore.userinfo.uid,
-    displayName: UserStore.userinfo.displayName,
-    photoUrl: UserStore.userinfo.photoUrl,
-    caption: UserStore.userinfo.caption,
-    webpage: UserStore.userinfo.webpage,
-    feedList: UserStore.userinfo.feedList,
-    likeFeeds: UserStore.userinfo.likeFeeds,
-  });
+  const router = useRouter();
+
+  const [user, setUser] = useState({});
   const [feedList, setFeedList] = useState([]);
   const [popupOpen, setPopupOpen] = useState(false);
+
+  useEffect(() => {
+    if (!UserStore.userinfo) {
+      router.push('/login');
+    }
+    try {
+      setUser({
+        uid: UserStore.userinfo.uid,
+        displayName: UserStore.userinfo.displayName,
+        photoUrl: UserStore.userinfo.photoUrl,
+        caption: UserStore.userinfo.caption,
+        webpage: UserStore.userinfo.webpage,
+        feedList: UserStore.userinfo.feedList,
+        likeFeeds: UserStore.userinfo.likeFeeds,
+      });
+      getUserFeedList();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   async function getUserFeedList() {
     const feedRef = db.collection('feed');
@@ -73,13 +88,8 @@ const myFeed = observer(({ myFeed }) => {
     allFeedList.forEach((feed) => {
       if (feed.author.uid === user.uid) myFeedList.push(feed);
     });
-    console.log('myFeedList', myFeedList);
     setFeedList(myFeedList);
   }
-
-  useEffect(() => {
-    getUserFeedList();
-  }, []);
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);

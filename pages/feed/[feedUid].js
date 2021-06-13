@@ -30,20 +30,8 @@ const detail = observer(({ detail }) => {
   const router = useRouter();
   const { feedUid } = router.query;
 
-  const [feed, setFeed] = useState({
-    uid: feedUid,
-    content: '',
-    create_at: '',
-    location: '',
-    photoUrl: '',
-    tag: '',
-    like: 0,
-    author: {
-      displayName: '',
-      photoUrl: '',
-      uid: '',
-    },
-  });
+  const [feed, setFeed] = useState({});
+  const [user, setUser] = useState({});
   const [inputs, setInputs] = useState({ comment: '' });
   const comments = [
     {
@@ -69,14 +57,30 @@ const detail = observer(({ detail }) => {
   ];
 
   useEffect(() => {
-    getFeedDetail();
+    if (!UserStore.userinfo) {
+      router.push('/login');
+    }
+    try {
+      setUser({
+        displayName: UserStore.userinfo.displayName,
+        photoUrl: UserStore.userinfo.displayName,
+        uid: UserStore.userinfo.uid,
+      });
+      getFeedDetail();
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   async function getFeedDetail() {
-    const feedRef = db.collection('feed').doc(feedUid);
-    const feedDoc = await feedRef.get();
-    const feedDetail = feedDoc.data();
-    setFeed(feedDetail);
+    try {
+      const feedRef = db.collection('feed').doc(feedUid);
+      const feedDoc = await feedRef.get();
+      const feedDetail = feedDoc.data();
+      setFeed(feedDetail);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const handleTextChange = (e) => {
@@ -89,7 +93,7 @@ const detail = observer(({ detail }) => {
   const handleSendClick = () => {
     const comments = {
       id: comments.length + 1,
-      username: UserStore.userinfo.displayName,
+      username: user.displayName,
       comment: inputs.comment,
     };
     setComments([...comments, comment]);
@@ -101,7 +105,7 @@ const detail = observer(({ detail }) => {
     <Grid container>
       <Grid item xs={8}>
         <Paper className={classes.paper}>
-          <DetailFeed feed={feed} />
+          <DetailFeed feedData={feed} />
         </Paper>
       </Grid>
       <Grid item xs={4}>
@@ -117,8 +121,8 @@ const detail = observer(({ detail }) => {
             <Grid item>
               <Avatar
                 size={1}
-                photoUrl={UserStore.userinfo.photoUrl}
-                displayName={UserStore.userinfo.displayName}
+                photoUrl={user.photoUrl}
+                displayName={user.displayName}
               />
             </Grid>
             <Grid item>
@@ -130,7 +134,7 @@ const detail = observer(({ detail }) => {
                     display='block'
                     className={classes.commentItem}
                   >
-                    {UserStore.userinfo.displayName}
+                    {user.displayName}
                   </Typography>
                 </Grid>
                 <Grid item>

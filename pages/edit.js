@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -29,16 +29,27 @@ const edit = () => {
   const router = useRouter();
   const uid = uuidv4();
 
+  useEffect(() => {
+    if (!UserStore.userinfo) {
+      router.push('/login');
+    }
+    try {
+      setAuthor({
+        displayName: UserStore.userinfo.displayName,
+        photoUrl: UserStore.userinfo.photoUrl,
+        uid: UserStore.userinfo.uid,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   // 이미지 초기값은 프리뷰 이미지 등으로 세팅해두기
   const [photoUrl, setPhotoUrl] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [tag, setTag] = useState('');
-  const author = {
-    displayName: UserStore.userinfo.displayName,
-    photoUrl: UserStore.userinfo.photoUrl,
-    uid: UserStore.userinfo.uid,
-  };
+  const [author, setAuthor] = useState({});
   const fileButton = useRef();
 
   const getPhotoUrl = () => {
@@ -57,7 +68,7 @@ const edit = () => {
     event.preventDefault();
 
     const feedData = {
-      uid: uid,
+      uid,
       photoUrl,
       content,
       location,
