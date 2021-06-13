@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { observer } from 'mobx-react';
 import UserStores from '../../firestores/UserStore';
+import firebase from 'firebase';
 import {
   makeStyles,
   AppBar,
@@ -40,6 +41,14 @@ const Header = observer(({ Header }) => {
     setAnchorEl(null);
   };
 
+  const logout = () =>{
+    firebase.auth().signOut().then(() => {
+      window.location.href = "/"
+    }).catch((error) => {
+      // An error happened.
+    })
+  }
+
   const menuId = 'primary-account-menu';
   const renderMenu = (
     <Menu
@@ -54,6 +63,7 @@ const Header = observer(({ Header }) => {
       <MenuItem onClick={handleMenuClose}>알림 1</MenuItem>
       <MenuItem onClick={handleMenuClose}>알림 2</MenuItem>
       <MenuItem onClick={handleMenuClose}>알림 3</MenuItem>
+      <MenuItem onClick={logout}>로그아웃</MenuItem>
     </Menu>
   );
   return (
