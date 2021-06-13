@@ -8,7 +8,9 @@ import SendIcon from "@material-ui/icons/Send";
 import GridList from "@material-ui/core/GridList";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-
+import firebase from "firebase";
+import db from "../../firestores/db";
+import UserStore from "../../firestores/UserStore";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -29,7 +31,34 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateZ(0)",
   },
 }));
-
+function checkSession(){
+  firebase.auth().onAuthStateChanged((user)=>{
+    if(user){
+      db.collection('user')
+      .get()
+      .then((answer) => {
+        answer.forEach((element) => {
+          if (element.data().uid == user.uid) {
+            UserStore.userinfo = {
+              uid: element.data().uid,
+              displayName: element.data().displayName,
+              photoUrl: element.data().photoUrl,
+              webpage: element.data().webpage,
+              caption: element.data().caption,
+              likeFeeds: element.data().likeFeeds,
+              feedList: element.data().feedList,
+            };
+            console.log('존재 하는 유저');
+          }
+        })
+      })
+      .catch((error) => {
+        alert('error' + error.message);
+        console.log(error);
+      });
+    }
+})
+};
 const detail = observer(({ detail }) => {
   const router = useRouter();
   const { id } = router.query;

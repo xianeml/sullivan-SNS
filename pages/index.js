@@ -5,6 +5,7 @@ import db from '../firestores/db';
 import UserStores from '../firestores/UserStore';
 import { observer } from 'mobx-react-lite';
 import router from 'next/router';
+import Login from './login';
 const index = observer(({index}) => {
   const [comments, setComments] = useState([
     {
@@ -66,18 +67,27 @@ const index = observer(({index}) => {
 
   if (loading) return <div>Loading...</div>;
   if (UserStores.userinfo == null) {
-    router.push('/login')
+    //router.push('/login')
+    return <Login></Login>
   }
-  return (
-    <div>
-       
-
-         {feeds.map((feed) => (
-          <Feed feed={feed} comments={comments} setComments={setComments} />
-        ))}
+  else{
+    return (
+      <div>
+           {feeds.map((feed) => (
+            <Feed feed={feed} comments={comments} setComments={setComments} />
+          ))}
+        
+      </div>
+    );
+  }
+  // return (
+  //   <div>
+  //        {feeds.map((feed) => (
+  //         <Feed feed={feed} comments={comments} setComments={setComments} />
+  //       ))}
       
-    </div>
-  );
+  //   </div>
+  // );
 });
 
 export default index;

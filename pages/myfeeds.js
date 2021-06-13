@@ -8,6 +8,7 @@ import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
+import firebase from 'firebase';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -47,6 +48,34 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+function checkSession(){
+  firebase.auth().onAuthStateChanged((user)=>{
+    if(user){
+      db.collection('user')
+      .get()
+      .then((answer) => {
+        answer.forEach((element) => {
+          if (element.data().uid == user.uid) {
+            UserStore.userinfo = {
+              uid: element.data().uid,
+              displayName: element.data().displayName,
+              photoUrl: element.data().photoUrl,
+              webpage: element.data().webpage,
+              caption: element.data().caption,
+              likeFeeds: element.data().likeFeeds,
+              feedList: element.data().feedList,
+            };
+            console.log('존재 하는 유저');
+          }
+        })
+      })
+      .catch((error) => {
+        alert('error' + error.message);
+        console.log(error);
+      });
+    }
+})
+};
 
 const myFeed = observer(({ myFeed }) => {
   const classes = useStyles();
