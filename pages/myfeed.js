@@ -8,11 +8,8 @@ import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
-<<<<<<< HEAD:pages/myfeeds.js
 import firebase from 'firebase';
-=======
 import Link from 'next/link';
->>>>>>> origin:pages/myfeed.js
 
 const useStyles = makeStyles((theme) => ({
   primary: {

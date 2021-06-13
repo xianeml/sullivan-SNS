@@ -51,6 +51,7 @@ export default function MyApp(props) {
       }
   })
     return () =>{
+      console.log(unsubscribeFromAuth);
       unsubscribeFromAuth;
     }
   })
