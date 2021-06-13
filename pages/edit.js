@@ -57,6 +57,7 @@ const edit = () => {
     event.preventDefault();
 
     const feedData = {
+      uid: uid,
       photoUrl,
       content,
       location,
@@ -142,6 +143,7 @@ const edit = () => {
                   type='file'
                   ref={fileButton}
                   onChange={getPhotoUrl}
+                  required
                 />
               </Grid>
             </Grid>
