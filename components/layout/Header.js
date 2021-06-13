@@ -72,7 +72,7 @@ const Header = observer(({ Header }) => {
                 <AddCircleOutlineIcon />
               </IconButton>
             </Link>
-            <Link href='/myfeeds'>
+            <Link href='/myfeed'>
               <IconButton
                 edge='end'
                 aria-label='account of user'

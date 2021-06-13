@@ -101,7 +101,7 @@ const edit = () => {
         .doc(uid)
         .set(feedData)
         .then((res) => {
-          router.push('/myfeeds');
+          router.push('/myfeed');
         });
     } catch (error) {
       console.log(error);
