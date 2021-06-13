@@ -8,7 +8,11 @@ import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
+<<<<<<< HEAD:pages/myfeeds.js
 import firebase from 'firebase';
+=======
+import Link from 'next/link';
+>>>>>>> origin:pages/myfeed.js
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -208,11 +212,13 @@ const myFeed = observer(({ myFeed }) => {
           feedList.map((feed, idx) => (
             <Grid item md={4} sm={6} xs={12} key={idx}>
               <div className={classes.imgContainer}>
-                <img
-                  src={feed.photoUrl}
-                  alt={feed.content}
-                  className={classes.feedImg}
-                />
+                <Link href='/feed/[feedUid]' as={'/feed/' + feed.uid}>
+                  <img
+                    src={feed.photoUrl}
+                    alt={feed.content}
+                    className={classes.feedImg}
+                  />
+                </Link>
               </div>
             </Grid>
           ))

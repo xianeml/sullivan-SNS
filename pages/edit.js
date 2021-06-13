@@ -64,6 +64,7 @@ const edit = () => {
       tag,
       author,
       create_at: new Date(),
+      like: 0,
     };
     try {
       await updateUserFeedList();
@@ -100,7 +101,7 @@ const edit = () => {
         .doc(uid)
         .set(feedData)
         .then((res) => {
-          router.push('/myfeeds');
+          router.push('/myfeed');
         });
     } catch (error) {
       console.log(error);
