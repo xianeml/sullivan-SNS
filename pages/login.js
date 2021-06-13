@@ -19,7 +19,9 @@ import UserStore from '../firestores/UserStore';
 import { observer } from 'mobx-react';
 import Index from '.';
 import redirect from 'nextjs-redirect';
+import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
+import UserStores from '../firestores/UserStore';
 
 function Copyright() {
   return (
@@ -63,10 +65,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// 로그인 버튼 클릭시 firebase 와 로그인 연결
 const loginfuntion = () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
   var count = 0;
-  firebase
+   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(()=>{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().onAuthStateChanged((user)=>{
+      if(user){
+        db.collection('user')
+        .get()
+        .then((answer) => {
+          answer.forEach((element) => {
+            if (element.data().uid == user.uid) {
+              count = count + 1;
+              UserStore.userinfo = {
+                uid: element.data().uid,
+                displayName: element.data().displayName,
+                photoUrl: element.data().photoUrl,
+                webpage: element.data().webpage,
+                caption: element.data().caption,
+                likeFeeds: element.data().likeFeeds,
+                feedList: element.data().feedList,
+              };
+              console.log('존재 하는 유저');
+            }
+          })
+        })
+        .catch((error) => {
+          alert('error' + error.message);
+          console.log(error);
+        });
+      }
+      else{
+        firebase
     .auth()
     .signInWithPopup(provider)
     .then(function (result) {
@@ -127,11 +159,26 @@ const loginfuntion = () => {
       alert('login error:' + error.message);
       console.log(error);
     });
-  console.log(count);
+      }
+      
+    
+  })
+})
+  .catch((error) => {
+    alert('login error:' + error.message);
+    console.log(error);
+  });
+
+
+  
 };
 
 const login = observer(({ login }) => {
   const classes = useStyles();
+  const router = useRouter();
+  if (UserStores.userinfo !=null){
+    router.push('/')
+  }
   return (
     <div>
       {UserStore.userinfo == null && (
@@ -165,6 +212,9 @@ const login = observer(({ login }) => {
           </div>
         </Container>
       )}
+      {/* {UserStore.userinfo!= null&&(
+         window.location.href = '/'
+      )} */}
     </div>
   );
 });
