@@ -101,7 +101,7 @@ const loginfuntion = () => {
             UserStore.userinfo = {
               uid: result.user.uid,
               displayName: result.user.displayName,
-              photoUrl: result.user.photoUrl,
+              photoUrl: result.user.photoURL,
               webpage: '',
               caption: '',
               likeFeeds: '',
