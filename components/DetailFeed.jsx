@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Avatar from './common/Avatar';
 import Comment from './Comment';
@@ -22,6 +22,8 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ChatIcon from '@material-ui/icons/Chat';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import db from '../firestores/db';
+import UserStore from '../firestores/UserStore';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   feed: {
@@ -52,15 +54,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function DetailFeed({ feed }) {
+export default function DetailFeed({ feedData }) {
   const classes = useStyles();
+  const router = useRouter();
+
+  const [feed, setFeed] = useState({});
   const [liked, setLiked] = useState({
     status: false,
     num: feed.like,
   });
 
+  useEffect(() => {
+    if (!UserStore.userinfo) {
+      router.push('/login');
+    }
+    try {
+      setFeed(feedData);
+      getFeedDetail();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   var t = new Date(1970, 0, 1); // Epoch
-  t.setSeconds(feed.create_at.seconds);
+  t.setSeconds(feed.create_at);
 
   const createAT =
     t.getDate() + '/' + (t.getMonth() + 1) + '/' + t.getFullYear();
