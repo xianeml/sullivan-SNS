@@ -4,7 +4,6 @@ import Avatar from '../components/common/Avatar';
 import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
 import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
 import db from '../firestores/db';
@@ -25,8 +24,13 @@ const useStyles = makeStyles((theme) => ({
   },
   feedImg: {
     padding: theme.spacing(1),
-    width: 'auto',
-    height: '100%',
+    maxWidth: '100%',
+    height: 'auto',
+    display: 'block',
+    '&:hover': {
+      cursor: 'pointer',
+      filter: 'brightness(70%)',
+    },
   },
   profile: {
     paddingTop: '3rem',
@@ -55,22 +59,22 @@ const myFeed = observer(({ myFeed }) => {
     feedList: UserStore.userinfo.feedList,
     likeFeeds: UserStore.userinfo.likeFeeds,
   });
-  const [feedList, setFeedList] = useState(user.feedList);
+  const [feedList, setFeedList] = useState([]);
   const [popupOpen, setPopupOpen] = useState(false);
 
-  const getUserFeedList = () => {
+  async function getUserFeedList() {
+    const feedRef = db.collection('feed');
+    const feedSnapshot = await feedRef.get();
+    // TODO: 왜 map, filter 사용이 안되는가????
+    const allFeedList = [];
+    feedSnapshot.forEach((doc) => allFeedList.push(doc.data()));
     const myFeedList = [];
-    db.collection('feed')
-      .get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          if (doc.data().author.uid === user.uid) {
-            myFeedList.push(doc.data());
-            setFeedList(myFeedList);
-          }
-        });
-      });
-  };
+    allFeedList.forEach((feed) => {
+      if (feed.author.uid === user.uid) myFeedList.push(feed);
+    });
+    console.log('myFeedList', myFeedList);
+    setFeedList(myFeedList);
+  }
 
   useEffect(() => {
     getUserFeedList();
@@ -171,42 +175,21 @@ const myFeed = observer(({ myFeed }) => {
       </Grid>
       <Divider variant='middle' light className={classes.divider} />
       <Grid container spacing={3} className={classes.container}>
-        <Grid item md={4} sm={6} xs={12}>
-          <div className={classes.imgContainer}>
-            <img
-              src={feedList[0].photoUrl}
-              alt={feedList[0].caption}
-              className={classes.feedImg}
-            />
-          </div>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <div className={classes.imgContainer}>
-            <img
-              src={feedList[0].photoUrl}
-              alt={feedList[0].caption}
-              className={classes.feedImg}
-            />
-          </div>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <div className={classes.imgContainer}>
-            <img
-              src={feedList[0].photoUrl}
-              alt={feedList[0].caption}
-              className={classes.feedImg}
-            />
-          </div>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <div className={classes.imgContainer}>
-            <img
-              src={feedList[0].photoUrl}
-              alt={feedList[0].caption}
-              className={classes.feedImg}
-            />
-          </div>
-        </Grid>
+        {feedList.length !== 0 ? (
+          feedList.map((feed, idx) => (
+            <Grid item md={4} sm={6} xs={12} key={idx}>
+              <div className={classes.imgContainer}>
+                <img
+                  src={feed.photoUrl}
+                  alt={feed.content}
+                  className={classes.feedImg}
+                />
+              </div>
+            </Grid>
+          ))
+        ) : (
+          <p>피드가 없습니다. 사진을 업로드하세요.</p>
+        )}
       </Grid>
     </div>
   );
