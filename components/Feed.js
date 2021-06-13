@@ -1,8 +1,8 @@
-import React from "react";
-import Link from "next/link";
-import Avatar from "./common/Avatar";
-import Comment from "./Comment";
-import db from "../firestores/db";
+import React from 'react';
+import Link from 'next/link';
+import Avatar from './common/Avatar';
+import Comment from './Comment';
+import db from '../firestores/db';
 import {
   Paper,
   TextField,
@@ -16,36 +16,41 @@ import {
   IconButton,
   Typography,
   makeStyles,
-} from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ChatIcon from "@material-ui/icons/Chat";
+  Tooltip,
+} from '@material-ui/core';
+import SendIcon from '@material-ui/icons/Send';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ChatIcon from '@material-ui/icons/Chat';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 
 const useStyles = makeStyles(() => ({
   feed: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   root: {
-    marginTop: "55px",
-    width: "800px",
+    marginTop: '55px',
+    width: '800px',
   },
   media: {
     height: 0,
-    paddingTop: "56.25%", // 16:9
+    paddingTop: '56.25%', // 16:9
   },
   comment: {
-    width: "600px",
-    height: "75px",
+    width: '600px',
+    height: '75px',
   },
   commentItem: {
-    marginTop: "10px",
+    marginTop: '10px',
   },
   commentSend: {
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  link: {
+    cursor: 'pointer',
   },
 }));
 
@@ -68,7 +73,7 @@ export default function Feed({ feed, comments, setComments }) {
     num: like,
   });
   const [inputs, setInputs] = React.useState({
-    comment: "",
+    comment: '',
   });
 
   const handleExpandClick = () => {
@@ -81,7 +86,7 @@ export default function Feed({ feed, comments, setComments }) {
       status: !liked.status,
       num: likeNum,
     });
-    db.collection("feed")
+    db.collection('feed')
       .doc(uid)
       .update({
         like: likeNum,
@@ -102,19 +107,19 @@ export default function Feed({ feed, comments, setComments }) {
   const handleSendClick = () => {
     const comment = {
       id: comments.length + 1,
-      username: "aeuna",
+      username: 'aeuna',
       comment: inputs.comment,
     };
     setComments([...comments, comment]);
     setInputs({
-      comment: "",
+      comment: '',
     });
   };
 
   var t = new Date(1970, 0, 1); // Epoch
   t.setSeconds(create_at);
   const createAT =
-    t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear();
+    t.getDate() + '/' + (t.getMonth() + 1) + '/' + t.getFullYear();
 
   return (
     <div className={classes.feed}>
@@ -124,22 +129,25 @@ export default function Feed({ feed, comments, setComments }) {
           title={author.displayName}
           subheader={createAT}
         />
-        <CardMedia className={classes.media} image={photoUrl} title="food" />
+        <CardMedia className={classes.media} image={photoUrl} title='food' />
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant='body1' component='p'>
             {content}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {tag}
-          </Typography>
-          <Link href="/detail/[feedUid]" as="/detail/first">
-            <Typography variant="body1">더보기</Typography>
+          <Link href='/feed/[feedUid]' as={'/feed/' + uid}>
+            <Typography
+              variant='body2'
+              color='textSecondary'
+              className={classes.link}
+            >
+              더보기
+            </Typography>
           </Link>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
+          <IconButton aria-label='add to favorites' onClick={handleHeartClick}>
             {liked.status ? (
-              <FavoriteIcon color="secondary" />
+              <FavoriteIcon color='secondary' />
             ) : (
               <FavoriteIcon />
             )}
@@ -148,42 +156,47 @@ export default function Feed({ feed, comments, setComments }) {
             {liked.num <= 0 || !liked.num ? 0 : liked.num}
           </Typography>
           <IconButton
-            aria-label="comment"
+            aria-label='comment'
             onClick={handleExpandClick}
             aria-expanded={expanded}
           >
             <ChatIcon />
           </IconButton>
+          <Tooltip title={tag || '태그 없음'} placement='top' arrow>
+            <IconButton aria-label='tag' className>
+              <LocalOfferIcon />
+            </IconButton>
+          </Tooltip>
         </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Collapse in={expanded} timeout='auto' unmountOnExit>
           <CardContent>
-            <Paper style={{ padding: "20px 20px" }}>
+            <Paper style={{ padding: '20px 20px' }}>
               {comments.map((comment) => (
                 <Comment key={comment.id} data={comment} />
               ))}
-              <Grid container wrap="nowrap" spacing={2}>
+              <Grid container wrap='nowrap' spacing={2}>
                 <Grid item>
                   <Avatar size={1} />
                 </Grid>
                 <Grid
                   className={classes.commentItem}
-                  justifyContent="left"
+                  justifyContent='left'
                   item
                   xs
                   zeroMinWidth
                 >
-                  <h4 style={{ margin: 0, textAlign: "left" }}>aeuna</h4>
+                  <h4 style={{ margin: 0, textAlign: 'left' }}>aeuna</h4>
                   <div className={classes.commentSend}>
                     <TextField
-                      name="comment"
+                      name='comment'
                       multiline
-                      placeholder="댓글을 입력해주세요..."
+                      placeholder='댓글을 입력해주세요...'
                       rowsMax={3}
                       className={classes.comment}
                       onChange={handleTextChange}
                       value={inputs.comment}
                     />
-                    <IconButton aria-label="send" onClick={handleSendClick}>
+                    <IconButton aria-label='send' onClick={handleSendClick}>
                       <SendIcon />
                     </IconButton>
                   </div>
