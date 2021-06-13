@@ -71,6 +71,7 @@ const loginfuntion = () => {
    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   .then(()=>{
     const provider = new firebase.auth.GoogleAuthProvider();
+    // 파이어 베이스가 셰션에 유지 되어 있는지 확인
     firebase.auth().onAuthStateChanged((user)=>{
       if(user){
         db.collection('user')

@@ -7,8 +7,7 @@ try{
     firebase.app(); 
 }
 catch{
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    firebase.initializeApp(firebaseConfig); 
 }
 
   export default firebase;
