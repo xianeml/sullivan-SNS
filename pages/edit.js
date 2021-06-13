@@ -64,6 +64,7 @@ const edit = () => {
       tag,
       author,
       create_at: new Date(),
+      like: 0,
     };
     try {
       await updateUserFeedList();

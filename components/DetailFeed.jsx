@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Avatar from './common/Avatar';
 import Comment from './Comment';
@@ -15,105 +15,131 @@ import {
   IconButton,
   Typography,
   makeStyles,
+  Tooltip,
 } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ChatIcon from '@material-ui/icons/Chat';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import db from '../firestores/db';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   feed: {
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyItems: 'center',
   },
-  root: {
-    marginTop: '20px',
-    maxWidth: '1000px',
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  comment: {
-    width: '600px',
-    height: '75px',
-  },
-  cheader: {
+  header: {
+    margin: '1rem 0',
     width: '600px',
     height: '55px',
+    textAlign: 'left',
   },
-  commentItem: {
-    marginTop: '10px',
+  media: {
+    maxHeight: '600px',
+    width: '100%',
+    overflow: 'auto',
   },
-  commentSend: {
-    display: 'flex',
-    flexDirection: 'row',
+  mediaImg: {
+    height: 'auto',
+    width: '600px',
+    display: 'block',
+  },
+  content: {
+    textAlign: 'left',
   },
 }));
 
-export default function DetailFeed() {
+export default function DetailFeed({ feed }) {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
-  const [liked, setLiked] = React.useState(false);
+  const [liked, setLiked] = useState({
+    status: false,
+    num: feed.like,
+  });
+
+  var t = new Date(1970, 0, 1); // Epoch
+  t.setSeconds(feed.create_at.seconds);
+
+  const createAT =
+    t.getDate() + '/' + (t.getMonth() + 1) + '/' + t.getFullYear();
+
+  const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
   const handleHeartClick = () => {
-    setLiked(!liked);
-  };
-
-  const handleTextChange = (e) => {
-    const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value,
+    const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
+    setLiked({
+      status: !liked.status,
+      num: likeNum,
     });
-  };
-
-  const handleSendClick = () => {
-    const comment = {
-      id: comments.length + 1,
-      username: 'aeuna',
-      comment: inputs.comment,
-    };
-    setComments([...comments, comment]);
-    setInputs({
-      comment: '',
-    });
+    db.collection('feed')
+      .doc(feed.uid)
+      .update({
+        like: likeNum,
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <div className={classes.feed}>
       <Card className={classes.root}>
         <CardHeader
-          className={classes.cheader}
-          avatar={<Avatar size={1} />}
-          title='aeuna'
-          subheader='May 14, 2020'
+          className={classes.header}
+          avatar={
+            <Avatar
+              size={1}
+              photoUrl={feed.author.photoUrl}
+              displayName={feed.author.displayName}
+            />
+          }
+          title={feed.author.displayName}
+          subheader={feed.location}
         />
-        <CardMedia
-          className={classes.media}
-          image='/images/test.jpeg'
-          title='food'
-        />
-        <CardContent>
-          <Typography variant='body2' color='textSecondary' component='p'>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s.... (데이터 들어오면 몇자 이내로 자를 예정!)
+        <CardMedia className={classes.media}>
+          <img
+            src={feed.photoUrl}
+            alt={feed.content}
+            className={classes.mediaImg}
+          />
+        </CardMedia>
+        <CardContent className={classes.content}>
+          <Typography variant='body1' component='p'>
+            {feed.content}
           </Typography>
-          <Link href='/'>
-            <Typography variant='body1'>더보기</Typography>
-          </Link>
         </CardContent>
         <CardActions disableSpacing>
           <IconButton aria-label='add to favorites' onClick={handleHeartClick}>
-            {liked ? <FavoriteIcon color='secondary' /> : <FavoriteIcon />}
+            {liked.status ? (
+              <FavoriteIcon color='secondary' />
+            ) : (
+              <FavoriteIcon />
+            )}
+          </IconButton>
+          <Typography>
+            {liked.num <= 0 || !liked.num ? 0 : liked.num}
+          </Typography>
+          <IconButton
+            aria-label='comment'
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+          >
             <ChatIcon />
           </IconButton>
+          <Tooltip title={feed.tag || '태그 없음'} placement='top' arrow>
+            <IconButton aria-label='tag' className>
+              <LocalOfferIcon />
+            </IconButton>
+          </Tooltip>
+          <Typography variant='body2' color='textSecondary'>
+            {createAT}
+          </Typography>
         </CardActions>
       </Card>
     </div>
