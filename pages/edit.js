@@ -57,6 +57,7 @@ const edit = () => {
     event.preventDefault();
 
     const feedData = {
+      uid: uid,
       photoUrl,
       content,
       location,
@@ -72,42 +73,38 @@ const edit = () => {
     }
   }
 
-  const updateUserFeedList = () => {
-    // 1. 로그인한 사용자의 feedList 가져오기
-    let userFeedList;
-    db.collection('user')
-      .doc(UserStore.userinfo.uid)
-      .get()
-      .then((res) => {
-        userFeedList = res.data().feedList;
-      });
-
-    // 2. 업데이트를 위한 새로운 feedList 만들기
-    let newFeedList;
-    if (userFeedList) {
-      newFeedList = [...userFeedList, { feedId: uid }];
-    } else {
-      newFeedList = [{ feedId: uid }];
+  async function updateUserFeedList() {
+    try {
+      // 1. 로그인한 사용자의 feedList 가져오기
+      const userDocsRef = db.collection('user').doc(UserStore.userinfo.uid);
+      const userDocs = await userDocsRef.get();
+      const userFeedList = await userDocs.data().feedList;
+      // 2. 업데이트를 위한 새로운 feedList 만들기
+      let newFeedList;
+      if (userFeedList) {
+        newFeedList = [...userFeedList, { feedId: uid }];
+      } else {
+        newFeedList = [{ feedId: uid }];
+      }
+      // 3. 사용자의 feedList 업데이트하기
+      const update = await userDocsRef.update({ feedList: newFeedList });
+      console.log('사용자 feedList 업뎃 성공', update);
+    } catch (error) {
+      console.log(error);
     }
-
-    // 3. 사용자의 feedList 업데이트하기
-    db.collection('user')
-      .doc(UserStore.userinfo.uid)
-      .update({ feedList: newFeedList })
-      .then((res) => {
-        console.log('선생 피드리스트 업뎃 성공!');
-      })
-      .catch((err) => console.log(err));
-  };
+  }
 
   const createFeed = (feedData) => {
-    db.collection('feed')
-      .doc(uid)
-      .set(feedData)
-      .then((res) => {
-        router.push('/myfeeds');
-      })
-      .catch((err) => console.log(err));
+    try {
+      db.collection('feed')
+        .doc(uid)
+        .set(feedData)
+        .then((res) => {
+          router.push('/myfeeds');
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -142,6 +139,7 @@ const edit = () => {
                   type='file'
                   ref={fileButton}
                   onChange={getPhotoUrl}
+                  required
                 />
               </Grid>
             </Grid>

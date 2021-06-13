@@ -1,11 +1,8 @@
-import { WbIncandescentTwoTone } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
-import Feed from '../components/Feed';
-import db from '../firestores/db';
-import UserStores from '../firestores/UserStore';
-import { observer } from 'mobx-react-lite';
-import router from 'next/router';
-const index = observer(({index}) => {
+import Feed from '../../components/Feed';
+import db from '../../firestores/db';
+
+const index = () => {
   const [comments, setComments] = useState([
     {
       id: 1,
@@ -65,19 +62,13 @@ const index = observer(({index}) => {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  if (UserStores.userinfo == null) {
-    router.push('/login')
-  }
   return (
     <div>
-       
-
-         {feeds.map((feed) => (
-          <Feed feed={feed} comments={comments} setComments={setComments} />
-        ))}
-      
+      {feeds.map((feed) => (
+        <Feed feed={feed} comments={comments} setComments={setComments} />
+      ))}
     </div>
   );
-});
+};
 
 export default index;

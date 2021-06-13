@@ -5,24 +5,31 @@ import ProfileUpdatePopup from '../components/ProfileUpdatePopup';
 import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import { observer } from 'mobx-react';
 import Snackbar from '../components/common/Snackbar';
+import { observer } from 'mobx-react';
+import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
+
 const useStyles = makeStyles((theme) => ({
   primary: {
     color: '#2196f3',
     fontWeight: 'bold',
   },
   divider: {
-    margin: theme.spacing(10, 0),
+    margin: theme.spacing(6, 0),
   },
-  paper: {
-    padding: theme.spacing(20, 2), //grid padding
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
+  imgContainer: {
+    overflow: 'hidden',
+    width: '400px',
+    height: '400px',
+  },
+  feedImg: {
+    padding: theme.spacing(1),
+    width: 'auto',
+    height: '100%',
   },
   profile: {
-    paddingTop: '2rem',
+    paddingTop: '3rem',
   },
   container: {
     [theme.breakpoints.down('lg')]: {
@@ -40,12 +47,34 @@ const useStyles = makeStyles((theme) => ({
 const myFeed = observer(({ myFeed }) => {
   const classes = useStyles();
   const [user, setUser] = useState({
+    uid: UserStore.userinfo.uid,
     displayName: UserStore.userinfo.displayName,
     photoUrl: UserStore.userinfo.photoUrl,
+    caption: UserStore.userinfo.caption,
+    webpage: UserStore.userinfo.webpage,
+    feedList: UserStore.userinfo.feedList,
+    likeFeeds: UserStore.userinfo.likeFeeds,
   });
-
-  // 프로필 업데이트 팝업
+  const [feedList, setFeedList] = useState(user.feedList);
   const [popupOpen, setPopupOpen] = useState(false);
+
+  const getUserFeedList = () => {
+    const myFeedList = [];
+    db.collection('feed')
+      .get()
+      .then((docs) => {
+        docs.forEach((doc) => {
+          if (doc.data().author.uid === user.uid) {
+            myFeedList.push(doc.data());
+            setFeedList(myFeedList);
+          }
+        });
+      });
+  };
+
+  useEffect(() => {
+    getUserFeedList();
+  }, []);
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);
@@ -67,31 +96,6 @@ const myFeed = observer(({ myFeed }) => {
     setResultMessageOpen(false);
   };
 
-  function FormRow() {
-    return (
-      <>
-        <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item md={4} sm={6} xs={12}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-      </>
-    );
-  }
-
   return (
     <div className={classes.root}>
       <Grid
@@ -112,40 +116,27 @@ const myFeed = observer(({ myFeed }) => {
         <Grid item>
           <Grid container direction='column'>
             <Grid item>
-              {/* 로그인 되어 있을 경우 사용자 이름 display */}
-              {UserStore.userinfo != null && (
-                <Typography variant='h6' component='h2' paragraph>
-                  {UserStore.userinfo.displayName}
-                </Typography>
-              )}
-              {UserStore.userinfo == null && (
-                <Typography variant='h6' component='h2' paragraph>
-                  로그인 안되어 있음
-                </Typography>
-              )}
+              <Typography variant='h6' component='h2' paragraph>
+                {user.displayName}
+              </Typography>
             </Grid>
             <Grid item>
               <Grid container direction='row' spacing={2}>
                 <Grid item>
                   <Typography variant='body1' component='h2' paragraph>
-                    게시물 200
+                    게시물 {feedList.length}
                   </Typography>
                 </Grid>
                 <Grid item>
                   <Typography variant='body1' component='h2' paragraph>
-                    팔로워 200
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography variant='body1' component='h2' paragraph>
-                    팔로우 200
+                    좋아하는 피드 수 {user.likeFeeds}
                   </Typography>
                 </Grid>
               </Grid>
             </Grid>
             <Grid item>
               <Typography variant='caption' component='h2'>
-                프로필 설명
+                {user.caption}
               </Typography>
               <Typography
                 variant='subtitle2'
@@ -153,7 +144,7 @@ const myFeed = observer(({ myFeed }) => {
                 component='h2'
                 gutterBottom
               >
-                www.sullivan-sns.com
+                {user.webpage}
               </Typography>
             </Grid>
             <Button
@@ -167,6 +158,7 @@ const myFeed = observer(({ myFeed }) => {
               open={popupOpen}
               closeHandler={closeProfileUpdatePopup}
               openResultMessageHandler={openResultMessage}
+              defaultUserInfo={user}
             />
             <Snackbar
               open={resultMessageOpen}
@@ -179,7 +171,42 @@ const myFeed = observer(({ myFeed }) => {
       </Grid>
       <Divider variant='middle' light className={classes.divider} />
       <Grid container spacing={3} className={classes.container}>
-        <FormRow />
+        <Grid item md={4} sm={6} xs={12}>
+          <div className={classes.imgContainer}>
+            <img
+              src={feedList[0].photoUrl}
+              alt={feedList[0].caption}
+              className={classes.feedImg}
+            />
+          </div>
+        </Grid>
+        <Grid item md={4} sm={6} xs={12}>
+          <div className={classes.imgContainer}>
+            <img
+              src={feedList[0].photoUrl}
+              alt={feedList[0].caption}
+              className={classes.feedImg}
+            />
+          </div>
+        </Grid>
+        <Grid item md={4} sm={6} xs={12}>
+          <div className={classes.imgContainer}>
+            <img
+              src={feedList[0].photoUrl}
+              alt={feedList[0].caption}
+              className={classes.feedImg}
+            />
+          </div>
+        </Grid>
+        <Grid item md={4} sm={6} xs={12}>
+          <div className={classes.imgContainer}>
+            <img
+              src={feedList[0].photoUrl}
+              alt={feedList[0].caption}
+              className={classes.feedImg}
+            />
+          </div>
+        </Grid>
       </Grid>
     </div>
   );
