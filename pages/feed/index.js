@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import Feed from '../../components/Feed';
-import db from '../../firestores/db';
+import React, { useEffect, useState } from "react";
+import Feed from "../../components/Feed";
+import db from "../../firestores/db";
 
 const index = () => {
   const [comments, setComments] = useState([
     {
       id: 1,
-      username: 'aeuna',
-      comment: '정말 맛있겠다!',
+      username: "aeuna",
+      comment: "정말 맛있겠다!",
     },
     {
       id: 2,
-      username: 'kelee98',
-      comment: '장소가 어디인가용?',
+      username: "kelee98",
+      comment: "장소가 어디인가용?",
     },
     {
       id: 3,
-      username: 'xianeml',
-      comment: '가고 싶어요!',
+      username: "xianeml",
+      comment: "가고 싶어요!",
     },
     {
       id: 4,
-      username: 'huiji0315',
-      comment: '나도 가고 싶어요!',
+      username: "huiji0315",
+      comment: "나도 가고 싶어요!",
     },
   ]);
   const [feeds, setFeeds] = useState(null);
@@ -32,7 +32,8 @@ const index = () => {
     const fetchFeeds = async () => {
       const feedsData = []; //받아온 데이터를 저장할 배열
       await db
-        .collection('feed')
+        .collection("feed")
+        .orderBy("create_at", "desc")
         .get() // "feed" 컬렉션의 모든 다큐먼트를 갖는 프로미스 반환
         .then((docs) => {
           docs.forEach((doc) => {
@@ -64,8 +65,13 @@ const index = () => {
   if (loading) return <div>Loading...</div>;
   return (
     <div>
-      {feeds.map((feed) => (
-        <Feed feed={feed} comments={comments} setComments={setComments} />
+      {feeds.map((feed, index) => (
+        <Feed
+          key={index}
+          feed={feed}
+          comments={comments}
+          setComments={setComments}
+        />
       ))}
     </div>
   );
