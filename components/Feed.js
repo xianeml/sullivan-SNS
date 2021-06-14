@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Router from "next/router";
 import Link from "next/link";
 import Avatar from "./common/Avatar";
 import Comment from "./Comment";
@@ -68,22 +69,35 @@ export default function Feed({ feed, comments, setComments }) {
   } = feed;
 
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
-  const userFeedLike = UserStore.userinfo.likeFeeds;
-  const isLike = false;
-  for (const feedId of userFeedLike) {
-    if (uid === feedId) {
-      isLike = true;
-      break;
-    }
-  }
-  const [liked, setLiked] = React.useState({
-    status: isLike,
+  const [expanded, setExpanded] = useState(false);
+  const [liked, setLiked] = useState({
+    status: false,
     num: like,
   });
-  const [inputs, setInputs] = React.useState({
+  const [inputs, setInputs] = useState({
     comment: "",
   });
+  const [likeFeeds, setLikeFeeds] = useState([]);
+
+  useEffect(() => {
+    let checkFeed = [];
+    if (!UserStore.userinfo && !UserStore.userinfo.likeFeeds) {
+      Router.push("/login");
+    }
+    if (UserStore.userinfo.likeFeeds !== "") {
+      setLikeFeeds(UserStore.userinfo.likeFeeds);
+      checkFeed = [...UserStore.userinfo.likeFeeds];
+    }
+    for (const feedId of checkFeed) {
+      if (uid === feedId) {
+        setLiked({
+          ...liked,
+          status: true,
+        });
+        break;
+      }
+    }
+  }, []);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -91,11 +105,11 @@ export default function Feed({ feed, comments, setComments }) {
 
   const handleHeartClick = () => {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
-    const updateFeedLike = [];
+    let updateFeedLike = [];
     if (liked.status) {
-      updateFeedLike.filter((feedId) => feedId !== uid);
+      updateFeedLike = likeFeeds.filter((feedId) => feedId !== uid);
     } else {
-      updateFeedLike = [...updateFeedLike, uid];
+      updateFeedLike = [...likeFeeds, uid];
     }
     //feed likeNum 업데이트
     db.collection("feed")
@@ -116,6 +130,7 @@ export default function Feed({ feed, comments, setComments }) {
       status: !liked.status,
       num: likeNum,
     });
+    setLikeFeeds(updateFeedLike);
   };
 
   const handleTextChange = (e) => {
@@ -138,10 +153,10 @@ export default function Feed({ feed, comments, setComments }) {
     });
   };
 
-  var t = new Date(1970, 0, 1); // Epoch
+  let t = new Date(1970, 0, 1); // Epoch
   t.setSeconds(create_at);
   const createAT =
-    t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear();
+    t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
 
   return (
     <div className={classes.feed}>
@@ -149,12 +164,12 @@ export default function Feed({ feed, comments, setComments }) {
         <CardHeader
           avatar={<Avatar size={1} photoUrl={author.photoUrl} />}
           title={author.displayName}
-          subheader={createAT}
+          subheader={createAT + " " + location}
         />
-        <CardMedia className={classes.media} image={photoUrl} title="food" />
+        {photoUrl && <CardMedia className={classes.media} image={photoUrl} />}
         <CardContent>
           <Typography variant="body1" component="p">
-            {content}
+            {content.length < 180 ? content : content.slice(0, 180) + "..."}
           </Typography>
           <Link href="/feed/[feedUid]" as={"/feed/" + uid}>
             <Typography
