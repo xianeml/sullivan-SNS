@@ -7,7 +7,7 @@ try{
     firebase.app(); 
 }
 catch{
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig); 
 }
 
   export default firebase;

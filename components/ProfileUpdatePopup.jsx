@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import db from '../firestores/db';
 import firebase from '../firestores/firebase';
 import UserStore from '../firestores/UserStore';
+import { v4 as uuidv4, v4 } from 'uuid';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -43,6 +44,7 @@ export default function ProfileUpdatePopup({
   const [webpage, setWebpage] = useState(defaultUserInfo.webpage);
   const [caption, setCaption] = useState(defaultUserInfo.caption);
   const fileButton = useRef();
+  const uid = uuidv4();
 
   const getPhotoUrl = () => {
     const file = fileButton.current.files[0];

@@ -16,10 +16,12 @@ import {
   IconButton,
   Typography,
   makeStyles,
+  Tooltip,
 } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ChatIcon from "@material-ui/icons/Chat";
+import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import UserStore from "../firestores/UserStore";
 
 const useStyles = makeStyles(() => ({
@@ -47,6 +49,9 @@ const useStyles = makeStyles(() => ({
   commentSend: {
     display: "flex",
     flexDirection: "row",
+  },
+  link: {
+    cursor: "pointer",
   },
 }));
 
@@ -148,14 +153,17 @@ export default function Feed({ feed, comments, setComments }) {
         />
         <CardMedia className={classes.media} image={photoUrl} title="food" />
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body1" component="p">
             {content}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {tag}
-          </Typography>
-          <Link href="/detail/[feedUid]" as="/detail/first">
-            <Typography variant="body1">더보기</Typography>
+          <Link href="/feed/[feedUid]" as={"/feed/" + uid}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              className={classes.link}
+            >
+              더보기
+            </Typography>
           </Link>
         </CardContent>
         <CardActions disableSpacing>
@@ -176,6 +184,11 @@ export default function Feed({ feed, comments, setComments }) {
           >
             <ChatIcon />
           </IconButton>
+          <Tooltip title={tag || "태그 없음"} placement="top" arrow>
+            <IconButton aria-label="tag" className>
+              <LocalOfferIcon />
+            </IconButton>
+          </Tooltip>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>

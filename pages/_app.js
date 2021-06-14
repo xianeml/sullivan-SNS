@@ -6,10 +6,15 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 import Header from '../components/layout/Header';
-
+import firebase from "firebase";
+import db from "../firestores/db";
+import UserStore from '../firestores/UserStore';
+function checkSession(){
+   
+}
 export default function MyApp(props) {
+  
   const { Component, pageProps } = props;
-
   React.useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
@@ -17,6 +22,39 @@ export default function MyApp(props) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
+ var unsubscribeFromAuth = null;
+  React.useEffect(()=>{
+    unsubscribeFromAuth =firebase.auth().onAuthStateChanged((user)=>{
+      if(user){
+        db.collection('user')
+        .get()
+        .then((answer) => {
+          answer.forEach((element) => {
+            if (element.data().uid == user.uid) {
+              UserStore.userinfo = {
+                uid: element.data().uid,
+                displayName: element.data().displayName,
+                photoUrl: element.data().photoUrl,
+                webpage: element.data().webpage,
+                caption: element.data().caption,
+                likeFeeds: element.data().likeFeeds,
+                feedList: element.data().feedList,
+              };
+              console.log('존재 하는 유저');
+            }
+          })
+        })
+        .catch((error) => {
+          alert('error' + error.message);
+          console.log(error);
+        });
+      }
+  })
+    return () =>{
+      console.log(unsubscribeFromAuth);
+      unsubscribeFromAuth;
+    }
+  })
 
   return (
     <React.Fragment>

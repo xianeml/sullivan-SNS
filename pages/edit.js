@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -29,16 +29,27 @@ const edit = () => {
   const router = useRouter();
   const uid = uuidv4();
 
+  useEffect(() => {
+    if (!UserStore.userinfo) {
+      router.push('/login');
+    }
+    try {
+      setAuthor({
+        displayName: UserStore.userinfo.displayName,
+        photoUrl: UserStore.userinfo.photoUrl,
+        uid: UserStore.userinfo.uid,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   // 이미지 초기값은 프리뷰 이미지 등으로 세팅해두기
   const [photoUrl, setPhotoUrl] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [tag, setTag] = useState('');
-  const author = {
-    displayName: UserStore.userinfo.displayName,
-    photoUrl: UserStore.userinfo.photoUrl,
-    uid: UserStore.userinfo.uid,
-  };
+  const [author, setAuthor] = useState({});
   const fileButton = useRef();
 
   const getPhotoUrl = () => {
@@ -57,12 +68,14 @@ const edit = () => {
     event.preventDefault();
 
     const feedData = {
+      uid,
       photoUrl,
       content,
       location,
       tag,
       author,
       create_at: new Date(),
+      like: 0,
     };
     try {
       await updateUserFeedList();
@@ -72,42 +85,38 @@ const edit = () => {
     }
   }
 
-  const updateUserFeedList = () => {
-    // 1. 로그인한 사용자의 feedList 가져오기
-    let userFeedList;
-    db.collection('user')
-      .doc(UserStore.userinfo.uid)
-      .get()
-      .then((res) => {
-        userFeedList = res.data().feedList;
-      });
-
-    // 2. 업데이트를 위한 새로운 feedList 만들기
-    let newFeedList;
-    if (userFeedList) {
-      newFeedList = [...userFeedList, { feedId: uid }];
-    } else {
-      newFeedList = [{ feedId: uid }];
+  async function updateUserFeedList() {
+    try {
+      // 1. 로그인한 사용자의 feedList 가져오기
+      const userDocsRef = db.collection('user').doc(UserStore.userinfo.uid);
+      const userDocs = await userDocsRef.get();
+      const userFeedList = await userDocs.data().feedList;
+      // 2. 업데이트를 위한 새로운 feedList 만들기
+      let newFeedList;
+      if (userFeedList) {
+        newFeedList = [...userFeedList, { feedId: uid }];
+      } else {
+        newFeedList = [{ feedId: uid }];
+      }
+      // 3. 사용자의 feedList 업데이트하기
+      const update = await userDocsRef.update({ feedList: newFeedList });
+      console.log('사용자 feedList 업뎃 성공', update);
+    } catch (error) {
+      console.log(error);
     }
-
-    // 3. 사용자의 feedList 업데이트하기
-    db.collection('user')
-      .doc(UserStore.userinfo.uid)
-      .update({ feedList: newFeedList })
-      .then((res) => {
-        console.log('선생 피드리스트 업뎃 성공!');
-      })
-      .catch((err) => console.log(err));
-  };
+  }
 
   const createFeed = (feedData) => {
-    db.collection('feed')
-      .doc(uid)
-      .set(feedData)
-      .then((res) => {
-        router.push('/myfeeds');
-      })
-      .catch((err) => console.log(err));
+    try {
+      db.collection('feed')
+        .doc(uid)
+        .set(feedData)
+        .then((res) => {
+          router.push('/myfeed');
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -142,6 +151,7 @@ const edit = () => {
                   type='file'
                   ref={fileButton}
                   onChange={getPhotoUrl}
+                  required
                 />
               </Grid>
             </Grid>
