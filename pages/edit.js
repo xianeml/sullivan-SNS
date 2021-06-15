@@ -153,6 +153,11 @@ const edit = () => {
     }
   };
 
+  const deleteFeed = () => {
+    await db.collection().doc(feedUid).delete();
+    router.push('/feed');
+  };
+
   return (
     <div>
       <Card variant='outlined'>
