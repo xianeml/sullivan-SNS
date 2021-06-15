@@ -50,61 +50,25 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-function checkSession(){
-  firebase.auth().onAuthStateChanged((user)=>{
-    if(user){
-      db.collection('user')
-      .get()
-      .then((answer) => {
-        answer.forEach((element) => {
-          if (element.data().uid == user.uid) {
-            UserStore.userinfo = {
-              uid: element.data().uid,
-              displayName: element.data().displayName,
-              photoUrl: element.data().photoUrl,
-              webpage: element.data().webpage,
-              caption: element.data().caption,
-              likeFeeds: element.data().likeFeeds,
-              feedList: element.data().feedList,
-            };
-            console.log('존재 하는 유저');
-          }
-        })
-      })
-      .catch((error) => {
-        alert('error' + error.message);
-        console.log(error);
-      });
-    }
-})
-};
 
 const myFeed = observer(({ myFeed }) => {
   const classes = useStyles();
-  const router = useRouter();
 
   const [user, setUser] = useState({});
   const [feedList, setFeedList] = useState([]);
   const [popupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
-    if (!UserStore.userinfo) {
-      router.push('/login');
-    }
-    try {
-      setUser({
-        uid: UserStore.userinfo.uid,
-        displayName: UserStore.userinfo.displayName,
-        photoUrl: UserStore.userinfo.photoUrl,
-        caption: UserStore.userinfo.caption,
-        webpage: UserStore.userinfo.webpage,
-        feedList: UserStore.userinfo.feedList,
-        likeFeeds: UserStore.userinfo.likeFeeds,
-      });
-      getUserFeedList();
-    } catch (error) {
-      console.log(error);
-    }
+    setUser({
+      uid: UserStore.userinfo.uid,
+      displayName: UserStore.userinfo.displayName,
+      photoUrl: UserStore.userinfo.photoUrl,
+      caption: UserStore.userinfo.caption,
+      webpage: UserStore.userinfo.webpage,
+      feedList: UserStore.userinfo.feedList,
+      likeFeeds: UserStore.userinfo.likeFeeds,
+    });
+    getUserFeedList();
   }, []);
 
   async function getUserFeedList() {

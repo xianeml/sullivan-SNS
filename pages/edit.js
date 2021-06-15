@@ -27,24 +27,22 @@ const useStyles = makeStyles((theme) => ({
 const edit = () => {
   const classes = useStyles();
   const router = useRouter();
+  const feedUid = '';
   const uid = uuidv4();
 
   useEffect(() => {
-    if (!UserStore.userinfo) {
-      router.push('/login');
+    if (feedUid) {
+      setUpdateMode(true);
+      getFeedDetail();
     }
-    try {
-      setAuthor({
-        displayName: UserStore.userinfo.displayName,
-        photoUrl: UserStore.userinfo.photoUrl,
-        uid: UserStore.userinfo.uid,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    setAuthor({
+      displayName: UserStore.userinfo.displayName,
+      photoUrl: UserStore.userinfo.photoUrl,
+      uid: UserStore.userinfo.uid,
+    });
   }, []);
 
-  // 이미지 초기값은 프리뷰 이미지 등으로 세팅해두기
+  const [updateMode, setUpdateMode] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
@@ -64,10 +62,55 @@ const edit = () => {
     });
   };
 
+  async function getFeedDetail() {
+    try {
+      const feedRef = db.collection('feed').doc(feedUid);
+      const feedDoc = await feedRef.get();
+      const feedDetail = feedDoc.data();
+      setPhotoUrl(feedDetail.photoUrl);
+      setContent(feedDetail.content);
+      setLocation(feedDetail.location);
+      setTag(feedDetail.tag);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async function submitHandler(event) {
     event.preventDefault();
 
-    const feedData = {
+    try {
+      if (updateMode) {
+        updateFeed();
+      } else {
+        await updateUserFeedList();
+        await createFeed();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function updateUserFeedList() {
+    try {
+      const userDocsRef = db.collection('user').doc(UserStore.userinfo.uid);
+      const userDocs = await userDocsRef.get();
+      const userFeedList = await userDocs.data().feedList;
+
+      let newFeedList;
+      if (userFeedList) {
+        newFeedList = [...userFeedList, { feedId: uid }];
+      } else {
+        newFeedList = [{ feedId: uid }];
+      }
+      await userDocsRef.update({ feedList: newFeedList });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const createFeed = () => {
+    const createData = {
       uid,
       photoUrl,
       content,
@@ -77,42 +120,33 @@ const edit = () => {
       create_at: new Date(),
       like: 0,
     };
-    try {
-      await updateUserFeedList();
-      await createFeed(feedData);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
-  async function updateUserFeedList() {
-    try {
-      // 1. 로그인한 사용자의 feedList 가져오기
-      const userDocsRef = db.collection('user').doc(UserStore.userinfo.uid);
-      const userDocs = await userDocsRef.get();
-      const userFeedList = await userDocs.data().feedList;
-      // 2. 업데이트를 위한 새로운 feedList 만들기
-      let newFeedList;
-      if (userFeedList) {
-        newFeedList = [...userFeedList, { feedId: uid }];
-      } else {
-        newFeedList = [{ feedId: uid }];
-      }
-      // 3. 사용자의 feedList 업데이트하기
-      const update = await userDocsRef.update({ feedList: newFeedList });
-      console.log('사용자 feedList 업뎃 성공', update);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const createFeed = (feedData) => {
     try {
       db.collection('feed')
         .doc(uid)
         .set(feedData)
         .then((res) => {
-          router.push('/myfeed');
+          router.push('/feed');
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateFeed = () => {
+    const updateData = {
+      content,
+      location,
+      tag,
+      author,
+    };
+
+    try {
+      db.collection('feed')
+        .doc(feedUid)
+        .update(updateData)
+        .then((res) => {
+          router.push('/feed');
         });
     } catch (error) {
       console.log(error);
@@ -139,22 +173,24 @@ const edit = () => {
       <Card variant='outlined'>
         <CardContent>
           <form id='edit' className={classes.form} onSubmit={submitHandler}>
-            <Grid container direction='row' alignItems='center'>
-              <Grid item md={2} xs={12}>
-                <label htmlFor='file' className={classes.label}>
-                  사진첨부
-                </label>
+            {!updateMode && (
+              <Grid container direction='row' alignItems='center'>
+                <Grid item md={2} xs={12}>
+                  <label htmlFor='file' className={classes.label}>
+                    사진첨부
+                  </label>
+                </Grid>
+                <Grid item md={10} xs={12}>
+                  <input
+                    id='file'
+                    type='file'
+                    ref={fileButton}
+                    onChange={getPhotoUrl}
+                    required
+                  />
+                </Grid>
               </Grid>
-              <Grid item md={10} xs={12}>
-                <input
-                  id='file'
-                  type='file'
-                  ref={fileButton}
-                  onChange={getPhotoUrl}
-                  required
-                />
-              </Grid>
-            </Grid>
+            )}
             <Grid container direction='row' alignItems='center'>
               <Grid item md={2} xs={12}>
                 <label htmlFor='caption' className={classes.label}>
