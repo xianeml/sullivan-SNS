@@ -17,6 +17,7 @@ import {
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ChatIcon from '@material-ui/icons/Chat';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
 
@@ -65,6 +66,10 @@ export default function DetailFeed({ feed }) {
 
   const [expanded, setExpanded] = useState(false);
 
+  const openFeedSettingMenu = () => {
+    // 수정, 삭제 메뉴 오픈 구현 예정
+  };
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -96,6 +101,15 @@ export default function DetailFeed({ feed }) {
               photoUrl={feed.author.photoUrl}
               displayName={feed.author.displayName}
             />
+          }
+          action={
+            <IconButton
+              aria-label='settings'
+              aria-haspopup='true'
+              onClick={openFeedSettingMenu}
+            >
+              <MoreVertIcon />
+            </IconButton>
           }
           title={feed.author.displayName}
           subheader={createAT + ' ' + feed.location}
