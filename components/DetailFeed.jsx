@@ -1,29 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
 import Avatar from './common/Avatar';
-import Comment from './Comment';
 import {
-  Paper,
-  TextField,
-  Grid,
   CardHeader,
   CardMedia,
   CardContent,
   Card,
   CardActions,
-  Collapse,
   IconButton,
   Typography,
   makeStyles,
   Tooltip,
 } from '@material-ui/core';
-import SendIcon from '@material-ui/icons/Send';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ChatIcon from '@material-ui/icons/Chat';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
-import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   feed: {
@@ -54,35 +47,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function DetailFeed({ feedData }) {
+export default function DetailFeed({ feed }) {
   const classes = useStyles();
-  const router = useRouter();
 
-  const [feed, setFeed] = useState({});
   const [liked, setLiked] = useState({
     status: false,
     num: feed.like,
   });
 
-  useEffect(() => {
-    if (!UserStore.userinfo) {
-      router.push('/login');
-    }
-    try {
-      setFeed(feedData);
-      getFeedDetail();
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
-  var t = new Date(1970, 0, 1); // Epoch
-  t.setSeconds(feed.create_at);
+  var t = new Date(1970, 0, 1);
+  t.setSeconds(feed.create_at.seconds);
 
   const createAT =
     t.getDate() + '/' + (t.getMonth() + 1) + '/' + t.getFullYear();
 
   const [expanded, setExpanded] = useState(false);
+
+  const openFeedSettingMenu = () => {
+    // 수정, 삭제 메뉴 오픈 구현 예정
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -116,8 +99,17 @@ export default function DetailFeed({ feedData }) {
               displayName={feed.author.displayName}
             />
           }
+          action={
+            <IconButton
+              aria-label='settings'
+              aria-haspopup='true'
+              onClick={openFeedSettingMenu}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          }
           title={feed.author.displayName}
-          subheader={feed.location}
+          subheader={createAT + ' ' + feed.location}
         />
         <CardMedia className={classes.media}>
           <img
@@ -154,9 +146,6 @@ export default function DetailFeed({ feedData }) {
               <LocalOfferIcon />
             </IconButton>
           </Tooltip>
-          <Typography variant='body2' color='textSecondary'>
-            {createAT}
-          </Typography>
         </CardActions>
       </Card>
     </div>

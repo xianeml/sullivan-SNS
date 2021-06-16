@@ -24,34 +24,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'left',
   },
 }));
-function checkSession(){
-  firebase.auth().onAuthStateChanged((user)=>{
-    if(user){
-      db.collection('user')
-      .get()
-      .then((answer) => {
-        answer.forEach((element) => {
-          if (element.data().uid == user.uid) {
-            UserStore.userinfo = {
-              uid: element.data().uid,
-              displayName: element.data().displayName,
-              photoUrl: element.data().photoUrl,
-              webpage: element.data().webpage,
-              caption: element.data().caption,
-              likeFeeds: element.data().likeFeeds,
-              feedList: element.data().feedList,
-            };
-            console.log('존재 하는 유저');
-          }
-        })
-      })
-      .catch((error) => {
-        alert('error' + error.message);
-        console.log(error);
-      });
-    }
-})
-};
+
 const detail = observer(({ detail }) => {
   const classes = useStyles();
   const router = useRouter();
@@ -84,19 +57,12 @@ const detail = observer(({ detail }) => {
   ];
 
   useEffect(() => {
-    if (!UserStore.userinfo) {
-      router.push('/login');
-    }
-    try {
-      setUser({
-        displayName: UserStore.userinfo.displayName,
-        photoUrl: UserStore.userinfo.displayName,
-        uid: UserStore.userinfo.uid,
-      });
-      getFeedDetail();
-    } catch (error) {
-      console.log(error);
-    }
+    setUser({
+      displayName: UserStore.userinfo.displayName,
+      photoUrl: UserStore.userinfo.displayName,
+      uid: UserStore.userinfo.uid,
+    });
+    getFeedDetail();
   }, []);
 
   async function getFeedDetail() {
