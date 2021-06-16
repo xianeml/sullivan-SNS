@@ -43,6 +43,7 @@ export default function MyApp(props) {
               console.log('존재 하는 유저');
             }
           })
+          // localStorage.setItem("user",UserStore)
         })
         .catch((error) => {
           alert('error' + error.message);

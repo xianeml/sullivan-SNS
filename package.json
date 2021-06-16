@@ -14,6 +14,7 @@
     "firebase": "^8.6.3",
     "material-icons": "^0.7.0",
     "mobx": "^6.3.2",
+    "mobx-persist-store": "^1.0.3",
     "mobx-react": "^7.2.0",
     "next": "10.2.2",
     "next-routes": "^1.4.2",
