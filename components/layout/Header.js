@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { observer } from 'mobx-react';
-import UserStores from '../../firestores/UserStore';
 import firebase from 'firebase';
+import UserStores from '../../firestores/UserStore';
 import {
   makeStyles,
   AppBar,
@@ -43,6 +43,7 @@ const Header = observer(({ Header }) => {
 
   const logout = () =>{
     firebase.auth().signOut().then(() => {
+      UserStores.clearPersistedData();
       window.location.href = "/"
     }).catch((error) => {
       // An error happened.
