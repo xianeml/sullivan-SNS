@@ -65,7 +65,6 @@ export default function ProfileUpdatePopup({
   };
 
   async function submitHandler(event) {
-    // 프로필 업데이트 로직 작성
     event.preventDefault();
 
     const profileData = {
@@ -78,7 +77,6 @@ export default function ProfileUpdatePopup({
       await updateUserProfile(profileData);
       handleClose();
       openResultMessageHandler();
-      // userstore update action 필요
     } catch (error) {
       console.log(error);
     }
@@ -88,9 +86,6 @@ export default function ProfileUpdatePopup({
     db.collection('user')
       .doc(UserStore.userinfo.uid)
       .update(profileData)
-      .then((res) => {
-        console.log('프로필 업뎃 성공');
-      })
       .catch((err) => console.log(err));
   };
 

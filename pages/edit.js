@@ -153,6 +153,10 @@ const edit = () => {
     }
   };
 
+  const moveToFeedPage = () => {
+    router.push('/feed');
+  };
+
   return (
     <div>
       <Card variant='outlined'>
@@ -256,8 +260,15 @@ const edit = () => {
             </Grid>
             <CardActions>
               <Grid container justify='flex-end'>
-                <Button size='small'>목록</Button>
-                <Button size='small' type='submit' form='edit'>
+                <Button size='large' onClick={moveToFeedPage}>
+                  목록
+                </Button>
+                <Button
+                  className={classes.primary}
+                  size='large'
+                  type='submit'
+                  form='edit'
+                >
                   공유
                 </Button>
               </Grid>

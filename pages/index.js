@@ -7,7 +7,6 @@ const index = observer(({ index }) => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('로그인정보 있나요?', UserStore.userinfo);
     if (!UserStore.userinfo) {
       router.push('/login');
     } else {

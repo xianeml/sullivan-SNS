@@ -6,10 +6,8 @@ import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '../components/common/Snackbar';
 import { observer } from 'mobx-react';
-import { useRouter } from 'next/router';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
-import firebase from 'firebase';
 import Link from 'next/link';
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +72,6 @@ const myFeed = observer(({ myFeed }) => {
   async function getUserFeedList() {
     const feedRef = db.collection('feed');
     const feedSnapshot = await feedRef.get();
-    // TODO: 왜 map, filter 사용이 안되는가????
     const allFeedList = [];
     feedSnapshot.forEach((doc) => allFeedList.push(doc.data()));
     const myFeedList = [];
@@ -137,7 +134,7 @@ const myFeed = observer(({ myFeed }) => {
                 </Grid>
                 <Grid item>
                   <Typography variant='body1' component='h2' paragraph>
-                    좋아하는 피드 수 {user.likeFeeds}
+                    좋아하는 피드 수 {user.likeFeeds || 0}
                   </Typography>
                 </Grid>
               </Grid>

@@ -25,6 +25,9 @@ const useStyles = makeStyles(() => ({
   grow: {
     flexGrow: 1,
   },
+  logoutText: {
+    color: 'red',
+  },
 }));
 
 const Header = observer(({ Header }) => {
@@ -41,14 +44,18 @@ const Header = observer(({ Header }) => {
     setAnchorEl(null);
   };
 
-  const logout = () =>{
-    firebase.auth().signOut().then(() => {
-      UserStores.clearPersistedData();
-      window.location.href = "/"
-    }).catch((error) => {
-      // An error happened.
-    })
-  }
+  const logout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        UserStores.clearPersistedData();
+        window.location.href = '/';
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const menuId = 'primary-account-menu';
   const renderMenu = (
@@ -64,7 +71,9 @@ const Header = observer(({ Header }) => {
       <MenuItem onClick={handleMenuClose}>알림 1</MenuItem>
       <MenuItem onClick={handleMenuClose}>알림 2</MenuItem>
       <MenuItem onClick={handleMenuClose}>알림 3</MenuItem>
-      <MenuItem onClick={logout}>로그아웃</MenuItem>
+      <MenuItem className={classes.logoutText} onClick={logout}>
+        로그아웃
+      </MenuItem>
     </Menu>
   );
   return (

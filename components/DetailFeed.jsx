@@ -23,8 +23,6 @@ import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useRouter } from 'next/router';
 import db from '../firestores/db';
-import UserStore from '../firestores/UserStore';
-import router from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   feed: {
