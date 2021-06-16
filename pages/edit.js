@@ -124,7 +124,7 @@ const edit = () => {
     try {
       db.collection('feed')
         .doc(uid)
-        .set(feedData)
+        .set(createData)
         .then((res) => {
           router.push('/feed');
         });

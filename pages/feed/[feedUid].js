@@ -59,21 +59,17 @@ const detail = observer(({ detail }) => {
   useEffect(() => {
     setUser({
       displayName: UserStore.userinfo.displayName,
-      photoUrl: UserStore.userinfo.displayName,
+      photoUrl: UserStore.userinfo.photoUrl,
       uid: UserStore.userinfo.uid,
     });
     getFeedDetail();
   }, []);
 
   async function getFeedDetail() {
-    try {
-      const feedRef = db.collection('feed').doc(feedUid);
-      const feedDoc = await feedRef.get();
-      const feedDetail = feedDoc.data();
-      setFeed(feedDetail);
-    } catch (error) {
-      console.log(error);
-    }
+    const feedRef = db.collection('feed').doc(feedUid);
+    const feedDoc = await feedRef.get();
+    const feedDetail = feedDoc.data();
+    setFeed(feedDetail);
   }
 
   const handleTextChange = (e) => {
@@ -98,7 +94,7 @@ const detail = observer(({ detail }) => {
     <Grid container>
       <Grid item xs={8}>
         <Paper className={classes.paper}>
-          <DetailFeed feedData={feed} />
+          <DetailFeed feed={feed} />
         </Paper>
       </Grid>
       <Grid item xs={4}>

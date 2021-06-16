@@ -68,117 +68,103 @@ const useStyles = makeStyles((theme) => ({
 // 로그인 버튼 클릭시 firebase 와 로그인 연결
 const loginfuntion = () => {
   var count = 0;
-   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(()=>{
-    const provider = new firebase.auth.GoogleAuthProvider();
-    // 파이어 베이스가 셰션에 유지 되어 있는지 확인
-    firebase.auth().onAuthStateChanged((user)=>{
-      if(user){
-        db.collection('user')
-        .get()
-        .then((answer) => {
-          answer.forEach((element) => {
-            if (element.data().uid == user.uid) {
-              count = count + 1;
-              UserStore.userinfo = {
-                uid: element.data().uid,
-                displayName: element.data().displayName,
-                photoUrl: element.data().photoUrl,
-                webpage: element.data().webpage,
-                caption: element.data().caption,
-                likeFeeds: element.data().likeFeeds,
-                feedList: element.data().feedList,
-              };
-              console.log('존재 하는 유저');
-            }
-          })
-        })
-        .catch((error) => {
-          alert('error' + error.message);
-          console.log(error);
-        });
-      }
-      else{
-        firebase
+  firebase
     .auth()
-    .signInWithPopup(provider)
-    .then(function (result) {
-      console.log(
-        'result.credential.accessToken',
-        result.credential.accessToken
-      );
-      console.log('result.user', result.user);
-      db.collection('user')
-        .get()
-        // user db 중 uid 가 같은 것이 있나 탐색(같은 것이 있을 경우 이미 회원가입 된 유저)
-        .then((answer) => {
-          answer.forEach((element) => {
-            if (element.data().uid == result.user.uid) {
-              count = count + 1;
-              UserStore.userinfo = {
-                uid: element.data().uid,
-                displayName: element.data().displayName,
-                photoUrl: element.data().photoUrl,
-                webpage: element.data().webpage,
-                caption: element.data().caption,
-                likeFeeds: element.data().likeFeeds,
-                feedList: element.data().feedList,
-              };
-              console.log('존재 하는 유저');
-            }
-          });
-
-          if (count == 0) {
-            console.log('새로운 사용자');
-            // No user is signed in.
-            UserStore.userinfo = {
-              uid: result.user.uid,
-              displayName: result.user.displayName,
-              photoUrl: result.user.photoURL,
-              webpage: '',
-              caption: '',
-              likeFeeds: '',
-              feedList: [],
-            };
-            db.collection('user')
-              .doc(result.user.uid)
-              .set(UserStore.userinfo)
-              .then((res) => {
-                console.log('db에들어감');
-              })
-              .catch((error) => {
-                console.log(error);
+    .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(() => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      // 파이어 베이스가 셰션에 유지 되어 있는지 확인
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          db.collection('user')
+            .get()
+            .then((answer) => {
+              answer.forEach((element) => {
+                if (element.data().uid == user.uid) {
+                  count = count + 1;
+                  UserStore.userinfo = {
+                    uid: element.data().uid,
+                    displayName: element.data().displayName,
+                    photoUrl: element.data().photoUrl,
+                    webpage: element.data().webpage,
+                    caption: element.data().caption,
+                    likeFeeds: element.data().likeFeeds,
+                    feedList: element.data().feedList,
+                  };
+                }
               });
-          }
-        })
-        .catch((error) => {
-          alert('error' + error.message);
-          console.log(error);
-        });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          firebase
+            .auth()
+            .signInWithPopup(provider)
+            .then(function (result) {
+              db.collection('user')
+                .get()
+                // user db 중 uid 가 같은 것이 있나 탐색(같은 것이 있을 경우 이미 회원가입 된 유저)
+                .then((answer) => {
+                  answer.forEach((element) => {
+                    if (element.data().uid == result.user.uid) {
+                      count = count + 1;
+                      UserStore.userinfo = {
+                        uid: element.data().uid,
+                        displayName: element.data().displayName,
+                        photoUrl: element.data().photoUrl,
+                        webpage: element.data().webpage,
+                        caption: element.data().caption,
+                        likeFeeds: element.data().likeFeeds,
+                        feedList: element.data().feedList,
+                      };
+                    }
+                  });
+
+                  if (count == 0) {
+                    // 새로운 사용자
+                    UserStore.userinfo = {
+                      uid: result.user.uid,
+                      displayName: result.user.displayName,
+                      photoUrl: result.user.photoURL,
+                      webpage: '',
+                      caption: '',
+                      likeFeeds: '',
+                      feedList: [],
+                    };
+                    db.collection('user')
+                      .doc(result.user.uid)
+                      .set(UserStore.userinfo)
+                      .then((res) => {
+                        console.log('login success');
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
+                  }
+                })
+                .catch((error) => {
+                  alert('error' + error.message);
+                  console.log(error);
+                });
+            })
+            .catch((error) => {
+              alert('login error:' + error.message);
+              console.log(error);
+            });
+        }
+      });
     })
     .catch((error) => {
-      alert('login error:' + error.message);
       console.log(error);
     });
-      }
-      
-    
-  })
-})
-  .catch((error) => {
-    alert('login error:' + error.message);
-    console.log(error);
-  });
-
-
-  
 };
 
 const login = observer(({ login }) => {
   const classes = useStyles();
   const router = useRouter();
-  if (UserStores.userinfo !=null){
-    router.push('/')
+  if (UserStores.userinfo != null) {
+    router.push('/');
   }
   return (
     <div>
@@ -213,9 +199,6 @@ const login = observer(({ login }) => {
           </div>
         </Container>
       )}
-      {/* {UserStore.userinfo!= null&&(
-         window.location.href = '/'
-      )} */}
     </div>
   );
 });
