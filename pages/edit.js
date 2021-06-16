@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 const edit = () => {
   const classes = useStyles();
   const router = useRouter();
-  const feedUid = '';
+  const { feedUid } = router.query;
   const uid = uuidv4();
 
   useEffect(() => {
@@ -151,11 +151,6 @@ const edit = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const deleteFeed = () => {
-    await db.collection().doc(feedUid).delete();
-    router.push('/feed');
   };
 
   return (

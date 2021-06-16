@@ -72,6 +72,11 @@ const detail = observer(({ detail }) => {
     setFeed(feedDetail);
   }
 
+  async function deleteFeed() {
+    await db.collection('feed').doc(feedUid).delete();
+    router.push('/feed');
+  }
+
   const handleTextChange = (e) => {
     const { name, value } = e.target;
     setInputs({
@@ -94,7 +99,7 @@ const detail = observer(({ detail }) => {
     <Grid container>
       <Grid item xs={8}>
         <Paper className={classes.paper}>
-          <DetailFeed feed={feed} />
+          <DetailFeed feed={feed} deleteHandler={deleteFeed} />
         </Paper>
       </Grid>
       <Grid item xs={4}>

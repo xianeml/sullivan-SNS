@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Avatar from './common/Avatar';
 import {
   CardHeader,
@@ -10,13 +10,21 @@ import {
   Typography,
   makeStyles,
   Tooltip,
+  Grow,
+  ClickAwayListener,
+  Paper,
+  Popper,
+  MenuItem,
+  MenuList,
 } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ChatIcon from '@material-ui/icons/Chat';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { useRouter } from 'next/router';
 import db from '../firestores/db';
 import UserStore from '../firestores/UserStore';
+import router from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   feed: {
@@ -45,15 +53,31 @@ const useStyles = makeStyles((theme) => ({
   content: {
     textAlign: 'left',
   },
+  deleteText: {
+    color: 'red',
+  },
 }));
 
-export default function DetailFeed({ feed }) {
+export default function DetailFeed({ feed, deleteHandler }) {
   const classes = useStyles();
+  const router = useRouter();
+  const { feedUid } = router.query;
 
   const [liked, setLiked] = useState({
     status: false,
     num: feed.like,
   });
+  const [expanded, setExpanded] = useState(false);
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+  const prevOpen = useRef(open);
+
+  useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+    prevOpen.current = open;
+  }, [open]);
 
   var t = new Date(1970, 0, 1);
   t.setSeconds(feed.create_at.seconds);
@@ -61,10 +85,34 @@ export default function DetailFeed({ feed }) {
   const createAT =
     t.getDate() + '/' + (t.getMonth() + 1) + '/' + t.getFullYear();
 
-  const [expanded, setExpanded] = useState(false);
+  const openSettingMenu = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
 
-  const openFeedSettingMenu = () => {
-    // 수정, 삭제 메뉴 오픈 구현 예정
+  const closeSettingMenu = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  function handleListKeyDown(event) {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      setOpen(false);
+    }
+  }
+
+  const handleUpdate = () => {
+    router.push({
+      pathname: '/edit',
+      query: { feedUid },
+    });
+  };
+
+  const handleDelete = () => {
+    deleteHandler();
   };
 
   const handleExpandClick = () => {
@@ -89,6 +137,42 @@ export default function DetailFeed({ feed }) {
 
   return (
     <div className={classes.feed}>
+      <Popper
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === 'bottom' ? 'center top' : 'center bottom',
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={closeSettingMenu}>
+                <MenuList
+                  autoFocusItem={open}
+                  id='menu-list-grow'
+                  onKeyDown={handleListKeyDown}
+                >
+                  <MenuItem onClick={handleUpdate}>수정</MenuItem>
+                  <MenuItem
+                    className={classes.deleteText}
+                    onClick={handleDelete}
+                  >
+                    삭제
+                  </MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+
       <Card className={classes.root}>
         <CardHeader
           className={classes.header}
@@ -103,7 +187,10 @@ export default function DetailFeed({ feed }) {
             <IconButton
               aria-label='settings'
               aria-haspopup='true'
-              onClick={openFeedSettingMenu}
+              onClick={openSettingMenu}
+              ref={anchorRef}
+              aria-controls={open ? 'menu-list-grow' : undefined}
+              aria-haspopup='true'
             >
               <MoreVertIcon />
             </IconButton>
