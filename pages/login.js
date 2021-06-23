@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
-import { LockOutlinedIcon } from '@material-ui/icons';
+import LockOutlinedIcon from '@material-ui/icons/LockOpenOutlined';
 import { observer } from 'mobx-react';
 import db from '../firestores/db';
 import firebase from '../firestores/firebase';
@@ -18,9 +18,9 @@ import UserStore from '../firestores/UserStore';
 
 function Copyright() {
   return (
-    <Typography variant='body2' color='textSecondary' align='center'>
+    <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color='inherit' href='https://material-ui.com/'>
+      <Link color="inherit" href="https://material-ui.com/">
         Your Website
       </Link>{' '}
       {new Date().getFullYear()}
@@ -162,25 +162,25 @@ const login = observer(({ login }) => {
   return (
     <div>
       {UserStore.userinfo == null && (
-        <Container component='main' maxWidth='xs'>
+        <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className={classes.paper}>
             <Avatar className={classes.avatar}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component='h1' variant='h5'>
+            <Typography component="h1" variant="h5">
               Sullivan-SNS
             </Typography>
             <form className={classes.form} noValidate>
               <Button
                 fullWidth
-                variant='contained'
-                size='small'
-                color='primary'
+                variant="contained"
+                size="small"
+                color="primary"
                 onClick={loginfuntion}
               >
-                <Avatar src='images/google.png' className={classes.avatar} />
-                <Typography component='p' variant='h6'>
+                <Avatar src="images/google.png" className={classes.avatar} />
+                <Typography component="p" variant="h6">
                   Sign in with Google
                 </Typography>
               </Button>

@@ -25,12 +25,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const detail = observer(({ detail }) => {
+export const getServerSideProps = async (ctx) => {
+  const { feedUid } = ctx.query;
+
+  return {
+    props: {
+      feedUid,
+    },
+  };
+};
+
+const detail = observer(({ feedUid }) => {
   const classes = useStyles();
   const router = useRouter();
-  const { feedUid } = router.query;
 
-  const [feed, setFeed] = useState({});
+  const [feed, setFeed] = useState(null);
   const [user, setUser] = useState({});
   const [inputs, setInputs] = useState({ comment: '' });
   const comments = [
@@ -104,14 +113,14 @@ const detail = observer(({ detail }) => {
       </Grid>
       <Grid item xs={4}>
         <Paper className={classes.paper}>
-          <Grid container direction='column'>
+          <Grid container direction="column">
             {comments.map((comment) => (
               <Grid item>
                 <Comment key={comment.id} data={comment} />
               </Grid>
             ))}
           </Grid>
-          <Grid container direction='row' alignItems='center' spacing={3}>
+          <Grid container direction="row" alignItems="center" spacing={3}>
             <Grid item>
               <Avatar
                 size={1}
@@ -120,29 +129,29 @@ const detail = observer(({ detail }) => {
               />
             </Grid>
             <Grid item>
-              <Grid container direction='column' justify='flex-start'>
+              <Grid container direction="column" justify="flex-start">
                 <Grid item>
                   <Typography
-                    variant='body1'
-                    component='h4'
-                    display='block'
+                    variant="body1"
+                    component="h4"
+                    display="block"
                     className={classes.commentItem}
                   >
                     {user.displayName}
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Grid container direction='row' spacing={2}>
+                  <Grid container direction="row" spacing={2}>
                     <Grid item>
                       <TextField
-                        name='comment'
-                        placeholder='댓글을 입력해주세요...'
+                        name="comment"
+                        placeholder="댓글을 입력해주세요..."
                         onChange={handleTextChange}
                         value={inputs.comment}
                       />
                     </Grid>
                     <Grid item>
-                      <IconButton aria-label='send' onClick={handleSendClick}>
+                      <IconButton aria-label="send" onClick={handleSendClick}>
                         <SendIcon />
                       </IconButton>
                     </Grid>
