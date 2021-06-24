@@ -57,6 +57,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function DetailFeed({ feed, deleteHandler }) {
+  if (!feed) {
+    return null;
+  }
+
   const classes = useStyles();
   const router = useRouter();
   const { feedUid } = router.query;
@@ -154,7 +158,7 @@ export default function DetailFeed({ feed, deleteHandler }) {
               <ClickAwayListener onClickAway={closeSettingMenu}>
                 <MenuList
                   autoFocusItem={open}
-                  id='menu-list-grow'
+                  id="menu-list-grow"
                   onKeyDown={handleListKeyDown}
                 >
                   <MenuItem onClick={handleUpdate}>수정</MenuItem>
@@ -183,12 +187,12 @@ export default function DetailFeed({ feed, deleteHandler }) {
           }
           action={
             <IconButton
-              aria-label='settings'
-              aria-haspopup='true'
+              aria-label="settings"
+              aria-haspopup="true"
               onClick={openSettingMenu}
               ref={anchorRef}
               aria-controls={open ? 'menu-list-grow' : undefined}
-              aria-haspopup='true'
+              aria-haspopup="true"
             >
               <MoreVertIcon />
             </IconButton>
@@ -204,14 +208,14 @@ export default function DetailFeed({ feed, deleteHandler }) {
           />
         </CardMedia>
         <CardContent className={classes.content}>
-          <Typography variant='body1' component='p'>
+          <Typography variant="body1" component="p">
             {feed.content}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label='add to favorites' onClick={handleHeartClick}>
+          <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
             {liked.status ? (
-              <FavoriteIcon color='secondary' />
+              <FavoriteIcon color="secondary" />
             ) : (
               <FavoriteIcon />
             )}
@@ -220,14 +224,14 @@ export default function DetailFeed({ feed, deleteHandler }) {
             {liked.num <= 0 || !liked.num ? 0 : liked.num}
           </Typography>
           <IconButton
-            aria-label='comment'
+            aria-label="comment"
             onClick={handleExpandClick}
             aria-expanded={expanded}
           >
             <ChatIcon />
           </IconButton>
-          <Tooltip title={feed.tag || '태그 없음'} placement='top' arrow>
-            <IconButton aria-label='tag' className>
+          <Tooltip title={feed.tag || '태그 없음'} placement="top" arrow>
+            <IconButton aria-label="tag" className>
               <LocalOfferIcon />
             </IconButton>
           </Tooltip>
