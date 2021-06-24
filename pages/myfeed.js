@@ -55,6 +55,7 @@ const myFeed = observer(({ myFeed }) => {
   const [user, setUser] = useState({});
   const [feedList, setFeedList] = useState([]);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setUser({
@@ -66,20 +67,25 @@ const myFeed = observer(({ myFeed }) => {
       feedList: UserStore.userinfo.feedList,
       likeFeeds: UserStore.userinfo.likeFeeds,
     });
+
+    const getUserFeedList = async () => {
+      const feedRef = db.collection("feed");
+      const myFeedList = [];
+      await feedRef
+        .get()
+        .then((docs) => {
+          docs.forEach((doc) => {
+            if (doc.data().author.uid === UserStore.userinfo.uid)
+              myFeedList.push(doc.data());
+          });
+          setFeedList(myFeedList);
+        })
+        .catch((err) => console.log(err));
+      setLoading(false);
+    };
+
     getUserFeedList();
   }, []);
-
-  async function getUserFeedList() {
-    const feedRef = db.collection("feed");
-    const feedSnapshot = await feedRef.get();
-    const allFeedList = [];
-    feedSnapshot.forEach((doc) => allFeedList.push(doc.data()));
-    const myFeedList = [];
-    allFeedList.forEach((feed) => {
-      if (feed.author.uid === user.uid) myFeedList.push(feed);
-    });
-    setFeedList(myFeedList);
-  }
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);
@@ -176,7 +182,9 @@ const myFeed = observer(({ myFeed }) => {
       </Grid>
       <Divider variant="middle" light className={classes.divider} />
       <Grid container spacing={3} className={classes.container}>
-        {feedList.length !== 0 ? (
+        {loading ? (
+          <div>Loading...</div>
+        ) : feedList.length !== 0 ? (
           feedList.map((feed, idx) => (
             <Grid item md={4} sm={6} xs={12} key={idx}>
               <div className={classes.imgContainer}>
