@@ -6,10 +6,8 @@ import Avatar from "../../components/common/Avatar";
 import DetailFeed from "../../components/DetailFeed";
 import Comment from "../../components/Comment";
 import SendIcon from "@material-ui/icons/Send";
-import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import db from "../../firestores/db";
-import UserStore from "../../firestores/UserStore";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,12 +33,13 @@ export const getServerSideProps = async (ctx) => {
   };
 };
 
-const detail = observer(({ feedUid }) => {
+const detail = ({ feedUid }) => {
   const classes = useStyles();
   const router = useRouter();
 
   const [feed, setFeed] = useState(null);
-  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const [inputs, setInputs] = useState({ comment: "" });
   const comments = [
     {
@@ -66,20 +65,23 @@ const detail = observer(({ feedUid }) => {
   ];
 
   useEffect(() => {
-    setUser({
-      displayName: UserStore.userinfo.displayName,
-      photoUrl: UserStore.userinfo.photoUrl,
-      uid: UserStore.userinfo.uid,
-      likeFeeds: UserStore.userinfo.likeFeeds,
-    });
+    getUser();
     getFeedDetail();
   }, []);
+
+  async function getUser() {
+    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
+    const userDoc = await userRef.get();
+    const userInfo = userDoc.data();
+    setUser(userInfo);
+  }
 
   async function getFeedDetail() {
     const feedRef = db.collection("feed").doc(feedUid);
     const feedDoc = await feedRef.get();
     const feedDetail = feedDoc.data();
     setFeed(feedDetail);
+    setLoading(false);
   }
 
   async function deleteFeed() {
@@ -105,6 +107,8 @@ const detail = observer(({ feedUid }) => {
       comment: "",
     });
   };
+
+  if (loading) return <div>Loading...</div>;
   return (
     <Grid container>
       <Grid item xs={8}>
@@ -165,6 +169,6 @@ const detail = observer(({ feedUid }) => {
       </Grid>
     </Grid>
   );
-});
+};
 
 export default detail;
