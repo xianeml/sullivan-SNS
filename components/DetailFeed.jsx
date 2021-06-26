@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Avatar from './common/Avatar';
+import React, { useState, useRef, useEffect } from "react";
+import Avatar from "./common/Avatar";
 import {
   CardHeader,
   CardMedia,
@@ -16,50 +16,61 @@ import {
   Popper,
   MenuItem,
   MenuList,
-} from '@material-ui/core';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ChatIcon from '@material-ui/icons/Chat';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { useRouter } from 'next/router';
-import db from '../firestores/db';
+} from "@material-ui/core";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import ChatIcon from "@material-ui/icons/Chat";
+import LocalOfferIcon from "@material-ui/icons/LocalOffer";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { useRouter } from "next/router";
+import db from "../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
   feed: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyItems: 'center',
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyItems: "center",
   },
   header: {
-    margin: '1rem 0',
-    width: '600px',
-    height: '55px',
-    textAlign: 'left',
+    margin: "1rem 0",
+    width: "600px",
+    height: "55px",
+    textAlign: "left",
   },
   media: {
-    maxHeight: '600px',
-    width: '100%',
-    overflow: 'auto',
+    maxHeight: "600px",
+    width: "100%",
+    overflow: "auto",
   },
   mediaImg: {
-    height: 'auto',
-    width: '600px',
-    display: 'block',
+    height: "auto",
+    width: "600px",
+    display: "block",
   },
   content: {
-    textAlign: 'left',
+    textAlign: "left",
   },
   deleteText: {
-    color: 'red',
+    color: "red",
   },
 }));
 
-export default function DetailFeed({ feed, deleteHandler }) {
+export default function DetailFeed({ feed, deleteHandler, user }) {
   if (!feed) {
     return null;
   }
+
+  const {
+    content,
+    like = 0,
+    photoUrl,
+    author,
+    tag,
+    create_at,
+    uid,
+    location,
+  } = feed;
 
   const classes = useStyles();
   const router = useRouter();
@@ -67,8 +78,9 @@ export default function DetailFeed({ feed, deleteHandler }) {
 
   const [liked, setLiked] = useState({
     status: false,
-    num: feed.like,
+    num: like,
   });
+  const [likeFeeds, setLikeFeeds] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -79,13 +91,27 @@ export default function DetailFeed({ feed, deleteHandler }) {
       anchorRef.current.focus();
     }
     prevOpen.current = open;
+    let checkFeed = [];
+    if (likeFeeds !== "") {
+      setLikeFeeds(user.likeFeeds);
+      checkFeed = [...user.likeFeeds];
+    }
+    for (const feedId of checkFeed) {
+      if (feedId === uid) {
+        setLiked({
+          ...liked,
+          status: true,
+        });
+        break;
+      }
+    }
   }, [open]);
 
   var t = new Date(1970, 0, 1);
-  t.setSeconds(feed.create_at.seconds);
+  t.setSeconds(create_at.seconds);
 
   const createAT =
-    t.getDate() + '/' + (t.getMonth() + 1) + '/' + t.getFullYear();
+    t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear();
 
   const openSettingMenu = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -100,7 +126,7 @@ export default function DetailFeed({ feed, deleteHandler }) {
   };
 
   function handleListKeyDown(event) {
-    if (event.key === 'Tab') {
+    if (event.key === "Tab") {
       event.preventDefault();
       setOpen(false);
     }
@@ -108,7 +134,7 @@ export default function DetailFeed({ feed, deleteHandler }) {
 
   const handleUpdate = () => {
     router.push({
-      pathname: '/edit',
+      pathname: "/edit",
       query: { feedUid },
     });
   };
@@ -123,18 +149,31 @@ export default function DetailFeed({ feed, deleteHandler }) {
 
   const handleHeartClick = () => {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
-    setLiked({
-      status: !liked.status,
-      num: likeNum,
-    });
-    db.collection('feed')
-      .doc(feed.uid)
+    let updateFeedLike = [];
+    if (liked.status) {
+      updateFeedLike = user.likeFeeds.filter((feedId) => feedId !== uid);
+    } else {
+      updateFeedLike = [...user.likeFeeds, uid];
+    }
+    db.collection("feed")
+      .doc(uid)
       .update({
         like: likeNum,
       })
       .catch((err) => {
         console.log(err);
       });
+
+    db.collection("user")
+      .doc(user.uid)
+      .update({ likeFeeds: updateFeedLike })
+      .catch((err) => console.log(err));
+
+    setLiked({
+      status: !liked.status,
+      num: likeNum,
+    });
+    setLikeFeeds(updateFeedLike);
   };
 
   return (
@@ -151,7 +190,7 @@ export default function DetailFeed({ feed, deleteHandler }) {
             {...TransitionProps}
             style={{
               transformOrigin:
-                placement === 'bottom' ? 'center top' : 'center bottom',
+                placement === "bottom" ? "center top" : "center bottom",
             }}
           >
             <Paper>
@@ -181,8 +220,8 @@ export default function DetailFeed({ feed, deleteHandler }) {
           avatar={
             <Avatar
               size={1}
-              photoUrl={feed.author.photoUrl}
-              displayName={feed.author.displayName}
+              photoUrl={author.photoUrl}
+              displayName={author.displayName}
             />
           }
           action={
@@ -191,25 +230,21 @@ export default function DetailFeed({ feed, deleteHandler }) {
               aria-haspopup="true"
               onClick={openSettingMenu}
               ref={anchorRef}
-              aria-controls={open ? 'menu-list-grow' : undefined}
+              aria-controls={open ? "menu-list-grow" : undefined}
               aria-haspopup="true"
             >
               <MoreVertIcon />
             </IconButton>
           }
-          title={feed.author.displayName}
-          subheader={createAT + ' ' + feed.location}
+          title={author.displayName}
+          subheader={createAT + " " + location}
         />
         <CardMedia className={classes.media}>
-          <img
-            src={feed.photoUrl}
-            alt={feed.content}
-            className={classes.mediaImg}
-          />
+          <img src={photoUrl} alt={content} className={classes.mediaImg} />
         </CardMedia>
         <CardContent className={classes.content}>
           <Typography variant="body1" component="p">
-            {feed.content}
+            {content}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
@@ -230,7 +265,7 @@ export default function DetailFeed({ feed, deleteHandler }) {
           >
             <ChatIcon />
           </IconButton>
-          <Tooltip title={feed.tag || '태그 없음'} placement="top" arrow>
+          <Tooltip title={tag || "태그 없음"} placement="top" arrow>
             <IconButton aria-label="tag" className>
               <LocalOfferIcon />
             </IconButton>
