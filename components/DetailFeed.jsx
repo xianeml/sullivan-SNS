@@ -18,7 +18,6 @@ import {
   MenuList,
 } from "@material-ui/core";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import ChatIcon from "@material-ui/icons/Chat";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useRouter } from "next/router";
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
   header: {
     margin: "1rem 0",
-    width: "600px",
+    width: "1200px",
     height: "55px",
     textAlign: "left",
   },
@@ -45,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mediaImg: {
     height: "auto",
-    width: "600px",
+    width: "1200px",
     display: "block",
   },
   content: {
@@ -81,7 +80,6 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
     num: like,
   });
   const [likeFeeds, setLikeFeeds] = useState([]);
-  const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
   const prevOpen = useRef(open);
@@ -111,7 +109,7 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
   t.setSeconds(create_at.seconds);
 
   const createAT =
-    t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear();
+    t.getFullYear() + "/" + t.getDate() + "/" + (t.getMonth() + 1);
 
   const openSettingMenu = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -143,10 +141,6 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
     deleteHandler();
   };
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
   const handleHeartClick = () => {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
     let updateFeedLike = [];
@@ -164,7 +158,7 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
         console.log(err);
       });
 
-    db.collection("user")
+    db.collection("myuser")
       .doc(user.uid)
       .update({ likeFeeds: updateFeedLike })
       .catch((err) => console.log(err));
@@ -258,13 +252,6 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
           <Typography>
             {liked.num <= 0 || !liked.num ? 0 : liked.num}
           </Typography>
-          <IconButton
-            aria-label="comment"
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-          >
-            <ChatIcon />
-          </IconButton>
           <Tooltip title={tag || "태그 없음"} placement="top" arrow>
             <IconButton aria-label="tag" className>
               <LocalOfferIcon />
