@@ -5,9 +5,7 @@ import ProfileUpdatePopup from "../components/ProfileUpdatePopup";
 import { Divider, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "../components/common/Snackbar";
-import { observer } from "mobx-react";
 import db from "../firestores/db";
-import UserStore from "../firestores/UserStore";
 import Link from "next/link";
 
 const useStyles = makeStyles((theme) => ({
@@ -49,43 +47,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const myFeed = observer(({ myFeed }) => {
+const myFeed = () => {
   const classes = useStyles();
 
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [feedList, setFeedList] = useState([]);
   const [popupOpen, setPopupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setUser({
-      uid: UserStore.userinfo.uid,
-      displayName: UserStore.userinfo.displayName,
-      photoUrl: UserStore.userinfo.photoUrl,
-      caption: UserStore.userinfo.caption,
-      webpage: UserStore.userinfo.webpage,
-      feedList: UserStore.userinfo.feedList,
-      likeFeeds: UserStore.userinfo.likeFeeds,
-    });
-
-    const getUserFeedList = async () => {
-      const feedRef = db.collection("feed");
-      const myFeedList = [];
-      await feedRef
-        .get()
-        .then((docs) => {
-          docs.forEach((doc) => {
-            if (doc.data().author.uid === UserStore.userinfo.uid)
-              myFeedList.push(doc.data());
-          });
-          setFeedList(myFeedList);
-        })
-        .catch((err) => console.log(err));
-      setLoading(false);
-    };
-
-    getUserFeedList();
+    getUserInfo();
   }, []);
+
+  const getUserInfo = async () => {
+    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
+    const userDoc = await userRef.get();
+    const userInfo = userDoc.data();
+    setUser(userInfo);
+
+    const feedRef = db.collection("feed");
+    const myFeedList = [];
+    await feedRef
+      .get()
+      .then((docs) => {
+        docs.forEach((doc) => {
+          if (doc.data().author.uid === userInfo.uid)
+            myFeedList.push(doc.data());
+        });
+        setFeedList(myFeedList);
+      })
+      .catch((err) => console.log(err));
+    setLoading(false);
+  };
 
   const openProfileUpdatePopup = () => {
     setPopupOpen(true);
@@ -100,13 +93,14 @@ const myFeed = observer(({ myFeed }) => {
   const openResultMessage = () => {
     setResultMessageOpen(true);
   };
-  const closeResultMessage = (event, reason) => {
+  const closeResultMessage = (reason) => {
     if (reason === "clickaway") {
       return;
     }
     setResultMessageOpen(false);
   };
 
+  if (loading) return <div>Loading...</div>;
   return (
     <div className={classes.root}>
       <Grid
@@ -169,7 +163,7 @@ const myFeed = observer(({ myFeed }) => {
               open={popupOpen}
               closeHandler={closeProfileUpdatePopup}
               openResultMessageHandler={openResultMessage}
-              defaultUserInfo={user}
+              user={user}
             />
             <Snackbar
               open={resultMessageOpen}
@@ -204,6 +198,6 @@ const myFeed = observer(({ myFeed }) => {
       </Grid>
     </div>
   );
-});
+};
 
 export default myFeed;

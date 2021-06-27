@@ -1,27 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { Paper, TextField, IconButton, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import Avatar from '../../components/common/Avatar';
-import DetailFeed from '../../components/DetailFeed';
-import Comment from '../../components/Comment';
-import SendIcon from '@material-ui/icons/Send';
-import { observer } from 'mobx-react';
-import { useRouter } from 'next/router';
-import db from '../../firestores/db';
-import UserStore from '../../firestores/UserStore';
+import React, { useState, useEffect } from "react";
+import Grid from "@material-ui/core/Grid";
+import { Paper, TextField, IconButton, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "../../components/common/Avatar";
+import DetailFeed from "../../components/DetailFeed";
+import Comment from "../../components/Comment";
+import SendIcon from "@material-ui/icons/Send";
+import { useRouter } from "next/router";
+import db from "../../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.palette.text.secondary,
-    height: '100%',
+    height: "100%",
   },
   commentItem: {
-    width: '100%',
-    fontWeight: 'bold',
-    textAlign: 'left',
+    width: "100%",
+    fontWeight: "bold",
+    textAlign: "left",
   },
 }));
 
@@ -35,55 +33,60 @@ export const getServerSideProps = async (ctx) => {
   };
 };
 
-const detail = observer(({ feedUid }) => {
+const detail = ({ feedUid }) => {
   const classes = useStyles();
   const router = useRouter();
 
   const [feed, setFeed] = useState(null);
-  const [user, setUser] = useState({});
-  const [inputs, setInputs] = useState({ comment: '' });
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [inputs, setInputs] = useState({ comment: "" });
   const comments = [
     {
       id: 1,
-      username: 'aeuna',
-      comment: '정말 맛있겠다!',
+      username: "aeuna",
+      comment: "정말 맛있겠다!",
     },
     {
       id: 2,
-      username: 'kelee98',
-      comment: '장소가 어디인가용?',
+      username: "kelee98",
+      comment: "장소가 어디인가용?",
     },
     {
       id: 3,
-      username: 'xianeml',
-      comment: '가고 싶어요!',
+      username: "xianeml",
+      comment: "가고 싶어요!",
     },
     {
       id: 4,
-      username: 'huiji0315',
-      comment: '나도 가고 싶어요!',
+      username: "huiji0315",
+      comment: "나도 가고 싶어요!",
     },
   ];
 
   useEffect(() => {
-    setUser({
-      displayName: UserStore.userinfo.displayName,
-      photoUrl: UserStore.userinfo.photoUrl,
-      uid: UserStore.userinfo.uid,
-    });
+    getUser();
     getFeedDetail();
   }, []);
 
+  async function getUser() {
+    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
+    const userDoc = await userRef.get();
+    const userInfo = userDoc.data();
+    setUser(userInfo);
+  }
+
   async function getFeedDetail() {
-    const feedRef = db.collection('feed').doc(feedUid);
+    const feedRef = db.collection("feed").doc(feedUid);
     const feedDoc = await feedRef.get();
     const feedDetail = feedDoc.data();
     setFeed(feedDetail);
+    setLoading(false);
   }
 
   async function deleteFeed() {
-    await db.collection('feed').doc(feedUid).delete();
-    router.push('/feed');
+    await db.collection("feed").doc(feedUid).delete();
+    router.push("/feed");
   }
 
   const handleTextChange = (e) => {
@@ -101,14 +104,16 @@ const detail = observer(({ feedUid }) => {
     };
     setComments([...comments, comment]);
     setInputs({
-      comment: '',
+      comment: "",
     });
   };
+
+  if (loading) return <div>Loading...</div>;
   return (
     <Grid container>
       <Grid item xs={8}>
         <Paper className={classes.paper}>
-          <DetailFeed feed={feed} deleteHandler={deleteFeed} />
+          <DetailFeed feed={feed} deleteHandler={deleteFeed} user={user} />
         </Paper>
       </Grid>
       <Grid item xs={4}>
@@ -164,6 +169,6 @@ const detail = observer(({ feedUid }) => {
       </Grid>
     </Grid>
   );
-});
+};
 
 export default detail;

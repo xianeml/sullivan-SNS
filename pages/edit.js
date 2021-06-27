@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import { Grid, TextField } from '@material-ui/core';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Grid,
+  TextField,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import db from '../firestores/db';
-import { v4 as uuidv4, v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import firebase from '../firestores/firebase';
-import UserStore from '../firestores/UserStore';
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -30,18 +32,6 @@ const edit = () => {
   const { feedUid } = router.query;
   const uid = uuidv4();
 
-  useEffect(() => {
-    if (feedUid) {
-      setUpdateMode(true);
-      getFeedDetail();
-    }
-    setAuthor({
-      displayName: UserStore.userinfo.displayName,
-      photoUrl: UserStore.userinfo.photoUrl,
-      uid: UserStore.userinfo.uid,
-    });
-  }, []);
-
   const [updateMode, setUpdateMode] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
   const [content, setContent] = useState('');
@@ -49,6 +39,25 @@ const edit = () => {
   const [tag, setTag] = useState('');
   const [author, setAuthor] = useState({});
   const fileButton = useRef();
+
+  useEffect(() => {
+    if (feedUid) {
+      setUpdateMode(true);
+      getFeedDetail();
+    }
+    getUser();
+  }, []);
+
+  const getUser = async () => {
+    const userRef = db.collection('myuser').doc('SFCKJmd9KzCpO5H77wz1');
+    const userSnapshot = await userRef.get();
+    const userInfo = userSnapshot.data();
+    setAuthor({
+      uid: userInfo.uid,
+      photoUrl: userInfo.photoUrl,
+      displayName: userInfo.displayName,
+    });
+  };
 
   async function getPhotoUrl() {
     const file = fileButton.current.files[0];
@@ -89,10 +98,9 @@ const edit = () => {
 
   async function updateUserFeedList() {
     try {
-      const userRef = db.collection('user').doc(UserStore.userinfo.uid);
+      const userRef = db.collection('myuser').doc(author.uid);
       const userSnapshot = await userRef.get();
       const userFeedList = await userSnapshot.data().feedList;
-
       let newFeedList;
       if (userFeedList) {
         newFeedList = [...userFeedList, { feedId: uid }];
@@ -120,7 +128,7 @@ const edit = () => {
     try {
       const feedRef = db.collection('feed').doc(uid);
       await feedRef.set(createParams);
-      router.push('/feed');
+      moveToFeedPage();
     } catch (error) {
       console.log(error);
     }
@@ -178,9 +186,9 @@ const edit = () => {
                   <input
                     id='file'
                     type='file'
+                    required
                     ref={fileButton}
                     onChange={getPhotoUrl}
-                    required
                   />
                 </Grid>
               </Grid>
@@ -193,17 +201,17 @@ const edit = () => {
               </Grid>
               <Grid item md={10} xs={12}>
                 <TextField
-                  autoFocus
-                  margin='dense'
                   id='caption'
                   multiline
-                  variant='outlined'
-                  placeholder='문구 입력...'
                   rows='4'
+                  placeholder='문구 입력...'
+                  variant='outlined'
+                  margin='dense'
                   fullWidth
+                  autoFocus
+                  required
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  required
                 />
               </Grid>
             </Grid>
@@ -236,13 +244,13 @@ const edit = () => {
               </Grid>
               <Grid item md={10} xs={12}>
                 <TextField
-                  autoFocus
-                  margin='dense'
                   id='tagging'
                   type='text'
-                  variant='outlined'
                   placeholder='태그하기'
+                  variant='outlined'
+                  margin='dense'
                   fullWidth
+                  autoFocus
                   value={tag}
                   onChange={(e) => setTag(e.target.value)}
                 />
@@ -254,10 +262,10 @@ const edit = () => {
                   목록
                 </Button>
                 <Button
+                  form='edit'
+                  type='submit'
                   className={classes.primary}
                   size='large'
-                  type='submit'
-                  form='edit'
                 >
                   공유
                 </Button>
