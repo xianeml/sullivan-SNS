@@ -50,23 +50,19 @@ const edit = () => {
   const [author, setAuthor] = useState({});
   const fileButton = useRef();
 
-  const getPhotoUrl = () => {
+  async function getPhotoUrl() {
     const file = fileButton.current.files[0];
     const storageRef = firebase.storage().ref(author.uid + '/' + uid);
-    const task = storageRef.put(file);
-    task.then((snapshot) => {
-      const getUrl = snapshot.ref.getDownloadURL();
-      getUrl.then((url) => {
-        setPhotoUrl(url);
-      });
-    });
-  };
+    const saveFileTask = await storageRef.put(file);
+    const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
+    setPhotoUrl(downloadedPhotoUrl);
+  }
 
   async function getFeedDetail() {
     try {
       const feedRef = db.collection('feed').doc(feedUid);
-      const feedDoc = await feedRef.get();
-      const feedDetail = feedDoc.data();
+      const feedSnapshot = await feedRef.get();
+      const feedDetail = feedSnapshot.data();
       setPhotoUrl(feedDetail.photoUrl);
       setContent(feedDetail.content);
       setLocation(feedDetail.location);
@@ -93,9 +89,9 @@ const edit = () => {
 
   async function updateUserFeedList() {
     try {
-      const userDocsRef = db.collection('user').doc(UserStore.userinfo.uid);
-      const userDocs = await userDocsRef.get();
-      const userFeedList = await userDocs.data().feedList;
+      const userRef = db.collection('user').doc(UserStore.userinfo.uid);
+      const userSnapshot = await userRef.get();
+      const userFeedList = await userSnapshot.data().feedList;
 
       let newFeedList;
       if (userFeedList) {
@@ -109,8 +105,8 @@ const edit = () => {
     }
   }
 
-  const createFeed = () => {
-    const createData = {
+  async function createFeed() {
+    const createParams = {
       uid,
       photoUrl,
       content,
@@ -122,19 +118,16 @@ const edit = () => {
     };
 
     try {
-      db.collection('feed')
-        .doc(uid)
-        .set(createData)
-        .then((res) => {
-          router.push('/feed');
-        });
+      const feedRef = db.collection('feed').doc(uid);
+      await feedRef.set(createParams);
+      router.push('/feed');
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
-  const updateFeed = () => {
-    const updateData = {
+  async function updateFeed() {
+    const updateParams = {
       content,
       location,
       tag,
@@ -142,16 +135,13 @@ const edit = () => {
     };
 
     try {
-      db.collection('feed')
-        .doc(feedUid)
-        .update(updateData)
-        .then((res) => {
-          router.push('/feed');
-        });
+      const feedRef = db.collection('feed').doc(feedUid);
+      await feedRef.update(updateParams);
+      moveToFeedPage();
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   const moveToFeedPage = () => {
     router.push('/feed');
@@ -225,13 +215,13 @@ const edit = () => {
               </Grid>
               <Grid item md={10} xs={12}>
                 <TextField
-                  autoFocus
-                  margin='dense'
                   id='location'
                   type='text'
-                  variant='outlined'
                   placeholder='위치 추가'
+                  variant='outlined'
+                  margin='dense'
                   fullWidth
+                  autoFocus
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 />
