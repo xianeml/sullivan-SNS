@@ -109,7 +109,7 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
   t.setSeconds(create_at.seconds);
 
   const createAT =
-    t.getFullYear() + "/" + t.getDate() + "/" + (t.getMonth() + 1);
+    t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
 
   const openSettingMenu = () => {
     setOpen((prevOpen) => !prevOpen);
