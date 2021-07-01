@@ -10,9 +10,9 @@ import {
   TextField,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import Avatar from "./common/Avatar";
-import firebase from "../firestores/firebase";
-import db from "../firestores/db";
+import Avatar from "../common/Avatar";
+import firebase from "../../firestores/firebase";
+import db from "../../firestores/db";
 import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
