@@ -50,7 +50,7 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "row",
   },
-  link: {
+  detailBtn: {
     cursor: "pointer",
   },
 }));
@@ -170,7 +170,7 @@ export default function Feed({ feed, comments, setComments, user }) {
             <Typography
               variant="body2"
               color="textSecondary"
-              className={classes.link}
+              className={classes.detailBtn}
             >
               더보기
             </Typography>
@@ -212,7 +212,7 @@ export default function Feed({ feed, comments, setComments, user }) {
                 </Grid>
                 <Grid
                   className={classes.commentItem}
-                  justifyContent="left"
+                  justifycontent="left"
                   item
                   xs
                   zeroMinWidth

@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#2196f3",
     fontWeight: "bold",
   },
-  link: {
+  popupBtn: {
     cursor: "pointer",
     margin: "1rem 0",
     color: "#2196f3",
@@ -106,7 +106,11 @@ export default function ProfileUpdatePopup({
               alignItems="center"
             >
               <Avatar displayName={displayName} photoUrl={photoUrl} />
-              <Link component="label" className={classes.link} underline="none">
+              <Link
+                component="label"
+                className={classes.popupBtn}
+                underline="none"
+              >
                 프로필 사진 바꾸기
                 <input
                   type="file"

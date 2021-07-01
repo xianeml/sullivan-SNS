@@ -120,7 +120,7 @@ const detail = ({ feedUid }) => {
         <Paper className={classes.paper}>
           <Grid container direction="column">
             {comments.map((comment) => (
-              <Grid item>
+              <Grid item key={comment.id}>
                 <Comment key={comment.id} data={comment} />
               </Grid>
             ))}

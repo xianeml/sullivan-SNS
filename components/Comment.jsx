@@ -10,7 +10,7 @@ export default function Comment({ data }) {
         <Grid item>
           <Avatar size={1} />
         </Grid>
-        <Grid justifyContent='left' item xs zeroMinWidth>
+        <Grid justifycontent='left' item xs zeroMinWidth>
           <h4 style={{ margin: 0, textAlign: 'left' }}>{username}</h4>
           <p style={{ textAlign: 'left' }}>{comment}</p>
         </Grid>

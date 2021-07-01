@@ -23,8 +23,8 @@ const useStyles = makeStyles(() => ({
   grow: {
     flexGrow: 1,
   },
-  logoutText: {
-    color: "red",
+  title: {
+    cursor: "pointer",
   },
 }));
 
@@ -74,7 +74,7 @@ const Header = () => {
       <AppBar className={classes.fix}>
         <Toolbar>
           <Link href="/">
-            <Typography variant="h6" noWrap>
+            <Typography className={classes.title} variant="h6" noWrap>
               Sullivan-SNS
             </Typography>
           </Link>
