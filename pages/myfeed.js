@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Button from "@material-ui/core/Button";
 import Avatar from "../components/common/Avatar";
-import ProfileUpdatePopup from "../components/ProfileUpdatePopup";
-import { Divider, Grid, Typography } from "@material-ui/core";
+import { Button, Divider, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "../components/common/Snackbar";
-import db from "../firestores/db";
+import ProfileUpdatePopup from "../components/ProfileUpdatePopup";
 import Link from "next/link";
+import db from "../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
   primary: {
@@ -65,18 +64,15 @@ const myFeed = () => {
     const userInfo = userDoc.data();
     setUser(userInfo);
 
-    const feedRef = db.collection("feed");
     const myFeedList = [];
-    await feedRef
-      .get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          if (doc.data().author.uid === userInfo.uid)
-            myFeedList.push(doc.data());
-        });
-        setFeedList(myFeedList);
-      })
-      .catch((err) => console.log(err));
+    const feedRef = db.collection("feed");
+    const feedSnapshot = await feedRef.get();
+    feedSnapshot.forEach((doc) => {
+      if (doc.data().author.uid === userInfo.uid) {
+        myFeedList.push(doc.data());
+      }
+    });
+    setFeedList(myFeedList);
     setLoading(false);
   };
 
@@ -149,7 +145,9 @@ const myFeed = () => {
                 component="h2"
                 gutterBottom
               >
-                {user.webpage}
+                <a href={user.webpage} target="_blank">
+                  {user.webpage}
+                </a>
               </Typography>
             </Grid>
             <Button

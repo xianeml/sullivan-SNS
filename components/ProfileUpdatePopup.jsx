@@ -1,12 +1,16 @@
-import React, { useState, useRef } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import Avatar from "./common/Avatar";
-import { Divider, Grid, Link } from "@material-ui/core";
+import React, { useState, useRef, useCallback } from "react";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Divider,
+  Grid,
+  Link,
+  TextField,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "./common/Avatar";
 import firebase from "../firestores/firebase";
 import db from "../firestores/db";
 import { v4 as uuidv4 } from "uuid";
@@ -45,17 +49,13 @@ export default function ProfileUpdatePopup({
   const fileButton = useRef();
   const uid = uuidv4();
 
-  const getPhotoUrl = () => {
+  async function getPhotoUrl() {
     const file = fileButton.current.files[0];
     const storageRef = firebase.storage().ref(user.uid + "/" + uid);
-    const task = storageRef.put(file);
-    task.then((snapshot) => {
-      const getUrl = snapshot.ref.getDownloadURL();
-      getUrl.then((url) => {
-        setPhotoUrl(url);
-      });
-    });
-  };
+    const saveFileTask = await storageRef.put(file);
+    const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
+    setPhotoUrl(downloadedPhotoUrl);
+  }
 
   const handleClose = () => {
     closeHandler();
@@ -64,14 +64,14 @@ export default function ProfileUpdatePopup({
   async function submitHandler(event) {
     event.preventDefault();
 
-    const profileData = {
+    const profileUpdateParams = {
       photoUrl,
       displayName,
       webpage,
       caption,
     };
     try {
-      await updateUserProfile(profileData);
+      await updateUserProfile(profileUpdateParams);
       handleClose();
       openResultMessageHandler();
     } catch (error) {
@@ -79,12 +79,14 @@ export default function ProfileUpdatePopup({
     }
   }
 
-  const updateUserProfile = (profileData) => {
-    db.collection("myuser")
-      .doc(user.uid)
-      .update(profileData)
-      .catch((err) => console.log(err));
-  };
+  async function updateUserProfile(profileUpdateParams) {
+    try {
+      const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
+      await userRef.update(profileUpdateParams);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div>
