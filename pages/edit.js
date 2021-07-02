@@ -114,7 +114,7 @@ const edit = () => {
       } else {
         newFeedList = [{ feedId: uid }];
       }
-      await userDocsRef.update({ feedList: newFeedList });
+      await userRef.update({ feedList: newFeedList });
     } catch (error) {
       console.log(error);
     }
@@ -135,7 +135,7 @@ const edit = () => {
     try {
       const feedRef = db.collection('feed').doc(uid);
       await feedRef.set(createParams);
-      moveToFeedPage();
+      router.push('/feed');
     } catch (error) {
       console.log(error);
     }
@@ -152,7 +152,7 @@ const edit = () => {
     try {
       const feedRef = db.collection('feed').doc(feedUid);
       await feedRef.update(updateParams);
-      moveToFeedPage();
+      router.push('/feed');
     } catch (error) {
       console.log(error);
     }

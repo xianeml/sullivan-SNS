@@ -44,7 +44,7 @@ const PhotoPreview = ({ photoUrl, attachFile, loading }) => {
       ) : (
         <Paper elevation={0} className={classes.initialPreview}>
           {loading ? (
-            <CircularProgress color='primary' variant='contained' />
+            <CircularProgress color='primary' />
           ) : (
             <Typography
               variant='h2'
