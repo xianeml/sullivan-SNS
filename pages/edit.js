@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -12,17 +11,18 @@ import { useRouter } from 'next/router';
 import db from '../firestores/db';
 import { v4 as uuidv4 } from 'uuid';
 import firebase from '../firestores/firebase';
+import PhotoPreview from '../components/edit/PhotoPreview';
+import SubmitButton from '../components/edit/SubmitButton';
 
 const useStyles = makeStyles((theme) => ({
-  primary: {
-    color: '#2196f3',
-    fontWeight: 'bold',
+  form: {
+    padding: '3rem',
   },
   label: {
     fontWeight: 'bold',
   },
-  imgPreview: {
-    width: '60%',
+  fileInput: {
+    display: 'none',
   },
 }));
 
@@ -33,6 +33,7 @@ const edit = () => {
   const uid = uuidv4();
 
   const [updateMode, setUpdateMode] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
@@ -60,12 +61,18 @@ const edit = () => {
   };
 
   async function getPhotoUrl() {
+    setLoading(true);
     const file = fileButton.current.files[0];
     const storageRef = firebase.storage().ref(author.uid + '/' + uid);
     const saveFileTask = await storageRef.put(file);
     const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
+    setLoading(false);
     setPhotoUrl(downloadedPhotoUrl);
   }
+
+  const attachFile = () => {
+    fileButton.current.click();
+  };
 
   async function getFeedDetail() {
     try {
@@ -151,48 +158,27 @@ const edit = () => {
     }
   }
 
-  const moveToFeedPage = () => {
-    router.push('/feed');
-  };
-
   return (
     <div>
       <Card variant='outlined'>
         <CardContent>
-          <Grid container justify='center'>
-            {photoUrl ? (
-              <img
-                src={photoUrl}
-                alt='미리보기'
-                className={classes.imgPreview}
-              />
-            ) : (
-              '사진 미리보기'
-            )}
-          </Grid>
+          <PhotoPreview
+            photoUrl={photoUrl}
+            attachFile={attachFile}
+            loading={loading}
+          />
         </CardContent>
       </Card>
       <Card variant='outlined'>
         <CardContent>
           <form id='edit' className={classes.form} onSubmit={submitHandler}>
-            {!updateMode && (
-              <Grid container direction='row' alignItems='center'>
-                <Grid item md={2} xs={12}>
-                  <label htmlFor='file' className={classes.label}>
-                    사진첨부
-                  </label>
-                </Grid>
-                <Grid item md={10} xs={12}>
-                  <input
-                    id='file'
-                    type='file'
-                    required
-                    ref={fileButton}
-                    onChange={getPhotoUrl}
-                  />
-                </Grid>
-              </Grid>
-            )}
+            <input
+              id='file'
+              type='file'
+              ref={fileButton}
+              onChange={getPhotoUrl}
+              className={classes.fileInput}
+            />
             <Grid container direction='row' alignItems='center'>
               <Grid item md={2} xs={12}>
                 <label htmlFor='caption' className={classes.label}>
@@ -235,7 +221,6 @@ const edit = () => {
                 />
               </Grid>
             </Grid>
-
             <Grid container direction='row' alignItems='center'>
               <Grid item md={2} xs={12}>
                 <label htmlFor='tagging' className={classes.label}>
@@ -257,19 +242,7 @@ const edit = () => {
               </Grid>
             </Grid>
             <CardActions>
-              <Grid container justify='flex-end'>
-                <Button size='large' onClick={moveToFeedPage}>
-                  목록
-                </Button>
-                <Button
-                  form='edit'
-                  type='submit'
-                  className={classes.primary}
-                  size='large'
-                >
-                  공유
-                </Button>
-              </Grid>
+              <SubmitButton />
             </CardActions>
           </form>
         </CardContent>

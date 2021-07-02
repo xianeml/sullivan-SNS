@@ -243,11 +243,7 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
         </CardContent>
         <CardActions disableSpacing>
           <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
-            {liked.status ? (
-              <FavoriteIcon color="secondary" />
-            ) : (
-              <FavoriteIcon />
-            )}
+            {liked.status ? <FavoriteIcon color="error" /> : <FavoriteIcon />}
           </IconButton>
           <Typography>
             {liked.num <= 0 || !liked.num ? 0 : liked.num}

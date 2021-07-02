@@ -106,7 +106,7 @@ const Header = () => {
               aria-haspopup="true"
               onClick={handleNotificationMenuOpen}
             >
-              <Badge badgeContent={3} color="secondary">
+              <Badge badgeContent={3} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>

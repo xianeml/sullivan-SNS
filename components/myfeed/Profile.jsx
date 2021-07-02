@@ -65,7 +65,8 @@ const Profile = ({ user, feedList }) => {
                 </Grid>
                 <Grid item>
                   <Typography variant='body1' component='h2' paragraph>
-                    좋아하는 피드 수{user.likeFeeds ? user.likeFeeds.length : 0}
+                    좋아하는 피드 수{' '}
+                    {user.likeFeeds ? user.likeFeeds.length : 0}
                   </Typography>
                 </Grid>
               </Grid>
