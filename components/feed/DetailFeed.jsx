@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import Avatar from "./common/Avatar";
+import Avatar from "../common/Avatar";
 import {
   CardHeader,
   CardMedia,
@@ -21,7 +21,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useRouter } from "next/router";
-import db from "../firestores/db";
+import db from "../../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
   feed: {

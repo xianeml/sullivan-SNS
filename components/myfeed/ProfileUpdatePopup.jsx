@@ -16,14 +16,13 @@ import db from "../../firestores/db";
 import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
-  primary: {
-    color: "#2196f3",
+  saveBtn: {
     fontWeight: "bold",
   },
   popupBtn: {
     cursor: "pointer",
     margin: "1rem 0",
-    color: "#2196f3",
+    color: theme.palette.primary,
     fontWeight: "bold",
   },
   formGroup: {
@@ -186,11 +185,12 @@ export default function ProfileUpdatePopup({
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} size="large">
+          <Button color="secondary" size="large" onClick={handleClose}>
             취소
           </Button>
           <Button
-            className={classes.primary}
+            className={classes.saveBtn}
+            color="primary"
             size="large"
             type="submit"
             form="profileUpdate"

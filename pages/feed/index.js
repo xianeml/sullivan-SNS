@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Feed from "../../components/Feed";
+import Feed from "../../components/feed/Feed";
 import db from "../../firestores/db";
 
 const index = () => {
@@ -88,23 +88,5 @@ const index = () => {
     </div>
   );
 };
-
-// export async function getStaticProps() {
-//   let user = {};
-//   await db
-//     .collection("myuser")
-//     .doc("SFCKJmd9KzCpO5H77wz1")
-//     .get()
-//     .then((doc) => {
-//       user = { ...doc.data() };
-//     })
-//     .catch((err) => console.log(err));
-
-//   return {
-//     props: {
-//       user,
-//     },
-//   };
-// }
 
 export default index;
