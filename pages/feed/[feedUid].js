@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
-import Grid from "@material-ui/core/Grid";
-import { Paper, TextField, IconButton, Typography } from "@material-ui/core";
+import {
+  Grid,
+  Paper,
+  TextField,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
 import Avatar from "../../components/common/Avatar";
 import DetailFeed from "../../components/feed/DetailFeed";
 import Comment from "../../components/feed/Comment";
+import commentData from "../../src/comments.js";
 import SendIcon from "@material-ui/icons/Send";
-import { useRouter } from "next/router";
 import db from "../../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
@@ -40,28 +46,7 @@ const detail = ({ feedUid }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [inputs, setInputs] = useState({ comment: "" });
-  const comments = [
-    {
-      id: 1,
-      username: "aeuna",
-      comment: "정말 맛있겠다!",
-    },
-    {
-      id: 2,
-      username: "kelee98",
-      comment: "장소가 어디인가용?",
-    },
-    {
-      id: 3,
-      username: "xianeml",
-      comment: "가고 싶어요!",
-    },
-    {
-      id: 4,
-      username: "huiji0315",
-      comment: "나도 가고 싶어요!",
-    },
-  ];
+  const [comments, setComments] = useState(commentData);
 
   useEffect(() => {
     getUser();
@@ -99,7 +84,7 @@ const detail = ({ feedUid }) => {
     });
   };
   const handleSendClick = () => {
-    const comments = {
+    const comment = {
       id: comments.length + 1,
       username: user.displayName,
       comment: inputs.comment,
@@ -159,7 +144,7 @@ const detail = ({ feedUid }) => {
                     </Grid>
                     <Grid item>
                       <IconButton aria-label="send" onClick={handleSendClick}>
-                        <SendIcon />
+                        <SendIcon color="primary" />
                       </IconButton>
                     </Grid>
                   </Grid>

@@ -5,18 +5,19 @@ import db from "../firestores/db";
 const index = () => {
   const router = useRouter();
 
+  const getUser = async () => {
+    try {
+      const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
+      const userDoc = await userRef.get();
+      const userInfo = userDoc.data();
+      userInfo ? router.push("/feed") : <div>유저 정보가 없습니다.</div>;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    db.collection("myuser")
-      .doc("SFCKJmd9KzCpO5H77wz1")
-      .get()
-      .then((doc) => {
-        if (doc.data()) {
-          router.push("/feed");
-        } else {
-          <div>유저 정보가 없습니다.</div>;
-        }
-      })
-      .catch((err) => console.log(err));
+    getUser();
   }, []);
 
   return <div></div>;

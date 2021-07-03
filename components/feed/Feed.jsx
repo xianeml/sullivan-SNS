@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Router from 'next/router';
 import Link from 'next/link';
 import Avatar from '../common/Avatar';
 import Comment from './Comment';
@@ -139,7 +138,7 @@ export default function Feed({ feed, comments, setComments, user }) {
   const handleSendClick = () => {
     const comment = {
       id: comments.length + 1,
-      username: 'aeuna',
+      username: user.displayName,
       comment: inputs.comment,
     };
     setComments([...comments, comment]);
@@ -204,7 +203,7 @@ export default function Feed({ feed, comments, setComments, user }) {
               ))}
               <Grid container wrap='nowrap' spacing={2}>
                 <Grid item>
-                  <Avatar size={1} />
+                  <Avatar photoUrl={user.photoUrl} size={1} />
                 </Grid>
                 <Grid
                   className={classes.commentItem}
@@ -213,7 +212,9 @@ export default function Feed({ feed, comments, setComments, user }) {
                   xs
                   zeroMinWidth
                 >
-                  <h4 style={{ margin: 0, textAlign: 'left' }}>aeuna</h4>
+                  <h4 style={{ margin: 0, textAlign: 'left' }}>
+                    {user.displayName}
+                  </h4>
                   <div className={classes.commentSend}>
                     <TextField
                       name='comment'
@@ -225,7 +226,7 @@ export default function Feed({ feed, comments, setComments, user }) {
                       value={inputs.comment}
                     />
                     <IconButton aria-label='send' onClick={handleSendClick}>
-                      <SendIcon />
+                      <SendIcon color='primary' />
                     </IconButton>
                   </div>
                 </Grid>
