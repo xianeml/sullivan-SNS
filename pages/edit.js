@@ -135,7 +135,10 @@ const edit = () => {
     try {
       const feedRef = db.collection('feed').doc(uid);
       await feedRef.set(createParams);
-      router.push('/feed');
+      router.push({
+        pathname: '/feed',
+        query: { message: '등록되었습니다.' },
+      });
     } catch (error) {
       console.log(error);
     }
@@ -152,7 +155,10 @@ const edit = () => {
     try {
       const feedRef = db.collection('feed').doc(feedUid);
       await feedRef.update(updateParams);
-      router.push('/feed');
+      router.push({
+        pathname: '/feed',
+        query: { message: '수정되었습니다.' },
+      });
     } catch (error) {
       console.log(error);
     }

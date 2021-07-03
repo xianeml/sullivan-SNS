@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Snackbar from "../../components/common/Snackbar";
 import Feed from "../../components/feed/Feed";
 import db from "../../firestores/db";
 
@@ -29,8 +31,26 @@ const index = () => {
     },
   ]);
 
+  // 스낵바 알림창
+  const [resultMessageOpen, setResultMessageOpen] = useState(false);
+  const [resultMessage, setResultMessage] = useState("");
+  const router = useRouter();
+  const { message } = router.query;
+
+  const openResultMessage = () => {
+    setResultMessageOpen(true);
+  };
+  const closeResultMessage = (reason) => {
+    if (reason === "clickaway") return;
+    setResultMessageOpen(false);
+  };
+
   useEffect(() => {
     fetchData();
+    if (message) {
+      setResultMessage(message);
+      openResultMessage();
+    }
   }, []);
 
   const fetchData = async () => {
@@ -85,6 +105,12 @@ const index = () => {
           setComments={setComments}
         />
       ))}
+      <Snackbar
+        open={resultMessageOpen}
+        closeHandler={closeResultMessage}
+        message={resultMessage}
+        durationProps={1500}
+      />
     </div>
   );
 };

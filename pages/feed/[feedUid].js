@@ -85,7 +85,10 @@ const detail = ({ feedUid }) => {
 
   async function deleteFeed() {
     await db.collection("feed").doc(feedUid).delete();
-    router.push("/feed");
+    router.push({
+      pathname: "/feed",
+      query: { message: "삭제되었습니다." },
+    });
   }
 
   const handleTextChange = (e) => {
