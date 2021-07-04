@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
   feedImg: {
     padding: theme.spacing(1),
     maxWidth: "100%",
-    height: "auto",
+    height: "400px",
+    width: "400px",
     display: "block",
     "&:hover": {
       cursor: "pointer",
@@ -29,11 +30,21 @@ const FeedImgGrid = ({ feed }) => {
       <Grid item md={4} sm={6} xs={12}>
         <div className={classes.imgContainer}>
           <Link href="/feed/[feedUid]" as={"/feed/" + feed.uid}>
-            <img
-              src={feed.photoUrl}
-              alt={feed.content}
-              className={classes.feedImg}
-            />
+            {feed.photoUrl ? (
+              <img
+                src={feed.photoUrl}
+                alt={feed.content}
+                className={classes.feedImg}
+              />
+            ) : (
+              <img
+                width="100%"
+                height="100%"
+                src={feed.author.photoUrl}
+                alt={feed.content}
+                className={classes.feedImg}
+              />
+            )}
           </Link>
         </div>
       </Grid>
