@@ -233,9 +233,11 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
           title={author.displayName}
           subheader={createAT + " " + location}
         />
-        <CardMedia className={classes.media}>
-          <img src={photoUrl} alt={content} className={classes.mediaImg} />
-        </CardMedia>
+        {photoUrl && (
+          <CardMedia className={classes.media}>
+            <img src={photoUrl} alt={content} className={classes.mediaImg} />
+          </CardMedia>
+        )}
         <CardContent className={classes.content}>
           <Typography variant="body1" component="p">
             {content}
