@@ -1,28 +1,28 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   Card,
   CardActions,
   CardContent,
   Grid,
   TextField,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { useRouter } from 'next/router';
-import db from '../firestores/db';
-import { v4 as uuidv4 } from 'uuid';
-import firebase from '../firestores/firebase';
-import PhotoPreview from '../components/edit/PhotoPreview';
-import SubmitButton from '../components/edit/SubmitButton';
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
+import db from "../firestores/db";
+import { v4 as uuidv4 } from "uuid";
+import firebase from "../firestores/firebase";
+import PhotoPreview from "../components/edit/PhotoPreview";
+import SubmitButton from "../components/edit/SubmitButton";
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    padding: '3rem',
+    padding: "3rem",
   },
   label: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   fileInput: {
-    display: 'none',
+    display: "none",
   },
 }));
 
@@ -34,10 +34,10 @@ const edit = () => {
 
   const [updateMode, setUpdateMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState('');
-  const [content, setContent] = useState('');
-  const [location, setLocation] = useState('');
-  const [tag, setTag] = useState('');
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [content, setContent] = useState("");
+  const [location, setLocation] = useState("");
+  const [tag, setTag] = useState("");
   const [author, setAuthor] = useState({});
   const fileButton = useRef();
 
@@ -50,7 +50,7 @@ const edit = () => {
   }, []);
 
   const getUser = async () => {
-    const userRef = db.collection('myuser').doc('SFCKJmd9KzCpO5H77wz1');
+    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
     const userSnapshot = await userRef.get();
     const userInfo = userSnapshot.data();
     setAuthor({
@@ -63,7 +63,7 @@ const edit = () => {
   async function getPhotoUrl() {
     setLoading(true);
     const file = fileButton.current.files[0];
-    const storageRef = firebase.storage().ref(author.uid + '/' + uid);
+    const storageRef = firebase.storage().ref(author.uid + "/" + uid);
     const saveFileTask = await storageRef.put(file);
     const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
     setLoading(false);
@@ -76,7 +76,7 @@ const edit = () => {
 
   async function getFeedDetail() {
     try {
-      const feedRef = db.collection('feed').doc(feedUid);
+      const feedRef = db.collection("feed").doc(feedUid);
       const feedSnapshot = await feedRef.get();
       const feedDetail = feedSnapshot.data();
       setPhotoUrl(feedDetail.photoUrl);
@@ -105,7 +105,7 @@ const edit = () => {
 
   async function updateUserFeedList() {
     try {
-      const userRef = db.collection('myuser').doc(author.uid);
+      const userRef = db.collection("myuser").doc(author.uid);
       const userSnapshot = await userRef.get();
       const userFeedList = await userSnapshot.data().feedList;
       let newFeedList;
@@ -133,11 +133,11 @@ const edit = () => {
     };
 
     try {
-      const feedRef = db.collection('feed').doc(uid);
+      const feedRef = db.collection("feed").doc(uid);
       await feedRef.set(createParams);
       router.push({
-        pathname: '/feed',
-        query: { message: '등록되었습니다.' },
+        pathname: "/feed",
+        query: { message: "등록되었습니다." },
       });
     } catch (error) {
       console.log(error);
@@ -153,11 +153,11 @@ const edit = () => {
     };
 
     try {
-      const feedRef = db.collection('feed').doc(feedUid);
+      const feedRef = db.collection("feed").doc(feedUid);
       await feedRef.update(updateParams);
       router.push({
-        pathname: '/feed',
-        query: { message: '수정되었습니다.' },
+        pathname: "/feed",
+        query: { message: "수정되었습니다." },
       });
     } catch (error) {
       console.log(error);
@@ -166,7 +166,7 @@ const edit = () => {
 
   return (
     <div>
-      <Card variant='outlined'>
+      <Card variant="outlined">
         <CardContent>
           <PhotoPreview
             photoUrl={photoUrl}
@@ -175,30 +175,30 @@ const edit = () => {
           />
         </CardContent>
       </Card>
-      <Card variant='outlined'>
+      <Card variant="outlined">
         <CardContent>
-          <form id='edit' className={classes.form} onSubmit={submitHandler}>
+          <form id="edit" className={classes.form} onSubmit={submitHandler}>
             <input
-              id='file'
-              type='file'
+              id="file"
+              type="file"
               ref={fileButton}
               onChange={getPhotoUrl}
               className={classes.fileInput}
             />
-            <Grid container direction='row' alignItems='center'>
+            <Grid container direction="row" alignItems="center">
               <Grid item md={2} xs={12}>
-                <label htmlFor='caption' className={classes.label}>
+                <label htmlFor="caption" className={classes.label}>
                   문구입력
                 </label>
               </Grid>
               <Grid item md={10} xs={12}>
                 <TextField
-                  id='caption'
+                  id="caption"
                   multiline
-                  rows='4'
-                  placeholder='문구 입력...'
-                  variant='outlined'
-                  margin='dense'
+                  rows="4"
+                  placeholder="문구 입력..."
+                  variant="outlined"
+                  margin="dense"
                   fullWidth
                   autoFocus
                   required
@@ -207,19 +207,19 @@ const edit = () => {
                 />
               </Grid>
             </Grid>
-            <Grid container direction='row' alignItems='center'>
+            <Grid container direction="row" alignItems="center">
               <Grid item md={2} xs={12}>
-                <label htmlFor='location' className={classes.label}>
+                <label htmlFor="location" className={classes.label}>
                   위치 추가
                 </label>
               </Grid>
               <Grid item md={10} xs={12}>
                 <TextField
-                  id='location'
-                  type='text'
-                  placeholder='위치 추가'
-                  variant='outlined'
-                  margin='dense'
+                  id="location"
+                  type="text"
+                  placeholder="위치 추가"
+                  variant="outlined"
+                  margin="dense"
                   fullWidth
                   autoFocus
                   value={location}
@@ -227,19 +227,19 @@ const edit = () => {
                 />
               </Grid>
             </Grid>
-            <Grid container direction='row' alignItems='center'>
+            <Grid container direction="row" alignItems="center">
               <Grid item md={2} xs={12}>
-                <label htmlFor='tagging' className={classes.label}>
-                  사람 태그
+                <label htmlFor="tagging" className={classes.label}>
+                  태그
                 </label>
               </Grid>
               <Grid item md={10} xs={12}>
                 <TextField
-                  id='tagging'
-                  type='text'
-                  placeholder='태그하기'
-                  variant='outlined'
-                  margin='dense'
+                  id="tagging"
+                  type="text"
+                  placeholder="태그하기"
+                  variant="outlined"
+                  margin="dense"
                   fullWidth
                   autoFocus
                   value={tag}
