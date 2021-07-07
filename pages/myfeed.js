@@ -34,9 +34,8 @@ const myFeed = () => {
   }, []);
 
   const getUserInfo = async () => {
-    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
-    const userDoc = await userRef.get();
-    const userInfo = userDoc.data();
+    const fetchUserInfo = await fetch("/api/user");
+    const userInfo = await fetchUserInfo.json();
     setUser(userInfo);
 
     const myFeedList = [];
