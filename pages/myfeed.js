@@ -3,7 +3,6 @@ import { Divider, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Profile from "../components/myFeed/Profile";
 import PhotoGrid from "../components/myFeed/PhotoGrid";
-import db from "../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
   divider: {
@@ -38,15 +37,9 @@ const myFeed = () => {
     const userInfo = await fetchUserInfo.json();
     setUser(userInfo);
 
-    const myFeedList = [];
-    const feedRef = db.collection("feed");
-    const feedSnapshot = await feedRef.orderBy("create_at", "desc").get();
-    feedSnapshot.forEach((doc) => {
-      if (doc.data().author.uid === userInfo.uid) {
-        myFeedList.push(doc.data());
-      }
-    });
-    setFeedList(myFeedList);
+    const fetchFeedList = await fetch(`/api/myfeed?userId=${userInfo.uid}`);
+    const myFeedList = await fetchFeedList.json();
+    setFeedList(myFeedList.data);
     setLoading(false);
   };
 
