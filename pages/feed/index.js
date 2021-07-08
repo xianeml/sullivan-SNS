@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Snackbar from "../../components/common/Snackbar";
 import Feed from "../../components/feed/Feed";
-import db from "../../firestores/db";
 import commentData from "../../src/comments.js";
 
 const index = () => {
@@ -34,43 +33,18 @@ const index = () => {
   }, []);
 
   const fetchData = async () => {
-    const feedsData = [];
-    await db
-      .collection("myuser")
-      .doc("SFCKJmd9KzCpO5H77wz1")
-      .get()
-      .then((doc) => {
-        setUser(doc.data());
-      })
-      .catch((err) => console.log(err));
+    try {
+      const fetchUserInfo = await fetch("/api/user");
+      const userInfo = await fetchUserInfo.json();
+      setUser(userInfo);
 
-    await db
-      .collection("feed")
-      .orderBy("create_at", "desc")
-      .get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          feedsData.push({
-            content: doc.data().content,
-            like: doc.data().like,
-            photoUrl: doc.data().photoUrl,
-            author: {
-              displayName: doc.data().author.displayName,
-              photoUrl: doc.data().author.photoUrl,
-              uid: doc.data().author.uid,
-            },
-            location: doc.data().location,
-            tag: doc.data().tag,
-            uid: doc.data().uid,
-            create_at: doc.data().create_at.seconds,
-          });
-        });
-        setFeeds(feedsData);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    setLoading(false);
+      const fetchFeedList = await fetch("/api/feed");
+      const feedList = await fetchFeedList.json();
+      setFeeds(feedList.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
