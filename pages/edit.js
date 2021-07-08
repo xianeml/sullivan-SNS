@@ -133,11 +133,18 @@ const edit = () => {
     };
 
     try {
-      const feedRef = db.collection("feed").doc(uid);
-      await feedRef.set(createParams);
+      const createResult = await fetch("/api/feed", {
+        method: "POST",
+        body: JSON.stringify(createParams),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+      const { message } = await createResult.json();
+
       router.push({
         pathname: "/feed",
-        query: { message: "등록되었습니다." },
+        query: { message },
       });
     } catch (error) {
       console.log(error);
