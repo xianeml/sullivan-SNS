@@ -103,8 +103,6 @@ const edit = () => {
       location,
       tag,
       author,
-      create_at: new Date(),
-      like: 0,
     };
 
     try {

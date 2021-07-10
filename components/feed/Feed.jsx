@@ -148,7 +148,7 @@ export default function Feed({ feed, comments, setComments, user }) {
   };
 
   let t = new Date(1970, 0, 1);
-  t.setSeconds(create_at);
+  t.setSeconds(create_at.seconds);
   const createAT =
     t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate();
 

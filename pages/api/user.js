@@ -32,7 +32,6 @@ export default async function handler(req, res) {
     return res.status(200);
   } else {
     const userInfo = await getUserInfo();
-    console.log(userInfo);
     return res.status(200).json(userInfo);
   }
 }

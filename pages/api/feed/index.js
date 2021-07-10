@@ -40,9 +40,15 @@ async function getMyFeedList(userId) {
   method : POST
 */
 async function createFeed(createData) {
+  const createParams = {
+    ...createData,
+    create_at: new Date(),
+    like: 0,
+  };
+
   // 피드 생성
   const feedRef = db.collection("feed").doc(createData.uid);
-  await feedRef.set(createData);
+  await feedRef.set(createParams);
 
   // 사용자 피드 리스트 업데이트
   const userRef = db.collection("myuser").doc(createData.author.uid);

@@ -29,15 +29,25 @@ async function updateFeed(feedUid, updateData) {
   URL : /api/feed/{feedUid}
   method : DELETE
 */
-async function deleteFeed(feedUid) {
+async function deleteFeed(feedUid, userId) {
+  // // 피드 삭제
   const feedRef = db.collection("feed").doc(feedUid);
   await feedRef.delete();
 
-  // // 사용자 피드 리스트 업데이트 필요
+  // // 사용자 피드 리스트 업데이트
+  const userRef = db.collection("myuser").doc(userId);
+  const userSnapshot = await userRef.get();
+  const userFeedList = await userSnapshot.data().feedList;
+
+  const newFeedList = userFeedList.filter((feed) => {
+    return feed.feedId !== feedUid;
+  });
+
+  await userRef.update({ feedList: newFeedList });
 }
 
 export default async function handler(req, res) {
-  const { feedUid } = req.query;
+  const { feedUid, userId } = req.query;
 
   if (req.method === "PATCH") {
     const updateData = req.body;
@@ -45,7 +55,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ message: "수정되었습니다." });
   }
   if (req.method === "DELETE") {
-    await deleteFeed(feedUid);
+    await deleteFeed(feedUid, userId);
     return res.status(200).json({ message: "삭제되었습니다." });
   } else {
     const feedDetail = await getFeedDetail(feedUid);
