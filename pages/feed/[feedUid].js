@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Paper,
@@ -13,7 +13,6 @@ import DetailFeed from "../../components/feed/DetailFeed";
 import Comment from "../../components/feed/Comment";
 import commentData from "../../src/comments.js";
 import SendIcon from "@material-ui/icons/Send";
-import db from "../../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -31,48 +30,38 @@ const useStyles = makeStyles((theme) => ({
 export const getServerSideProps = async (ctx) => {
   const { feedUid } = ctx.query;
 
+  const fetchUserInfo = await fetch("http://localhost:3000/api/user");
+  const user = await fetchUserInfo.json();
+
+  const fetchFeedDetail = await fetch(
+    `http://localhost:3000/api/feed/${feedUid}`
+  );
+  const feedDetail = await fetchFeedDetail.json();
+
   return {
     props: {
       feedUid,
+      user,
+      feedDetail,
     },
   };
 };
 
-const detail = ({ feedUid }) => {
+const detail = ({ feedUid, user, feedDetail }) => {
   const classes = useStyles();
   const router = useRouter();
 
-  const [feed, setFeed] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [inputs, setInputs] = useState({ comment: "" });
   const [comments, setComments] = useState(commentData);
 
-  useEffect(() => {
-    getUser();
-    getFeedDetail();
-  }, []);
-
-  async function getUser() {
-    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
-    const userDoc = await userRef.get();
-    const userInfo = userDoc.data();
-    setUser(userInfo);
-  }
-
-  async function getFeedDetail() {
-    const feedRef = db.collection("feed").doc(feedUid);
-    const feedDoc = await feedRef.get();
-    const feedDetail = feedDoc.data();
-    setFeed(feedDetail);
-    setLoading(false);
-  }
-
   async function deleteFeed() {
-    await db.collection("feed").doc(feedUid).delete();
+    const createResult = await fetch(`/api/feed/${feedUid}`, {
+      method: "DELETE",
+    });
+    const { message } = await createResult.json();
     router.push({
       pathname: "/feed",
-      query: { message: "삭제되었습니다." },
+      query: { message },
     });
   }
 
@@ -95,12 +84,15 @@ const detail = ({ feedUid }) => {
     });
   };
 
-  if (loading) return <div>Loading...</div>;
   return (
     <Grid container>
       <Grid item xs={8}>
         <Paper className={classes.paper}>
-          <DetailFeed feed={feed} deleteHandler={deleteFeed} user={user} />
+          <DetailFeed
+            feed={feedDetail}
+            deleteHandler={deleteFeed}
+            user={user}
+          />
         </Paper>
       </Grid>
       <Grid item xs={4}>

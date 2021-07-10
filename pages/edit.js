@@ -160,11 +160,18 @@ const edit = () => {
     };
 
     try {
-      const feedRef = db.collection("feed").doc(feedUid);
-      await feedRef.update(updateParams);
+      const updateResult = await fetch(`/api/feed/${feedUid}`, {
+        method: "PATCH",
+        body: JSON.stringify(updateParams),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+      const { message } = await updateResult.json();
+
       router.push({
         pathname: "/feed",
-        query: { message: "수정되었습니다." },
+        query: { message },
       });
     } catch (error) {
       console.log(error);

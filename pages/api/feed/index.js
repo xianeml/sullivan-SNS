@@ -1,8 +1,6 @@
 import firebase from "../../../firestores/firebase";
-import { v4 as uuidv4 } from "uuid";
 
 const db = firebase.firestore();
-const uid = uuidv4();
 
 /*
   전체 피드 리스트 조회 API
@@ -25,7 +23,7 @@ async function getFeedList() {
   method : POST
 */
 async function createFeed(createData) {
-  const feedRef = db.collection("feed").doc(uid);
+  const feedRef = db.collection("feed").doc(createData.uid);
   await feedRef.set(createData);
 }
 
