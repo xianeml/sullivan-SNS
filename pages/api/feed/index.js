@@ -3,7 +3,7 @@ import firebase from "../../../firestores/firebase";
 const db = firebase.firestore();
 
 /*
-  전체 피드 리스트 조회 API
+  전체 피드 목록 조회 API
   URL : /api/feed
   method : GET
 */
@@ -18,16 +18,52 @@ async function getFeedList() {
 }
 
 /*
+  내 피드 목록 조회 API
+  URL : /api/feed/{userId}
+  method : GET
+*/
+async function getMyFeedList(userId) {
+  const myFeedList = [];
+  const feedRef = db.collection("feed");
+  const feedSnapshot = await feedRef.orderBy("create_at", "desc").get();
+  feedSnapshot.forEach((doc) => {
+    if (doc.data().author.uid === userId) {
+      myFeedList.push(doc.data());
+    }
+  });
+  return myFeedList;
+}
+
+/*
   피드 생성 API
   URL : /api/feed
   method : POST
 */
 async function createFeed(createData) {
+  // 피드 생성
   const feedRef = db.collection("feed").doc(createData.uid);
   await feedRef.set(createData);
+
+  // 사용자 피드 리스트 업데이트
+  const userRef = db.collection("myuser").doc(createData.author.uid);
+  const userSnapshot = await userRef.get();
+  const userFeedList = await userSnapshot.data().feedList;
+  let newFeedList;
+  if (userFeedList) {
+    newFeedList = [...userFeedList, { feedId: createData.uid }];
+  } else {
+    newFeedList = [{ feedId: createData.uid }];
+  }
+  await userRef.update({ feedList: newFeedList });
 }
 
 export default async function handler(req, res) {
+  const { userId } = req.query;
+
+  if (userId) {
+    const myFeedList = await getMyFeedList(userId);
+    return res.status(200).json({ data: myFeedList });
+  }
   if (req.method === "POST") {
     const createData = req.body;
     await createFeed(createData);

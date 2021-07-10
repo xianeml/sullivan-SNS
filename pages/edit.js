@@ -8,7 +8,6 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
-import db from "../firestores/db";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../firestores/firebase";
 import PhotoPreview from "../components/edit/PhotoPreview";
@@ -49,16 +48,11 @@ const edit = () => {
     getUser();
   }, []);
 
-  const getUser = async () => {
-    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
-    const userSnapshot = await userRef.get();
-    const userInfo = userSnapshot.data();
-    setAuthor({
-      uid: userInfo.uid,
-      photoUrl: userInfo.photoUrl,
-      displayName: userInfo.displayName,
-    });
-  };
+  async function getUser() {
+    const fetchUserInfo = await fetch("/api/user");
+    const userInfo = await fetchUserInfo.json();
+    setAuthor(userInfo);
+  }
 
   async function getPhotoUrl() {
     setLoading(true);
@@ -76,9 +70,8 @@ const edit = () => {
 
   async function getFeedDetail() {
     try {
-      const feedRef = db.collection("feed").doc(feedUid);
-      const feedSnapshot = await feedRef.get();
-      const feedDetail = feedSnapshot.data();
+      const fetchFeedDetail = await fetch(`/api/feed/${feedUid}`);
+      const feedDetail = await fetchFeedDetail.json();
       setPhotoUrl(feedDetail.photoUrl);
       setContent(feedDetail.content);
       setLocation(feedDetail.location);
@@ -95,26 +88,8 @@ const edit = () => {
       if (updateMode) {
         updateFeed();
       } else {
-        await updateUserFeedList();
         await createFeed();
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function updateUserFeedList() {
-    try {
-      const userRef = db.collection("myuser").doc(author.uid);
-      const userSnapshot = await userRef.get();
-      const userFeedList = await userSnapshot.data().feedList;
-      let newFeedList;
-      if (userFeedList) {
-        newFeedList = [...userFeedList, { feedId: uid }];
-      } else {
-        newFeedList = [{ feedId: uid }];
-      }
-      await userRef.update({ feedList: newFeedList });
     } catch (error) {
       console.log(error);
     }

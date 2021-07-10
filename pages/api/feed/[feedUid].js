@@ -32,6 +32,8 @@ async function updateFeed(feedUid, updateData) {
 async function deleteFeed(feedUid) {
   const feedRef = db.collection("feed").doc(feedUid);
   await feedRef.delete();
+
+  // // 사용자 피드 리스트 업데이트 필요
 }
 
 export default async function handler(req, res) {

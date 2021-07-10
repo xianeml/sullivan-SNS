@@ -37,7 +37,7 @@ const myFeed = () => {
     const userInfo = await fetchUserInfo.json();
     setUser(userInfo);
 
-    const fetchFeedList = await fetch(`/api/myfeed?userId=${userInfo.uid}`);
+    const fetchFeedList = await fetch(`/api/feed?userId=${userInfo.uid}`);
     const myFeedList = await fetchFeedList.json();
     setFeedList(myFeedList.data);
     setLoading(false);

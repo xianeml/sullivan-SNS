@@ -55,10 +55,11 @@ const detail = ({ feedUid, user, feedDetail }) => {
   const [comments, setComments] = useState(commentData);
 
   async function deleteFeed() {
-    const createResult = await fetch(`/api/feed/${feedUid}`, {
+    const deleteResult = await fetch(`/api/feed/${feedUid}`, {
       method: "DELETE",
     });
-    const { message } = await createResult.json();
+    const { message } = await deleteResult.json();
+
     router.push({
       pathname: "/feed",
       query: { message },
