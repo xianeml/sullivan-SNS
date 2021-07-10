@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Avatar from '../common/Avatar';
 import Comment from './Comment';
-import db from '../../firestores/db';
 import {
   Paper,
   TextField,
@@ -97,7 +96,7 @@ export default function Feed({ feed, comments, setComments, user }) {
     setExpanded(!expanded);
   };
 
-  const handleHeartClick = () => {
+  async function handleHeartClick() {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
     let updateFeedLike = [];
     if (liked.status) {
@@ -105,27 +104,29 @@ export default function Feed({ feed, comments, setComments, user }) {
     } else {
       updateFeedLike = [...likeFeeds, uid];
     }
-    // 피드 - 좋아요 수 업데이트
-    db.collection('feed')
-      .doc(uid)
-      .update({
-        like: likeNum,
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // 사용자 - 좋아하는 피드 리스트 업데이트
-    db.collection('myuser')
-      .doc(user.uid)
-      .update({ likeFeeds: updateFeedLike })
-      .catch((err) => console.log(err));
+
+    await fetch(`/api/feed/${uid}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ like: likeNum }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    });
+
+    await fetch(`/api/user`, {
+      method: 'PATCH',
+      body: JSON.stringify({ likeFeeds: updateFeedLike }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    });
 
     setLiked({
       status: !liked.status,
       num: likeNum,
     });
     setLikeFeeds(updateFeedLike);
-  };
+  }
 
   const handleTextChange = (e) => {
     const { name, value } = e.target;

@@ -12,7 +12,6 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "../common/Avatar";
 import firebase from "../../firestores/firebase";
-import db from "../../firestores/db";
 import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
@@ -63,14 +62,14 @@ export default function ProfileUpdatePopup({
   async function submitHandler(event) {
     event.preventDefault();
 
-    const profileUpdateParams = {
+    const updateData = {
       photoUrl,
       displayName,
       webpage,
       caption,
     };
     try {
-      await updateUserProfile(profileUpdateParams);
+      await updateUserProfile(updateData);
       handleClose();
       openResultMessageHandler();
     } catch (error) {
@@ -78,10 +77,15 @@ export default function ProfileUpdatePopup({
     }
   }
 
-  async function updateUserProfile(profileUpdateParams) {
+  async function updateUserProfile(updateData) {
     try {
-      const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
-      await userRef.update(profileUpdateParams);
+      await fetch(`/api/user`, {
+        method: "PATCH",
+        body: JSON.stringify(updateData),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
     } catch (error) {
       console.log(error);
     }

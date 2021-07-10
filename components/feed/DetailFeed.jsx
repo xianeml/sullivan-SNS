@@ -21,7 +21,6 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useRouter } from "next/router";
-import db from "../../firestores/db";
 
 const useStyles = makeStyles((theme) => ({
   feed: {
@@ -141,7 +140,7 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
     deleteHandler();
   };
 
-  const handleHeartClick = () => {
+  async function handleHeartClick() {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
     let updateFeedLike = [];
     if (liked.status) {
@@ -149,26 +148,29 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
     } else {
       updateFeedLike = [...user.likeFeeds, uid];
     }
-    db.collection("feed")
-      .doc(uid)
-      .update({
-        like: likeNum,
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 
-    db.collection("myuser")
-      .doc(user.uid)
-      .update({ likeFeeds: updateFeedLike })
-      .catch((err) => console.log(err));
+    await fetch(`/api/feed/${uid}`, {
+      method: "PATCH",
+      body: JSON.stringify({ like: likeNum }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+
+    await fetch(`/api/user`, {
+      method: "PATCH",
+      body: JSON.stringify({ likeFeeds: updateFeedLike }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
 
     setLiked({
       status: !liked.status,
       num: likeNum,
     });
     setLikeFeeds(updateFeedLike);
-  };
+  }
 
   return (
     <div className={classes.feed}>

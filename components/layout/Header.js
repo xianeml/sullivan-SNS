@@ -13,7 +13,6 @@ import {
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import db from "../../firestores/db";
 
 const useStyles = makeStyles(() => ({
   fix: {
@@ -39,9 +38,8 @@ const Header = () => {
   }, []);
 
   const getUser = async () => {
-    const userRef = db.collection("myuser").doc("SFCKJmd9KzCpO5H77wz1");
-    const userDoc = await userRef.get();
-    const userInfo = userDoc.data();
+    const fetchUserInfo = await fetch("/api/user");
+    const userInfo = await fetchUserInfo.json();
     setUser(userInfo);
   };
 
