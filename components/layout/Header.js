@@ -6,13 +6,10 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Badge,
-  MenuItem,
-  Menu,
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import NotificationBar from "./NotificationBar";
 
 const useStyles = makeStyles(() => ({
   fix: {
@@ -29,44 +26,18 @@ const useStyles = makeStyles(() => ({
 
 const Header = () => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
   const [user, setUser] = useState(null);
-  const isMenuOpen = Boolean(anchorEl);
 
   useEffect(() => {
     getUser();
   }, []);
 
-  const getUser = async () => {
+  async function getUser() {
     const fetchUserInfo = await fetch("/api/user");
     const userInfo = await fetchUserInfo.json();
     setUser(userInfo);
-  };
+  }
 
-  const handleNotificationMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const menuId = "primary-account-menu";
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>알림 1</MenuItem>
-      <MenuItem onClick={handleMenuClose}>알림 2</MenuItem>
-      <MenuItem onClick={handleMenuClose}>알림 3</MenuItem>
-    </Menu>
-  );
   return (
     <div className={classes.grow}>
       <AppBar className={classes.fix}>
@@ -97,21 +68,10 @@ const Header = () => {
                 )}
               </IconButton>
             </Link>
-            <IconButton
-              aria-label="show new notifications"
-              color="inherit"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleNotificationMenuOpen}
-            >
-              <Badge badgeContent={3} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <NotificationBar />
           </div>
         </Toolbar>
       </AppBar>
-      {renderMenu}
     </div>
   );
 };
