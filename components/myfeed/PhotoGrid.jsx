@@ -1,55 +1,38 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import Link from "next/link";
+import PhotoItem from "./PhotoItem";
 
 const useStyles = makeStyles((theme) => ({
-  imgContainer: {
-    overflow: "hidden",
-    width: "400px",
-    height: "400px",
-  },
-  feedImg: {
-    padding: theme.spacing(1),
-    maxWidth: "100%",
-    height: "400px",
-    width: "400px",
-    display: "block",
-    "&:hover": {
-      cursor: "pointer",
-      filter: "brightness(70%)",
+  container: {
+    [theme.breakpoints.down("lg")]: {
+      padding: theme.spacing(0, 30),
+    },
+    [theme.breakpoints.down("md")]: {
+      padding: theme.spacing(0, 2),
+    },
+    [theme.breakpoints.down("sm")]: {
+      padding: 0,
     },
   },
 }));
 
-const FeedImgGrid = ({ feed }) => {
+const PhotoGrid = ({ loading, feedList }) => {
   const classes = useStyles();
 
   return (
     <>
-      <Grid item md={4} sm={6} xs={12}>
-        <div className={classes.imgContainer}>
-          <Link href="/feed/[feedUid]" as={"/feed/" + feed.uid}>
-            {feed.photoUrl ? (
-              <img
-                src={feed.photoUrl}
-                alt={feed.content}
-                className={classes.feedImg}
-              />
-            ) : (
-              <img
-                width="100%"
-                height="100%"
-                src={feed.author.photoUrl}
-                alt={feed.content}
-                className={classes.feedImg}
-              />
-            )}
-          </Link>
-        </div>
+      <Grid container spacing={3} className={classes.container}>
+        {loading ? (
+          <div>Loading...</div>
+        ) : feedList ? (
+          feedList.map((feed, idx) => <PhotoItem feed={feed} key={idx} />)
+        ) : (
+          <p>피드가 없습니다. 사진을 업로드하세요.</p>
+        )}
       </Grid>
     </>
   );
 };
 
-export default FeedImgGrid;
+export default PhotoGrid;
