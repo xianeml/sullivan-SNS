@@ -62,9 +62,9 @@ export default function ProfileUpdatePopup({
     setLoading(false);
   }
 
-  const handleClose = () => {
+  function handleClose() {
     closeHandler();
-  };
+  }
 
   async function submitHandler(event) {
     event.preventDefault();
@@ -93,8 +93,8 @@ export default function ProfileUpdatePopup({
           "Content-type": "application/json; charset=UTF-8",
         },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e);
     }
   }
 

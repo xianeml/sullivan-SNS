@@ -33,9 +33,13 @@ const Header = () => {
   }, []);
 
   async function getUser() {
-    const fetchUserInfo = await fetch("/api/user");
-    const userInfo = await fetchUserInfo.json();
-    setUser(userInfo);
+    try {
+      const fetchUserInfo = await fetch("/api/user");
+      const userInfo = await fetchUserInfo.json();
+      setUser(userInfo);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return (

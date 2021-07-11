@@ -22,23 +22,27 @@ const myFeed = () => {
   }, []);
 
   async function getUserInfo() {
-    const fetchUserInfo = await fetch("/api/user");
-    const userInfo = await fetchUserInfo.json();
-    setUser(userInfo);
+    try {
+      const fetchUserInfo = await fetch("/api/user");
+      const userInfo = await fetchUserInfo.json();
+      setUser(userInfo);
 
-    const fetchFeedList = await fetch(`/api/feed?userId=${userInfo.uid}`);
-    const myFeedList = await fetchFeedList.json();
-    setFeedList(myFeedList.data);
-    setLoading(false);
+      const fetchFeedList = await fetch(`/api/feed?userId=${userInfo.uid}`);
+      const myFeedList = await fetchFeedList.json();
+      setFeedList(myFeedList.data);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   if (loading) return <div>Loading...</div>;
   return (
-    <div className={classes.root}>
+    <>
       <Profile user={user} feedList={feedList} />
       <Divider variant="middle" light className={classes.divider} />
       <PhotoGrid loading={loading} feedList={feedList} />
-    </div>
+    </>
   );
 };
 

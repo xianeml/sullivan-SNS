@@ -49,9 +49,13 @@ const edit = () => {
   }, []);
 
   async function getUser() {
-    const fetchUserInfo = await fetch("/api/user");
-    const userInfo = await fetchUserInfo.json();
-    setAuthor(userInfo);
+    try {
+      const fetchUserInfo = await fetch("/api/user");
+      const userInfo = await fetchUserInfo.json();
+      setAuthor(userInfo);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function getPhotoUrl() {
@@ -76,8 +80,8 @@ const edit = () => {
       setContent(feedDetail.content);
       setLocation(feedDetail.location);
       setTag(feedDetail.tag);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -90,8 +94,8 @@ const edit = () => {
       } else {
         await createFeed();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -119,8 +123,8 @@ const edit = () => {
         pathname: "/feed",
         query: { message },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -146,8 +150,8 @@ const edit = () => {
         pathname: "/feed",
         query: { message },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e);
     }
   }
 

@@ -104,28 +104,31 @@ export default function Feed({ feed, comments, setComments, user }) {
     } else {
       updateFeedLike = [...likeFeeds, uid];
     }
+    try {
+      await fetch(`/api/feed/${uid}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ like: likeNum }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      });
 
-    await fetch(`/api/feed/${uid}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ like: likeNum }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    });
+      await fetch(`/api/user`, {
+        method: 'PATCH',
+        body: JSON.stringify({ likeFeeds: updateFeedLike }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      });
 
-    await fetch(`/api/user`, {
-      method: 'PATCH',
-      body: JSON.stringify({ likeFeeds: updateFeedLike }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    });
-
-    setLiked({
-      status: !liked.status,
-      num: likeNum,
-    });
-    setLikeFeeds(updateFeedLike);
+      setLiked({
+        status: !liked.status,
+        num: likeNum,
+      });
+      setLikeFeeds(updateFeedLike);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   const handleTextChange = (e) => {

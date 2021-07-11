@@ -42,8 +42,8 @@ const index = () => {
       const feedList = await fetchFeedList.json();
       setFeeds(feedList.data);
       setLoading(false);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e);
     }
   };
 
