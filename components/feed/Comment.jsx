@@ -6,11 +6,11 @@ export default function Comment({ data }) {
   const { username, comment } = data;
   return (
     <>
-      <Grid container wrap="nowrap" spacing={2}>
+      <Grid container wrap="nowrap" spacing={2} justifyContent="flex-start">
         <Grid item>
           <Avatar size={1} />
         </Grid>
-        <Grid justifycontent="left" item xs zeroMinWidth>
+        <Grid item xs zeroMinWidth>
           <h4 style={{ margin: 0, textAlign: "left" }}>{username}</h4>
           <p style={{ textAlign: "left" }}>{comment}</p>
         </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import {
   Button,
   Dialog,
@@ -8,6 +8,7 @@ import {
   Grid,
   Link,
   TextField,
+  CircularProgress,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "../common/Avatar";
@@ -15,8 +16,8 @@ import firebase from "../../firestores/firebase";
 import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
-  saveBtn: {
-    fontWeight: "bold",
+  loadingPreview: {
+    margin: "2rem 0",
   },
   popupBtn: {
     cursor: "pointer",
@@ -30,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
   label: {
     fontWeight: "bold",
   },
+  saveBtn: {
+    fontWeight: "bold",
+  },
 }));
 
 export default function ProfileUpdatePopup({
@@ -40,6 +44,7 @@ export default function ProfileUpdatePopup({
 }) {
   const classes = useStyles();
 
+  const [loading, setLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState(user.photoUrl);
   const [displayName, setDisplayName] = useState(user.displayName);
   const [webpage, setWebpage] = useState(user.webpage);
@@ -48,11 +53,13 @@ export default function ProfileUpdatePopup({
   const uid = uuidv4();
 
   async function getPhotoUrl() {
+    setLoading(true);
     const file = fileButton.current.files[0];
     const storageRef = firebase.storage().ref(user.uid + "/" + uid);
     const saveFileTask = await storageRef.put(file);
     const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
     setPhotoUrl(downloadedPhotoUrl);
+    setLoading(false);
   }
 
   const handleClose = () => {
@@ -105,10 +112,17 @@ export default function ProfileUpdatePopup({
             <Grid
               container
               direction="column"
-              justify="center"
+              justifyContent="center"
               alignItems="center"
             >
-              <Avatar displayName={displayName} photoUrl={photoUrl} />
+              {loading ? (
+                <CircularProgress
+                  color="primary"
+                  className={classes.loadingPreview}
+                />
+              ) : (
+                <Avatar displayName={displayName} photoUrl={photoUrl} />
+              )}
               <Link
                 component="label"
                 className={classes.popupBtn}

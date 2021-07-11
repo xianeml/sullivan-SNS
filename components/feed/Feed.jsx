@@ -202,17 +202,16 @@ export default function Feed({ feed, comments, setComments, user }) {
               {comments.map((comment) => (
                 <Comment key={comment.id} data={comment} />
               ))}
-              <Grid container wrap='nowrap' spacing={2}>
+              <Grid
+                container
+                wrap='nowrap'
+                spacing={2}
+                justifyContent='flex-start'
+              >
                 <Grid item>
                   <Avatar photoUrl={user.photoUrl} size={1} />
                 </Grid>
-                <Grid
-                  className={classes.commentItem}
-                  justifycontent='left'
-                  item
-                  xs
-                  zeroMinWidth
-                >
+                <Grid className={classes.commentItem} item xs zeroMinWidth>
                   <h4 style={{ margin: 0, textAlign: 'left' }}>
                     {user.displayName}
                   </h4>

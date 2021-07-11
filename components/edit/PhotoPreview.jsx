@@ -38,7 +38,7 @@ const PhotoPreview = ({ photoUrl, attachFile, loading }) => {
   };
 
   return (
-    <Grid container justify='center' className={classes.container}>
+    <Grid container justifyContent='center' className={classes.container}>
       {photoUrl ? (
         <img src={photoUrl} alt='미리보기' className={classes.imgPreview} />
       ) : (

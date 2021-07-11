@@ -37,7 +37,7 @@ const Profile = ({ user, feedList }) => {
       <Grid
         container
         direction='row'
-        justify='center'
+        justifyContent='center'
         alignItems='center'
         className={classes.profile}
         spacing={4}

@@ -117,7 +117,7 @@ const detail = ({ feedUid, user, feedDetail }) => {
               />
             </Grid>
             <Grid item>
-              <Grid container direction="column" justify="flex-start">
+              <Grid container direction="column" justifyContent="flex-start">
                 <Grid item>
                   <Typography
                     variant="body1"

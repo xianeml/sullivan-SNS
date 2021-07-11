@@ -20,7 +20,7 @@ async function getUserInfo() {
   URL : /api/user/
   method : PATCH
 */
-async function updateUserFeedList(updateData) {
+async function updateUser(updateData) {
   const userRef = db.collection("myuser").doc(userId);
   await userRef.update(updateData);
 }
@@ -28,8 +28,8 @@ async function updateUserFeedList(updateData) {
 export default async function handler(req, res) {
   if (req.method === "PATCH") {
     const updateData = req.body;
-    await updateUserFeedList(updateData);
-    return res.status(200);
+    await updateUser(updateData);
+    return res.status(200).json({ message: "프로필이 수정되었습니다." });
   } else {
     const userInfo = await getUserInfo();
     return res.status(200).json(userInfo);
