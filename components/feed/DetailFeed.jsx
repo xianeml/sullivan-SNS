@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import Avatar from "../common/Avatar";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import {
   CardHeader,
   CardMedia,
@@ -8,19 +8,13 @@ import {
   CardActions,
   IconButton,
   Typography,
-  makeStyles,
   Tooltip,
-  Grow,
-  ClickAwayListener,
-  Paper,
-  Popper,
-  MenuItem,
-  MenuList,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { useRouter } from "next/router";
+import Avatar from "../common/Avatar";
+import PopperMenu from "./PopperMenu";
 
 const useStyles = makeStyles((theme) => ({
   feed: {
@@ -79,15 +73,8 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
     num: like,
   });
   const [likeFeeds, setLikeFeeds] = useState([]);
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
-  const prevOpen = useRef(open);
 
   useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current.focus();
-    }
-    prevOpen.current = open;
     let checkFeed = [];
     if (likeFeeds !== "") {
       setLikeFeeds(user.likeFeeds);
@@ -102,43 +89,13 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
         break;
       }
     }
-  }, [open]);
+  }, []);
 
   var t = new Date(1970, 0, 1);
   t.setSeconds(create_at.seconds);
 
   const createAT =
     t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
-
-  const openSettingMenu = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
-
-  const closeSettingMenu = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
-    setOpen(false);
-  };
-
-  function handleListKeyDown(event) {
-    if (event.key === "Tab") {
-      event.preventDefault();
-      setOpen(false);
-    }
-  }
-
-  const handleUpdate = () => {
-    router.push({
-      pathname: "/edit",
-      query: { feedUid },
-    });
-  };
-
-  const handleDelete = () => {
-    deleteHandler();
-  };
 
   async function handleHeartClick() {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
@@ -174,42 +131,6 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
 
   return (
     <div className={classes.feed}>
-      <Popper
-        open={open}
-        anchorEl={anchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
-      >
-        {({ TransitionProps, placement }) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin:
-                placement === "bottom" ? "center top" : "center bottom",
-            }}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={closeSettingMenu}>
-                <MenuList
-                  autoFocusItem={open}
-                  id="menu-list-grow"
-                  onKeyDown={handleListKeyDown}
-                >
-                  <MenuItem onClick={handleUpdate}>수정</MenuItem>
-                  <MenuItem
-                    className={classes.deleteText}
-                    onClick={handleDelete}
-                  >
-                    삭제
-                  </MenuItem>
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
-
       <Card className={classes.root}>
         <CardHeader
           className={classes.header}
@@ -221,16 +142,7 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
             />
           }
           action={
-            <IconButton
-              aria-label="settings"
-              aria-haspopup="true"
-              onClick={openSettingMenu}
-              ref={anchorRef}
-              aria-controls={open ? "menu-list-grow" : undefined}
-              aria-haspopup="true"
-            >
-              <MoreVertIcon />
-            </IconButton>
+            <PopperMenu deleteHandler={deleteHandler} feedUid={feedUid} />
           }
           title={author.displayName}
           subheader={createAT + " " + location}
