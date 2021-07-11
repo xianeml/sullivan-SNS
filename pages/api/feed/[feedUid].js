@@ -30,20 +30,27 @@ async function updateFeed(feedUid, updateData) {
   method : DELETE
 */
 async function deleteFeed(feedUid, userId) {
-  // // 피드 삭제
+  // 피드 삭제
   const feedRef = db.collection("feed").doc(feedUid);
   await feedRef.delete();
 
-  // // 사용자 피드 리스트 업데이트
+  // 사용자 피드 리스트 업데이트
   const userRef = db.collection("myuser").doc(userId);
   const userSnapshot = await userRef.get();
   const userFeedList = await userSnapshot.data().feedList;
+  const userLikeFeeds = await await userSnapshot.data().likeFeeds;
 
   const newFeedList = userFeedList.filter((feed) => {
     return feed.feedId !== feedUid;
   });
+  const newLikeFeeds = userLikeFeeds.filter((feed) => {
+    return feed === feedUid;
+  });
 
-  await userRef.update({ feedList: newFeedList });
+  await userRef.update({
+    feedList: newFeedList,
+    likeFeeds: newLikeFeeds,
+  });
 }
 
 export default async function handler(req, res) {
