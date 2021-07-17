@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Avatar from '../common/Avatar';
-import Comment from './Comment';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import Avatar from "../common/Avatar";
 import {
-  Paper,
-  TextField,
-  Grid,
   CardHeader,
   CardMedia,
   CardContent,
@@ -16,44 +12,33 @@ import {
   Typography,
   makeStyles,
   Tooltip,
-} from '@material-ui/core';
-import SendIcon from '@material-ui/icons/Send';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ChatIcon from '@material-ui/icons/Chat';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+} from "@material-ui/core";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import ChatIcon from "@material-ui/icons/Chat";
+import LocalOfferIcon from "@material-ui/icons/LocalOffer";
+import Comment from "./Comment";
 
 const useStyles = makeStyles(() => ({
   feed: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   root: {
-    marginTop: '55px',
-    width: '800px',
+    marginTop: "55px",
+    width: "800px",
   },
   media: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  comment: {
-    width: '600px',
-    height: '75px',
-  },
-  commentItem: {
-    marginTop: '10px',
-  },
-  commentSend: {
-    display: 'flex',
-    flexDirection: 'row',
+    paddingTop: "56.25%", // 16:9
   },
   detailBtn: {
-    cursor: 'pointer',
+    cursor: "pointer",
   },
 }));
 
-export default function Feed({ feed, comments, setComments, user }) {
+export default function Feed({ feed, user }) {
   const {
     content,
     like = 0,
@@ -69,9 +54,6 @@ export default function Feed({ feed, comments, setComments, user }) {
   const [liked, setLiked] = useState({
     status: false,
     num: like,
-  });
-  const [inputs, setInputs] = useState({
-    comment: '',
   });
   const [likeFeeds, setLikeFeeds] = useState([]);
 
@@ -106,18 +88,18 @@ export default function Feed({ feed, comments, setComments, user }) {
     }
     try {
       await fetch(`/api/feed/${uid}`, {
-        method: 'PATCH',
+        method: "PATCH",
         body: JSON.stringify({ like: likeNum }),
         headers: {
-          'Content-type': 'application/json; charset=UTF-8',
+          "Content-type": "application/json; charset=UTF-8",
         },
       });
 
       await fetch(`/api/user`, {
-        method: 'PATCH',
+        method: "PATCH",
         body: JSON.stringify({ likeFeeds: updateFeedLike }),
         headers: {
-          'Content-type': 'application/json; charset=UTF-8',
+          "Content-type": "application/json; charset=UTF-8",
         },
       });
 
@@ -131,30 +113,10 @@ export default function Feed({ feed, comments, setComments, user }) {
     }
   }
 
-  const handleTextChange = (e) => {
-    const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value,
-    });
-  };
-
-  const handleSendClick = () => {
-    const comment = {
-      id: comments.length + 1,
-      username: user.displayName,
-      comment: inputs.comment,
-    };
-    setComments([...comments, comment]);
-    setInputs({
-      comment: '',
-    });
-  };
-
   let t = new Date(1970, 0, 1);
   t.setSeconds(create_at.seconds);
   const createAT =
-    t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate();
+    t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
 
   return (
     <div className={classes.feed}>
@@ -162,17 +124,17 @@ export default function Feed({ feed, comments, setComments, user }) {
         <CardHeader
           avatar={<Avatar size={1} photoUrl={author.photoUrl} />}
           title={author.displayName}
-          subheader={createAT + ' ' + location}
+          subheader={createAT + " " + location}
         />
         {photoUrl && <CardMedia className={classes.media} image={photoUrl} />}
         <CardContent>
-          <Typography variant='body1' component='p'>
-            {content.length < 180 ? content : content.slice(0, 180) + '...'}
+          <Typography variant="body1" component="p">
+            {content.length < 180 ? content : content.slice(0, 180) + "..."}
           </Typography>
-          <Link href='/feed/[feedUid]' as={'/feed/' + uid}>
+          <Link href="/feed/[feedUid]" as={"/feed/" + uid}>
             <Typography
-              variant='body2'
-              color='textSecondary'
+              variant="body2"
+              color="textSecondary"
               className={classes.detailBtn}
             >
               더보기
@@ -180,61 +142,28 @@ export default function Feed({ feed, comments, setComments, user }) {
           </Link>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label='add to favorites' onClick={handleHeartClick}>
-            {liked.status ? <FavoriteIcon color='error' /> : <FavoriteIcon />}
+          <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
+            {liked.status ? <FavoriteIcon color="error" /> : <FavoriteIcon />}
           </IconButton>
           <Typography>
             {liked.num <= 0 || !liked.num ? 0 : liked.num}
           </Typography>
           <IconButton
-            aria-label='comment'
+            aria-label="comment"
             onClick={handleExpandClick}
             aria-expanded={expanded}
           >
             <ChatIcon />
           </IconButton>
-          <Tooltip title={tag || '태그 없음'} placement='top' arrow>
-            <IconButton aria-label='tag' className>
+          <Tooltip title={tag || "태그 없음"} placement="top" arrow>
+            <IconButton aria-label="tag" className>
               <LocalOfferIcon />
             </IconButton>
           </Tooltip>
         </CardActions>
-        <Collapse in={expanded} timeout='auto' unmountOnExit>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Paper style={{ padding: '20px 20px' }}>
-              {comments.map((comment) => (
-                <Comment key={comment.id} data={comment} />
-              ))}
-              <Grid
-                container
-                wrap='nowrap'
-                spacing={2}
-                justifyContent='flex-start'
-              >
-                <Grid item>
-                  <Avatar photoUrl={user.photoUrl} size={1} />
-                </Grid>
-                <Grid className={classes.commentItem} item xs zeroMinWidth>
-                  <h4 style={{ margin: 0, textAlign: 'left' }}>
-                    {user.displayName}
-                  </h4>
-                  <div className={classes.commentSend}>
-                    <TextField
-                      name='comment'
-                      multiline
-                      placeholder='댓글을 입력해주세요...'
-                      rowsMax={3}
-                      className={classes.comment}
-                      onChange={handleTextChange}
-                      value={inputs.comment}
-                    />
-                    <IconButton aria-label='send' onClick={handleSendClick}>
-                      <SendIcon color='primary' />
-                    </IconButton>
-                  </div>
-                </Grid>
-              </Grid>
-            </Paper>
+            <Comment user={user} />
           </CardContent>
         </Collapse>
       </Card>
