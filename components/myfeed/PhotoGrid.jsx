@@ -17,15 +17,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PhotoGrid = ({ loading, feedList }) => {
+const PhotoGrid = ({ feedList }) => {
   const classes = useStyles();
 
   return (
     <>
       <Grid container spacing={3} className={classes.container}>
-        {loading ? (
-          <div>Loading...</div>
-        ) : feedList ? (
+        {feedList ? (
           feedList.map((feed, idx) => <PhotoItem feed={feed} key={idx} />)
         ) : (
           <p>피드가 없습니다. 사진을 업로드하세요.</p>
