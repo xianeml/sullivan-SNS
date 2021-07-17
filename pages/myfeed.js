@@ -3,6 +3,7 @@ import { Divider } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Profile from "../components/myFeed/Profile";
 import PhotoGrid from "../components/myFeed/PhotoGrid";
+import PageLoading from "../components/common/PageLoading";
 
 const useStyles = makeStyles((theme) => ({
   divider: {
@@ -36,12 +37,12 @@ const myFeed = () => {
     }
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <PageLoading />;
   return (
     <>
       <Profile user={user} feedList={feedList} />
       <Divider variant="middle" light className={classes.divider} />
-      <PhotoGrid loading={loading} feedList={feedList} />
+      <PhotoGrid feedList={feedList} />
     </>
   );
 };
