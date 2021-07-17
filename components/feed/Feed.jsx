@@ -6,17 +6,12 @@ import {
   CardMedia,
   CardContent,
   Card,
-  CardActions,
   Collapse,
-  IconButton,
   Typography,
   makeStyles,
-  Tooltip,
 } from "@material-ui/core";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ChatIcon from "@material-ui/icons/Chat";
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import Comment from "./Comment";
+import FeedIconBar from "./FeedIconBar";
 
 const useStyles = makeStyles(() => ({
   feed: {
@@ -49,6 +44,7 @@ export default function Feed({ feed, user }) {
     uid,
     location,
   } = feed;
+
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState({
@@ -141,26 +137,14 @@ export default function Feed({ feed, user }) {
             </Typography>
           </Link>
         </CardContent>
-        <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
-            {liked.status ? <FavoriteIcon color="error" /> : <FavoriteIcon />}
-          </IconButton>
-          <Typography>
-            {liked.num <= 0 || !liked.num ? 0 : liked.num}
-          </Typography>
-          <IconButton
-            aria-label="comment"
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-          >
-            <ChatIcon />
-          </IconButton>
-          <Tooltip title={tag || "태그 없음"} placement="top" arrow>
-            <IconButton aria-label="tag" className>
-              <LocalOfferIcon />
-            </IconButton>
-          </Tooltip>
-        </CardActions>
+        <FeedIconBar
+          tag={tag}
+          liked={liked}
+          expanded={expanded}
+          handleHeartClick={handleHeartClick}
+          handleExpandClick={handleExpandClick}
+          type={1}
+        />
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Comment user={user} />

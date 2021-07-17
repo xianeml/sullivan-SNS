@@ -5,18 +5,15 @@ import {
   CardMedia,
   CardContent,
   Card,
-  CardActions,
-  IconButton,
   Typography,
-  Tooltip,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import Avatar from "../common/Avatar";
 import PopperMenu from "./PopperMenu";
+import PageLoading from "../common/PageLoading";
+import FeedIconBar from "./FeedIconBar";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   feed: {
     width: "100%",
     display: "flex",
@@ -24,9 +21,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyItems: "center",
   },
+  root: {
+    width: "900px",
+  },
   header: {
     margin: "1rem 0",
-    width: "1200px",
     height: "55px",
     textAlign: "left",
   },
@@ -37,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mediaImg: {
     height: "auto",
-    width: "1200px",
+    width: "100%",
     display: "block",
   },
   content: {
@@ -50,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DetailFeed({ feed, deleteHandler, user }) {
   if (!feed) {
-    return null;
+    return <PageLoading />;
   }
 
   const {
@@ -91,12 +90,6 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
     }
   }, []);
 
-  var t = new Date(1970, 0, 1);
-  t.setSeconds(create_at.seconds);
-
-  const createAT =
-    t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
-
   async function handleHeartClick() {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
     let updateFeedLike = [];
@@ -132,6 +125,11 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
     }
   }
 
+  var t = new Date(1970, 0, 1);
+  t.setSeconds(create_at.seconds);
+  const createAT =
+    t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
+
   return (
     <div className={classes.feed}>
       <Card className={classes.root}>
@@ -160,19 +158,11 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
             {content}
           </Typography>
         </CardContent>
-        <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
-            {liked.status ? <FavoriteIcon color="error" /> : <FavoriteIcon />}
-          </IconButton>
-          <Typography>
-            {liked.num <= 0 || !liked.num ? 0 : liked.num}
-          </Typography>
-          <Tooltip title={tag || "태그 없음"} placement="top" arrow>
-            <IconButton aria-label="tag" className>
-              <LocalOfferIcon />
-            </IconButton>
-          </Tooltip>
-        </CardActions>
+        <FeedIconBar
+          tag={tag}
+          liked={liked}
+          handleHeartClick={handleHeartClick}
+        />
       </Card>
     </div>
   );
