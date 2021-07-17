@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ImageAvatars({ size, photoUrl, displayName }) {
+const ImageAvatars = ({ size, photoUrl, displayName }) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -42,4 +42,6 @@ export default function ImageAvatars({ size, photoUrl, displayName }) {
       )}
     </div>
   );
-}
+};
+
+export default ImageAvatars;

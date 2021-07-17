@@ -2,7 +2,7 @@ import React from "react";
 import Avatar from "../common/Avatar";
 import { Divider, Grid } from "@material-ui/core";
 
-export default function CommentDetail({ data }) {
+const CommentDetail = ({ data }) => {
   const { username, comment } = data;
   return (
     <>
@@ -18,4 +18,6 @@ export default function CommentDetail({ data }) {
       <Divider variant="fullWidth" style={{ margin: "30px 0" }} />
     </>
   );
-}
+};
+
+export default CommentDetail;

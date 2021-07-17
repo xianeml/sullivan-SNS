@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default ({ user }) => {
+const Comment = ({ user }) => {
   const classes = useStyles();
   const [inputs, setInputs] = useState({ comment: "" });
   const [comments, setComments] = useState(commentData);
@@ -80,3 +80,5 @@ export default ({ user }) => {
     </Paper>
   );
 };
+
+export default Comment;

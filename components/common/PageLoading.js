@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PageLoading() {
+const PageLoading = () => {
   const classes = useStyles();
 
   return (
@@ -23,4 +23,6 @@ export default function PageLoading() {
       <CircularProgress />
     </div>
   );
-}
+};
+
+export default PageLoading;

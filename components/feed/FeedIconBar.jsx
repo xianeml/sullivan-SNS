@@ -9,14 +9,14 @@ import {
   Tooltip,
 } from "@material-ui/core";
 
-export default function FeedIconBar({
+const FeedIconBar = ({
   tag,
   liked,
   expanded,
   handleHeartClick,
   handleExpandClick,
   type,
-}) {
+}) => {
   return (
     <CardActions disableSpacing>
       <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
@@ -39,4 +39,6 @@ export default function FeedIconBar({
       </Tooltip>
     </CardActions>
   );
-}
+};
+
+export default FeedIconBar;

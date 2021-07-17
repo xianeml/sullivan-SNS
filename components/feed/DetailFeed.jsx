@@ -47,7 +47,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function DetailFeed({ feed, deleteHandler, user }) {
+const DetailFeed = ({ feed, deleteHandler, user }) => {
   if (!feed) {
     return <PageLoading />;
   }
@@ -166,4 +166,6 @@ export default function DetailFeed({ feed, deleteHandler, user }) {
       </Card>
     </div>
   );
-}
+};
+
+export default DetailFeed;

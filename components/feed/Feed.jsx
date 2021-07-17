@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Feed({ feed, user }) {
+const Feed = ({ feed, user }) => {
   const {
     content,
     like = 0,
@@ -153,4 +153,6 @@ export default function Feed({ feed, user }) {
       </Card>
     </div>
   );
-}
+};
+
+export default Feed;

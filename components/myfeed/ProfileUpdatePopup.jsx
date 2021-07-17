@@ -36,12 +36,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ProfileUpdatePopup({
+const ProfileUpdatePopup = ({
   open,
   closeHandler,
   openResultMessageHandler,
   user,
-}) {
+}) => {
   const classes = useStyles();
 
   const [loading, setLoading] = useState(false);
@@ -219,4 +219,6 @@ export default function ProfileUpdatePopup({
       </Dialog>
     </div>
   );
-}
+};
+
+export default ProfileUpdatePopup;
