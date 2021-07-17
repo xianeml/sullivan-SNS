@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import Avatar from "../common/Avatar";
 import {
   CardHeader,
@@ -127,15 +126,16 @@ const Feed = ({ feed, user }) => {
           <Typography variant="body1" component="p">
             {content.length < 180 ? content : content.slice(0, 180) + "..."}
           </Typography>
-          <Link href="/feed/[feedUid]" as={"/feed/" + uid}>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              className={classes.detailBtn}
-            >
-              더보기
-            </Typography>
-          </Link>
+          <Typography
+            onClick={() => {
+              window.location.href = `/feed/${uid}`;
+            }}
+            variant="body2"
+            color="textSecondary"
+            className={classes.detailBtn}
+          >
+            더보기
+          </Typography>
         </CardContent>
         <FeedIconBar
           tag={tag}
