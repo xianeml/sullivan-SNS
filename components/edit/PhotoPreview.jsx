@@ -6,6 +6,7 @@ import PageLoading from "../common/PageLoading";
 const useStyles = makeStyles((theme) => ({
   container: {
     margin: "2rem 0",
+    justifyContent: "center",
   },
   imgPreview: {
     width: "45rem",
@@ -39,7 +40,7 @@ const PhotoPreview = ({ photoUrl, attachFile, loading }) => {
   }
 
   return (
-    <Grid container justifyContent="center" className={classes.container}>
+    <Grid container className={classes.container}>
       {photoUrl ? (
         <img src={photoUrl} alt="미리보기" className={classes.imgPreview} />
       ) : (

@@ -55,7 +55,7 @@ const Comment = ({ user }) => {
       {comments.map((comment) => (
         <CommentDetail key={comment.id} data={comment} />
       ))}
-      <Grid container wrap="nowrap" spacing={2} justifyContent="flex-start">
+      <Grid container wrap="nowrap" spacing={2} justify="flex-start">
         <Grid item>
           <Avatar photoUrl={user.photoUrl} size={1} />
         </Grid>

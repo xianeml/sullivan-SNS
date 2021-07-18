@@ -121,7 +121,7 @@ const ProfileUpdatePopup = ({ user }) => {
             <Grid
               container
               direction="column"
-              justifyContent="center"
+              justify="center"
               alignItems="center"
             >
               {loading ? (

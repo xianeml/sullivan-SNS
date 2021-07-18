@@ -6,7 +6,7 @@ const CommentDetail = ({ data }) => {
   const { username, comment } = data;
   return (
     <>
-      <Grid container wrap="nowrap" spacing={2} justifyContent="flex-start">
+      <Grid container wrap="nowrap" spacing={2} justify="flex-start">
         <Grid item>
           <Avatar size={1} />
         </Grid>

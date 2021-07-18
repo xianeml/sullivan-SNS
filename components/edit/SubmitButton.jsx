@@ -21,7 +21,7 @@ const SubmitButton = () => {
   }
 
   return (
-    <Grid container justifyContent='flex-end' className={classes.container}>
+    <Grid container justify='flex-end' className={classes.container}>
       <Button
         className={classes.feedBtn}
         size='large'
