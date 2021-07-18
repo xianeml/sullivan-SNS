@@ -4,14 +4,18 @@ import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 
-const SimpleSnackbar = ({ message, open, closeHandler, durationProps }) => {
+const SimpleSnackbar = ({ retultMessage, durationProps }) => {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const [duration, setDuration] = useState(2000);
 
-  const handleClose = () => {
-    closeHandler();
-  };
-
+  function closeSnackbar(reason) {
+    if (reason === "clickaway") return;
+    setOpen(false);
+  }
   useEffect(() => {
+    setOpen(true);
+    setMessage(retultMessage);
     setDuration(durationProps);
   }, []);
 
@@ -24,18 +28,18 @@ const SimpleSnackbar = ({ message, open, closeHandler, durationProps }) => {
         }}
         open={open}
         autoHideDuration={duration} // 2초동안 나타남
-        onClose={handleClose}
+        onClose={closeSnackbar}
         message={message}
         action={
           <>
-            <Button color="primary" size="small" onClick={handleClose}>
+            <Button color="primary" size="small" onClick={closeSnackbar}>
               닫기
             </Button>
             <IconButton
               size="small"
               aria-label="close"
               color="inherit"
-              onClick={handleClose}
+              onClick={closeSnackbar}
             >
               <CloseIcon fontSize="small" />
             </IconButton>

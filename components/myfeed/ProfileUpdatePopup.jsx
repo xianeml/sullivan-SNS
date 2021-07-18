@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "../common/Avatar";
+import Snackbar from "../common/Snackbar";
 import firebase from "../../firestores/firebase";
 import { v4 as uuidv4 } from "uuid";
 
@@ -36,21 +37,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProfileUpdatePopup = ({
-  open,
-  closeHandler,
-  openResultMessageHandler,
-  user,
-}) => {
+const ProfileUpdatePopup = ({ user }) => {
   const classes = useStyles();
+  const fileButton = useRef();
+  const uid = uuidv4();
 
-  const [loading, setLoading] = useState(false);
+  // 팝업창 오픈 상태
+  const [open, setOpen] = useState(false);
+  // form 입력 데이터 상태
   const [photoUrl, setPhotoUrl] = useState(user.photoUrl);
   const [displayName, setDisplayName] = useState(user.displayName);
   const [webpage, setWebpage] = useState(user.webpage);
   const [caption, setCaption] = useState(user.caption);
-  const fileButton = useRef();
-  const uid = uuidv4();
+  // 사진 첨부 시 로딩 상태
+  const [loading, setLoading] = useState(false);
+  // 업데이트 결과 메세지 상태
+  const [resultMessage, setResultMessage] = useState("");
+
+  function openPopup() {
+    setOpen(true);
+  }
+  function closePopup() {
+    setOpen(false);
+  }
 
   async function getPhotoUrl() {
     setLoading(true);
@@ -60,10 +69,6 @@ const ProfileUpdatePopup = ({
     const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
     setPhotoUrl(downloadedPhotoUrl);
     setLoading(false);
-  }
-
-  function handleClose() {
-    closeHandler();
   }
 
   async function submitHandler(event) {
@@ -77,22 +82,23 @@ const ProfileUpdatePopup = ({
     };
     try {
       await updateUserProfile(updateData);
-      handleClose();
-      openResultMessageHandler();
-    } catch (error) {
-      console.log(error);
+      closePopup();
+    } catch (e) {
+      console.error(e);
     }
   }
 
   async function updateUserProfile(updateData) {
     try {
-      await fetch(`/api/user`, {
+      const updateResult = await fetch(`/api/user`, {
         method: "PATCH",
         body: JSON.stringify(updateData),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       });
+      const { message } = await updateResult.json();
+      setResultMessage(message);
     } catch (e) {
       console.error(e);
     }
@@ -100,11 +106,14 @@ const ProfileUpdatePopup = ({
 
   return (
     <div>
+      <Button variant="outlined" color="primary" onClick={openPopup}>
+        프로필 수정하기
+      </Button>
       <Dialog
         fullWidth
         maxWidth="md"
         open={open}
-        onClose={handleClose}
+        onClose={closePopup}
         aria-labelledby="form-dialog-title"
       >
         <DialogContent>
@@ -203,7 +212,7 @@ const ProfileUpdatePopup = ({
           </form>
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" size="large" onClick={handleClose}>
+          <Button color="secondary" size="large" onClick={closePopup}>
             취소
           </Button>
           <Button
@@ -217,6 +226,9 @@ const ProfileUpdatePopup = ({
           </Button>
         </DialogActions>
       </Dialog>
+      {resultMessage && (
+        <Snackbar retultMessage={resultMessage} durationProps={1400} />
+      )}
     </div>
   );
 };

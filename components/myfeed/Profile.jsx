@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import Avatar from '../common/Avatar';
-import { Button, Grid, Typography } from '@material-ui/core';
+import React from 'react';
+import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Snackbar from '../common/Snackbar';
+import Avatar from '../common/Avatar';
 import ProfileUpdatePopup from '../myfeed/ProfileUpdatePopup';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   profile: {
     paddingTop: '3rem',
   },
@@ -13,24 +12,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = ({ user, feedList }) => {
   const classes = useStyles();
-
-  const [popupOpen, setPopupOpen] = useState(false);
-  const openProfileUpdatePopup = () => {
-    setPopupOpen(true);
-  };
-  const closeProfileUpdatePopup = () => {
-    setPopupOpen(false);
-  };
-
-  // 스낵바 알림창
-  const [resultMessageOpen, setResultMessageOpen] = useState(false);
-  const openResultMessage = () => {
-    setResultMessageOpen(true);
-  };
-  const closeResultMessage = (reason) => {
-    if (reason === 'clickaway') return;
-    setResultMessageOpen(false);
-  };
 
   return (
     <>
@@ -86,25 +67,7 @@ const Profile = ({ user, feedList }) => {
                 </a>
               </Typography>
             </Grid>
-            <Button
-              variant='outlined'
-              color='primary'
-              onClick={openProfileUpdatePopup}
-            >
-              프로필 수정하기
-            </Button>
-            <ProfileUpdatePopup
-              open={popupOpen}
-              closeHandler={closeProfileUpdatePopup}
-              openResultMessageHandler={openResultMessage}
-              user={user}
-            />
-            <Snackbar
-              open={resultMessageOpen}
-              closeHandler={closeResultMessage}
-              message={'프로필이 수정되었습니다.'}
-              durationProps={1000}
-            />
+            <ProfileUpdatePopup user={user} />
           </Grid>
         </Grid>
       </Grid>

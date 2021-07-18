@@ -8,7 +8,7 @@ const index = () => {
     getUser();
   }, []);
 
-  const getUser = async () => {
+  async function getUser() {
     try {
       const fetchUserInfo = await fetch("/api/user");
       const userInfo = await fetchUserInfo.json();
@@ -17,7 +17,7 @@ const index = () => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
   return <div></div>;
 };
