@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Grid } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   container: {
     marginTop: '1rem',
   },
@@ -16,9 +16,9 @@ const SubmitButton = () => {
   const classes = useStyles();
   const router = useRouter();
 
-  const moveToFeedPage = () => {
+  function moveToFeedPage() {
     router.push('/feed');
-  };
+  }
 
   return (
     <Grid container justifyContent='flex-end' className={classes.container}>

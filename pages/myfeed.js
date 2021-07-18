@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const myFeed = () => {
+const myfeed = () => {
   const classes = useStyles();
 
   const [user, setUser] = useState(null);
@@ -47,4 +47,4 @@ const myFeed = () => {
   );
 };
 
-export default myFeed;
+export default myfeed;

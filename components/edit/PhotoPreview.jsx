@@ -34,9 +34,9 @@ const useStyles = makeStyles((theme) => ({
 const PhotoPreview = ({ photoUrl, attachFile, loading }) => {
   const classes = useStyles();
 
-  const handleAttachFile = () => {
+  function handleAttachFile() {
     attachFile();
-  };
+  }
 
   return (
     <Grid container justifyContent="center" className={classes.container}>

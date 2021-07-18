@@ -13,7 +13,7 @@ import firebase from "../../firestores/firebase";
 import PhotoPreview from "./PhotoPreview";
 import SubmitButton from "./SubmitButton";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   form: {
     padding: "3rem",
   },
@@ -69,9 +69,9 @@ const UploadForm = ({ feedUid }) => {
     setPhotoUrl(downloadedPhotoUrl);
   }
 
-  const attachFile = () => {
+  function attachFile() {
     fileButton.current.click();
-  };
+  }
 
   async function getFeedDetail() {
     try {

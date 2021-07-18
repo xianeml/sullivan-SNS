@@ -33,7 +33,7 @@ const PhotoItem = ({ feed }) => {
             {feed.photoUrl ? (
               <img
                 src={feed.photoUrl}
-                alt={feed.content}
+                alt={feed.photoUrl}
                 className={classes.feedImg}
               />
             ) : (
