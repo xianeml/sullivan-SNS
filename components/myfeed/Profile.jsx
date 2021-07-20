@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Profile = ({ user, feedList }) => {
+const Profile = ({ user, feedList, getUserInfo }) => {
   const classes = useStyles();
 
   return (
@@ -67,7 +67,7 @@ const Profile = ({ user, feedList }) => {
                 </a>
               </Typography>
             </Grid>
-            <ProfileUpdatePopup user={user} />
+            <ProfileUpdatePopup user={user} getUserInfo={getUserInfo} />
           </Grid>
         </Grid>
       </Grid>

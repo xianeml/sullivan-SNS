@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProfileUpdatePopup = ({ user }) => {
+const ProfileUpdatePopup = ({ user, getUserInfo }) => {
   const classes = useStyles();
   const fileButton = useRef();
   const uid = uuidv4();
@@ -83,6 +83,7 @@ const ProfileUpdatePopup = ({ user }) => {
     try {
       await updateUserProfile(updateData);
       closePopup();
+      getUserInfo();
     } catch (e) {
       console.error(e);
     }
