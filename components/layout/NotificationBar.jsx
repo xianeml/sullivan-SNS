@@ -6,13 +6,13 @@ const NotificationBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
-  const handleMenuOpen = (event) => {
+  function handleMenuOpen(event) {
     setAnchorEl(event.currentTarget);
-  };
+  }
 
-  const handleMenuClose = () => {
+  function handleMenuClose() {
     setAnchorEl(null);
-  };
+  }
 
   return (
     <>

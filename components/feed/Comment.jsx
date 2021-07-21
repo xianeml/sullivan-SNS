@@ -30,15 +30,15 @@ const Comment = ({ user }) => {
   const [inputs, setInputs] = useState({ comment: "" });
   const [comments, setComments] = useState(commentData);
 
-  const handleTextChange = (e) => {
+  function handleTextChange(e) {
     const { name, value } = e.target;
     setInputs({
       ...inputs,
       [name]: value,
     });
-  };
+  }
 
-  const handleSendClick = () => {
+  function handleSendClick() {
     const comment = {
       id: comments.length + 1,
       username: user.displayName,
@@ -48,7 +48,7 @@ const Comment = ({ user }) => {
     setInputs({
       comment: "",
     });
-  };
+  }
 
   return (
     <Paper style={{ padding: "20px 20px" }}>
