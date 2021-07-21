@@ -22,7 +22,7 @@ const useStyles = makeStyles(() => ({
     justifyItems: "center",
   },
   root: {
-    width: "900px",
+    width: "100%",
   },
   header: {
     margin: "1rem 0",

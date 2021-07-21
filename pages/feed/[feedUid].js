@@ -68,7 +68,9 @@ const detail = ({ feedUid, user, feedDetail }) => {
         </Paper>
       </Grid>
       <Grid item xs={4}>
-        <Comment user={user} />
+        <Paper className={classes.paper}>
+          <Comment user={user} />
+        </Paper>
       </Grid>
     </Grid>
   );
