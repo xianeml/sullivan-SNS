@@ -33,16 +33,16 @@ const PopperMenu = ({ deleteHandler, feedUid }) => {
     prevOpen.current = open;
   }, [open]);
 
-  const openSettingMenu = () => {
+  function openSettingMenu() {
     setOpen((prevOpen) => !prevOpen);
-  };
+  }
 
-  const closeSettingMenu = (event) => {
+  function closeSettingMenu(event) {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
     setOpen(false);
-  };
+  }
 
   function handleListKeyDown(event) {
     if (event.key === "Tab") {
@@ -51,16 +51,16 @@ const PopperMenu = ({ deleteHandler, feedUid }) => {
     }
   }
 
-  const handleUpdate = () => {
+  function handleUpdate() {
     router.push({
       pathname: "/edit",
       query: { feedUid },
     });
-  };
+  }
 
-  const handleDelete = () => {
+  function handleDelete() {
     deleteHandler();
-  };
+  }
 
   return (
     <>

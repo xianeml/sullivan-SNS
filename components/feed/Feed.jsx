@@ -69,9 +69,9 @@ const Feed = ({ feed, user }) => {
     }
   }, []);
 
-  const handleExpandClick = () => {
+  function handleExpandClick() {
     setExpanded(!expanded);
-  };
+  }
 
   async function handleHeartClick() {
     const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
