@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   makeStyles,
   AppBar,
@@ -45,43 +46,32 @@ const Header = () => {
     <div className={classes.grow}>
       <AppBar className={classes.fix}>
         <Toolbar>
-          <Typography
-            className={classes.title}
-            onClick={() => {
-              window.location.href = "/";
-            }}
-            variant="h6"
-            noWrap
-          >
-            Sullivan-SNS
-          </Typography>
-
+          <Link href="/">
+            <Typography className={classes.title} variant="h6" noWrap>
+              Sullivan-SNS
+            </Typography>
+          </Link>
           <div className={classes.grow} />
           <div>
-            <IconButton
-              aria-label="add feed"
-              color="inherit"
-              onClick={() => {
-                window.location.href = "/edit";
-              }}
-            >
-              <AddCircleOutlineIcon />
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of user"
-              color="inherit"
-              onClick={() => {
-                window.location.href = "/myfeed";
-              }}
-            >
-              <AccountCircle />
-              {user != null && (
-                <Typography variant="h6" noWrap>
-                  {user.displayName} 님 반갑습니다
-                </Typography>
-              )}
-            </IconButton>
+            <Link href="/edit">
+              <IconButton aria-label="add feed" color="inherit">
+                <AddCircleOutlineIcon />
+              </IconButton>
+            </Link>
+            <Link href="/myfeed">
+              <IconButton
+                edge="end"
+                aria-label="account of user"
+                color="inherit"
+              >
+                <AccountCircle />
+                {user && (
+                  <Typography variant="h6" noWrap>
+                    {user.displayName} 님 반갑습니다
+                  </Typography>
+                )}
+              </IconButton>
+            </Link>
             <NotificationMenu />
           </div>
         </Toolbar>

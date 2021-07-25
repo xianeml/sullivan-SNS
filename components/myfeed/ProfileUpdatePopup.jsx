@@ -6,7 +6,7 @@ import {
   DialogContent,
   Divider,
   Grid,
-  Link,
+  Typography,
   TextField,
   CircularProgress,
 } from "@material-ui/core";
@@ -16,14 +16,13 @@ import Snackbar from "../common/Snackbar";
 import firebase from "../../firestores/firebase";
 import { v4 as uuidv4 } from "uuid";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   loadingPreview: {
     margin: "2rem 0",
   },
   popupBtn: {
     cursor: "pointer",
     margin: "1rem 0",
-    color: theme.palette.primary,
     fontWeight: "bold",
   },
   formGroup: {
@@ -133,11 +132,7 @@ const ProfileUpdatePopup = ({ user, getUserInfo }) => {
               ) : (
                 <Avatar displayName={displayName} photoUrl={photoUrl} />
               )}
-              <Link
-                component="label"
-                className={classes.popupBtn}
-                underline="none"
-              >
+              <Typography className={classes.popupBtn} color="primary">
                 프로필 사진 바꾸기
                 <input
                   type="file"
@@ -145,7 +140,7 @@ const ProfileUpdatePopup = ({ user, getUserInfo }) => {
                   ref={fileButton}
                   onChange={getPhotoUrl}
                 />
-              </Link>
+              </Typography>
             </Grid>
             <Divider variant="middle" light />
             <div className={classes.formGroup}>

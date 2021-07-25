@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   IconButton,
   Grow,
@@ -9,12 +11,11 @@ import {
   MenuList,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { useRouter } from "next/router";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 const useStyles = makeStyles((theme) => ({
   deleteText: {
-    color: "red",
+    color: theme.palette.error.main,
   },
 }));
 
@@ -49,13 +50,6 @@ const PopperMenu = ({ deleteHandler, feedUid }) => {
       event.preventDefault();
       setOpen(false);
     }
-  }
-
-  function handleUpdate() {
-    router.push({
-      pathname: "/edit",
-      query: { feedUid },
-    });
   }
 
   function handleDelete() {
@@ -96,7 +90,14 @@ const PopperMenu = ({ deleteHandler, feedUid }) => {
                   id="menu-list-grow"
                   onKeyDown={handleListKeyDown}
                 >
-                  <MenuItem onClick={handleUpdate}>수정</MenuItem>
+                  <Link
+                    href={{
+                      pathname: "/edit",
+                      query: { feedUid },
+                    }}
+                  >
+                    <MenuItem>수정</MenuItem>
+                  </Link>
                   <MenuItem
                     className={classes.deleteText}
                     onClick={handleDelete}

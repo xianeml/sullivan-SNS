@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Avatar from "../common/Avatar";
+import Link from "next/link";
 import {
   CardHeader,
   CardMedia,
@@ -9,6 +9,7 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
+import Avatar from "../common/Avatar";
 import Comment from "./Comment";
 import FeedIconBar from "./FeedIconBar";
 
@@ -33,6 +34,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Feed = ({ feed, user }) => {
+  const classes = useStyles();
+
   const {
     content,
     like = 0,
@@ -44,7 +47,6 @@ const Feed = ({ feed, user }) => {
     location,
   } = feed;
 
-  const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState({
     status: false,
@@ -120,16 +122,15 @@ const Feed = ({ feed, user }) => {
           <Typography variant="body1" component="p">
             {content.length < 180 ? content : content.slice(0, 180) + "..."}
           </Typography>
-          <Typography
-            onClick={() => {
-              window.location.href = `/feed/${uid}`;
-            }}
-            variant="body2"
-            color="textSecondary"
-            className={classes.detailBtn}
-          >
-            더보기
-          </Typography>
+          <Link href={`/feed/${uid}`}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              className={classes.detailBtn}
+            >
+              더보기
+            </Typography>
+          </Link>
         </CardContent>
         <FeedIconBar
           tag={tag}

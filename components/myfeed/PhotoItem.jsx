@@ -29,7 +29,7 @@ const PhotoItem = ({ feed }) => {
     <>
       <Grid item md={4} sm={6} xs={12}>
         <div className={classes.imgContainer}>
-          <Link href="/feed/[feedUid]" as={"/feed/" + feed.uid}>
+          <Link href={`/feed/${feed.uid}`}>
             {feed.photoUrl ? (
               <img
                 src={feed.photoUrl}
@@ -41,7 +41,7 @@ const PhotoItem = ({ feed }) => {
                 width="100%"
                 height="100%"
                 src={feed.author.photoUrl}
-                alt={feed.content}
+                alt={feed.photoUrl}
                 className={classes.feedImg}
               />
             )}

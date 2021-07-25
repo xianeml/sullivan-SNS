@@ -49,6 +49,10 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
     return <PageLoading />;
   }
 
+  const classes = useStyles();
+  const router = useRouter();
+  const { feedUid } = router.query;
+
   const {
     content,
     like = 0,
@@ -59,10 +63,6 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
     uid,
     location,
   } = feed;
-
-  const classes = useStyles();
-  const router = useRouter();
-  const { feedUid } = router.query;
 
   const [liked, setLiked] = useState({
     status: false,

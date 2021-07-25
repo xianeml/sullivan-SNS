@@ -3,7 +3,7 @@ import { Grid, Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PageLoading from "../common/PageLoading";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   container: {
     margin: "2rem 0",
     justifyContent: "center",

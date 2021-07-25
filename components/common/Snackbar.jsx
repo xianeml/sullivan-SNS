@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Button, Snackbar, IconButton } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
-const SimpleSnackbar = ({ retultMessage, durationProps }) => {
+const SimpleSnackbar = ({ resultMessage, durationProps }) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [duration, setDuration] = useState(2000);
 
   useEffect(() => {
     setOpen(true);
-    setMessage(retultMessage);
+    setMessage(resultMessage);
     setDuration(durationProps);
   }, []);
 
