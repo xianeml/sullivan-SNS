@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Snackbar from "../../components/common/Snackbar";
-import Feed from "../../components/feed/Feed";
+import MainFeed from "../../components/feed/MainFeed";
 import PageLoading from "../../components/common/PageLoading";
 
 const feed = () => {
@@ -35,7 +35,7 @@ const feed = () => {
   return (
     <div>
       {feeds.map((feed, index) => (
-        <Feed key={index} user={user} feed={feed} />
+        <MainFeed key={index} user={user} feed={feed} />
       ))}
       {message && <Snackbar retultMessage={message} durationProps={1400} />}
     </div>

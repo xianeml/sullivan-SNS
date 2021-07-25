@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Badge, Menu, MenuItem, IconButton } from "@material-ui/core";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 
-const NotificationBar = () => {
+const NotificationMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -44,4 +44,4 @@ const NotificationBar = () => {
   );
 };
 
-export default NotificationBar;
+export default NotificationMenu;
