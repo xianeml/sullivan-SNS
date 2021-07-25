@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Button from "@material-ui/core/Button";
-import Snackbar from "@material-ui/core/Snackbar";
-import IconButton from "@material-ui/core/IconButton";
+import { Button, Snackbar, IconButton } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
 const SimpleSnackbar = ({ retultMessage, durationProps }) => {
@@ -9,15 +7,16 @@ const SimpleSnackbar = ({ retultMessage, durationProps }) => {
   const [message, setMessage] = useState("");
   const [duration, setDuration] = useState(2000);
 
-  function closeSnackbar(reason) {
-    if (reason === "clickaway") return;
-    setOpen(false);
-  }
   useEffect(() => {
     setOpen(true);
     setMessage(retultMessage);
     setDuration(durationProps);
   }, []);
+
+  function closeSnackbar(reason) {
+    if (reason === "clickaway") return;
+    setOpen(false);
+  }
 
   return (
     <div>

@@ -32,8 +32,8 @@ const UploadForm = ({ feedUid }) => {
 
   const [updateMode, setUpdateMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState("");
 
+  const [photoUrl, setPhotoUrl] = useState("");
   const [content, setContent] = useState("");
   const [location, setLocation] = useState("");
   const [tag, setTag] = useState("");
@@ -60,13 +60,17 @@ const UploadForm = ({ feedUid }) => {
   }
 
   async function getPhotoUrl() {
-    setLoading(true);
-    const file = fileButton.current.files[0];
-    const storageRef = firebase.storage().ref(author.uid + "/" + uid);
-    const saveFileTask = await storageRef.put(file);
-    const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
-    setLoading(false);
-    setPhotoUrl(downloadedPhotoUrl);
+    try {
+      setLoading(true);
+      const file = fileButton.current.files[0];
+      const storageRef = firebase.storage().ref(author.uid + "/" + uid);
+      const saveFileTask = await storageRef.put(file);
+      const downloadedPhotoUrl = await saveFileTask.ref.getDownloadURL();
+      setLoading(false);
+      setPhotoUrl(downloadedPhotoUrl);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   function attachFile() {

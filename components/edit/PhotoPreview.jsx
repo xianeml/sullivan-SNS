@@ -57,7 +57,6 @@ const PhotoPreview = ({ photoUrl, attachFile, loading }) => {
               onClick={handleAttachFile}
             >
               사진을 업로드 하세요.
-              <input type="file" id="upload" className={classes.fileBtn} />
             </Typography>
           )}
         </Paper>

@@ -3,15 +3,15 @@ import Avatar from "../common/Avatar";
 import { Divider, Grid } from "@material-ui/core";
 
 const CommentDetail = ({ data }) => {
-  const { username, comment } = data;
+  const { username, photoUrl, comment } = data;
   return (
     <>
       <Grid container wrap="nowrap" spacing={2} justify="flex-start">
         <Grid item>
-          <Avatar size={1} />
+          <Avatar size={1} photoUrl={photoUrl} />
         </Grid>
         <Grid item xs zeroMinWidth>
-          <h4 style={{ margin: 0, textAlign: "left" }}>{username}</h4>
+          <h4 style={{ marginTop: "10px", textAlign: "left" }}>{username}</h4>
           <p style={{ textAlign: "left" }}>{comment}</p>
         </Grid>
       </Grid>

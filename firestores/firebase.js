@@ -1,13 +1,12 @@
-import firebase from 'firebase';
-import firebaseConfig from './firbaseconfig';
+import firebase from "firebase";
+import firebaseConfig from "./firebaseConfig";
 
-  // try: 초기화가 되어있으면 실행 
-  // catch: 안되어 있으면 초기화 실행 하는 구문
-try{
-    firebase.app(); 
-}
-catch{
-    firebase.initializeApp(firebaseConfig); 
+try {
+  // 초기화 된 경우 파이어베이스 실행
+  firebase.app();
+} catch {
+  // 초기화가 안된 경우 초기화 실행
+  firebase.initializeApp(firebaseConfig);
 }
 
-  export default firebase;
+export default firebase;

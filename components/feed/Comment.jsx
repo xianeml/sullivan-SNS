@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import CommentDetail from "./CommentDetail";
 import {
   Paper,
   TextField,
@@ -8,73 +7,81 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
-import commentData from "../../src/comments.js";
 import Avatar from "../common/Avatar";
+import CommentDetail from "./CommentDetail";
+import commentData from "../../src/comments.js";
 
 const useStyles = makeStyles(() => ({
-  comment: {
-    width: "600px",
-    height: "75px",
+  container: {
+    padding: "20px",
   },
-  commentItem: {
-    marginTop: "10px",
+  displayName: {
+    margin: "10px 0px",
   },
   commentSend: {
     display: "flex",
     flexDirection: "row",
+    marginBottom: "10px",
+  },
+  commentInput: {
+    width: "600px",
+  },
+  sendBtn: {
+    alignItems: "center",
   },
 }));
 
 const Comment = ({ user }) => {
   const classes = useStyles();
-  const [inputs, setInputs] = useState({ comment: "" });
-  const [comments, setComments] = useState(commentData);
+  const [inputs, setInputs] = useState("");
+  const [commentList, setCommentList] = useState(commentData);
 
   function handleTextChange(e) {
-    const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value,
-    });
+    setInputs(e.target.value);
   }
 
   function handleSendClick() {
+    if (!inputs) return;
+
     const comment = {
-      id: comments.length + 1,
+      id: commentList.length + 1,
       username: user.displayName,
-      comment: inputs.comment,
+      photoUrl: user.photoUrl,
+      comment: inputs,
     };
-    setComments([...comments, comment]);
-    setInputs({
-      comment: "",
-    });
+    setCommentList([...commentList, comment]);
+    setInputs("");
   }
 
   return (
-    <Paper style={{ padding: "20px 20px" }}>
-      {comments.map((comment) => (
+    <Paper className={classes.container}>
+      {commentList.map((comment) => (
         <CommentDetail key={comment.id} data={comment} />
       ))}
       <Grid container wrap="nowrap" spacing={2} justify="flex-start">
         <Grid item>
           <Avatar photoUrl={user.photoUrl} size={1} />
         </Grid>
-        <Grid className={classes.commentItem} item xs zeroMinWidth>
-          <h4 style={{ margin: 0, textAlign: "left" }}>{user.displayName}</h4>
-          <div className={classes.commentSend}>
+        <Grid item>
+          <h4 className={classes.displayName}>{user.displayName}</h4>
+          <Grid item className={classes.commentSend}>
             <TextField
               name="comment"
               multiline
               placeholder="댓글을 입력해주세요..."
               rowsMax={3}
-              className={classes.comment}
+              className={classes.commentInput}
               onChange={handleTextChange}
-              value={inputs.comment}
+              value={inputs}
             />
-            <IconButton aria-label="send" onClick={handleSendClick}>
+            <IconButton
+              className={classes.sendBtn}
+              aria-label="send"
+              onClick={handleSendClick}
+            >
               <SendIcon color="primary" />
             </IconButton>
-          </div>
+          </Grid>
         </Grid>
       </Grid>
     </Paper>
