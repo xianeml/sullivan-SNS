@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import NotificationBar from "./NotificationBar";
+import NotificationMenu from "./NotificationMenu";
 
 const useStyles = makeStyles(() => ({
   fix: {
@@ -82,7 +82,7 @@ const Header = () => {
                 </Typography>
               )}
             </IconButton>
-            <NotificationBar />
+            <NotificationMenu />
           </div>
         </Toolbar>
       </AppBar>

@@ -23,15 +23,18 @@ const useStyles = makeStyles(() => ({
     flexDirection: "row",
     marginBottom: "10px",
   },
-  commentInput: {
+  mainInput: {
     width: "600px",
+  },
+  detailInput: {
+    width: "400px",
   },
   sendBtn: {
     alignItems: "center",
   },
 }));
 
-const Comment = ({ user }) => {
+const Comment = ({ user, feedType }) => {
   const classes = useStyles();
   const [inputs, setInputs] = useState("");
   const [commentList, setCommentList] = useState(commentData);
@@ -67,10 +70,10 @@ const Comment = ({ user }) => {
           <Grid item className={classes.commentSend}>
             <TextField
               name="comment"
-              multiline
               placeholder="댓글을 입력해주세요..."
-              rowsMax={3}
-              className={classes.commentInput}
+              className={
+                feedType === "main" ? classes.mainInput : classes.detailInput
+              }
               onChange={handleTextChange}
               value={inputs}
             />

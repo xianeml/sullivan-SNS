@@ -14,14 +14,14 @@ import PageLoading from "../common/PageLoading";
 import FeedIconBar from "./FeedIconBar";
 
 const useStyles = makeStyles(() => ({
-  feed: {
+  root: {
     width: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyItems: "center",
   },
-  root: {
+  feed: {
     width: "100%",
   },
   header: {
@@ -42,12 +42,9 @@ const useStyles = makeStyles(() => ({
   content: {
     textAlign: "left",
   },
-  deleteText: {
-    color: "red",
-  },
 }));
 
-const DetailFeed = ({ feed, deleteHandler, user }) => {
+const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   if (!feed) {
     return <PageLoading />;
   }
@@ -71,19 +68,13 @@ const DetailFeed = ({ feed, deleteHandler, user }) => {
     status: false,
     num: like,
   });
-  const [likeFeeds, setLikeFeeds] = useState([]);
 
   useEffect(() => {
-    let checkFeed = [];
-    if (likeFeeds !== "") {
-      setLikeFeeds(user.likeFeeds);
-      checkFeed = [...user.likeFeeds];
-    }
-    for (const feedId of checkFeed) {
+    for (const feedId of userLikedFeeds) {
       if (feedId === uid) {
         setLiked({
-          ...liked,
           status: true,
+          num: like,
         });
         break;
       }
@@ -91,14 +82,10 @@ const DetailFeed = ({ feed, deleteHandler, user }) => {
   }, []);
 
   async function handleHeartClick() {
-    const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
-    let updateFeedLike = [];
-    if (liked.status) {
-      updateFeedLike = user.likeFeeds.filter((feedId) => feedId !== uid);
-    } else {
-      updateFeedLike = [...user.likeFeeds, uid];
-    }
     try {
+      // 피드 좋아요 수 업데이트
+      const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
+
       await fetch(`/api/feed/${uid}`, {
         method: "PATCH",
         body: JSON.stringify({ like: likeNum }),
@@ -107,9 +94,17 @@ const DetailFeed = ({ feed, deleteHandler, user }) => {
         },
       });
 
+      // 사용자가 좋아요 한 피드 목록 업데이트
+      let newUserLikeFeeds = [];
+      if (liked.status) {
+        newUserLikeFeeds = userLikedFeeds.filter((feedId) => feedId !== uid);
+      } else {
+        newUserLikeFeeds = [...userLikedFeeds, uid];
+      }
+
       await fetch(`/api/user`, {
         method: "PATCH",
-        body: JSON.stringify({ likeFeeds: updateFeedLike }),
+        body: JSON.stringify({ likeFeeds: newUserLikeFeeds }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
@@ -119,7 +114,6 @@ const DetailFeed = ({ feed, deleteHandler, user }) => {
         status: !liked.status,
         num: likeNum,
       });
-      setLikeFeeds(updateFeedLike);
     } catch (e) {
       console.error(e);
     }
@@ -131,8 +125,8 @@ const DetailFeed = ({ feed, deleteHandler, user }) => {
     t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
 
   return (
-    <div className={classes.feed}>
-      <Card className={classes.root}>
+    <div className={classes.root}>
+      <Card className={classes.feed}>
         <CardHeader
           className={classes.header}
           avatar={

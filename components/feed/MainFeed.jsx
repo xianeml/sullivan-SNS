@@ -50,19 +50,13 @@ const Feed = ({ feed, user }) => {
     status: false,
     num: like,
   });
-  const [likeFeeds, setLikeFeeds] = useState([]);
 
   useEffect(() => {
-    let checkFeed = [];
-    if (user.likeFeeds.length != 0) {
-      setLikeFeeds(user.likeFeeds);
-      checkFeed = [...user.likeFeeds];
-    }
-    for (const feedId of checkFeed) {
-      if (uid === feedId) {
+    for (const feedId of user.likeFeeds) {
+      if (feedId === uid) {
         setLiked({
-          ...liked,
           status: true,
+          num: like,
         });
         break;
       }
@@ -74,14 +68,10 @@ const Feed = ({ feed, user }) => {
   }
 
   async function handleHeartClick() {
-    const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
-    let updateFeedLike = [];
-    if (liked.status) {
-      updateFeedLike = likeFeeds.filter((feedId) => feedId !== uid);
-    } else {
-      updateFeedLike = [...likeFeeds, uid];
-    }
     try {
+      // 피드 좋아요 수 업데이트
+      const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
+
       await fetch(`/api/feed/${uid}`, {
         method: "PATCH",
         body: JSON.stringify({ like: likeNum }),
@@ -90,9 +80,17 @@ const Feed = ({ feed, user }) => {
         },
       });
 
+      // 사용자가 좋아요 한 피드 목록 업데이트
+      let newUserLikeFeeds = [];
+      if (liked.status) {
+        newUserLikeFeeds = user.likeFeeds.filter((feedId) => feedId !== uid);
+      } else {
+        newUserLikeFeeds = [...user.likeFeeds, uid];
+      }
+
       await fetch(`/api/user`, {
         method: "PATCH",
-        body: JSON.stringify({ likeFeeds: updateFeedLike }),
+        body: JSON.stringify({ likeFeeds: newUserLikeFeeds }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
@@ -102,7 +100,6 @@ const Feed = ({ feed, user }) => {
         status: !liked.status,
         num: likeNum,
       });
-      setLikeFeeds(updateFeedLike);
     } catch (e) {
       console.error(e);
     }
@@ -147,7 +144,7 @@ const Feed = ({ feed, user }) => {
         />
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Comment user={user} />
+            <Comment user={user} feedType={"main"} />
           </CardContent>
         </Collapse>
       </Card>

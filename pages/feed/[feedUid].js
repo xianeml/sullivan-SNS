@@ -6,8 +6,10 @@ import DetailFeed from "../../components/feed/DetailFeed";
 import Comment from "../../components/feed/Comment";
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
+  container: {
     padding: theme.spacing(2),
+  },
+  feed: {
     textAlign: "center",
     height: "100%",
   },
@@ -57,20 +59,16 @@ const detail = ({ feedUid, user, feedDetail }) => {
   }
 
   return (
-    <Grid container>
-      <Grid item xs={8}>
-        <Paper className={classes.paper}>
-          <DetailFeed
-            feed={feedDetail}
-            deleteHandler={deleteFeed}
-            user={user}
-          />
-        </Paper>
+    <Grid container className={classes.container}>
+      <Grid item xs={8} className={classes.feed}>
+        <DetailFeed
+          feed={feedDetail}
+          deleteHandler={deleteFeed}
+          userLikedFeeds={user.likeFeeds}
+        />
       </Grid>
       <Grid item xs={4}>
-        <Paper className={classes.paper}>
-          <Comment user={user} />
-        </Paper>
+        <Comment user={user} feedType={"detail"} />
       </Grid>
     </Grid>
   );
