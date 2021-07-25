@@ -228,7 +228,7 @@ const ProfileUpdatePopup = ({ user, getUserInfo }) => {
         </DialogActions>
       </Dialog>
       {resultMessage && (
-        <Snackbar retultMessage={resultMessage} durationProps={1400} />
+        <Snackbar resultMessage={resultMessage} durationProps={1400} />
       )}
     </div>
   );

@@ -52,14 +52,11 @@ const Feed = ({ feed, user }) => {
   });
 
   useEffect(() => {
-    for (const feedId of user.likeFeeds) {
-      if (feedId === uid) {
-        setLiked({
-          status: true,
-          num: like,
-        });
-        break;
-      }
+    if (user.likeFeeds.includes(uid)) {
+      setLiked({
+        status: true,
+        num: like,
+      });
     }
   }, []);
 

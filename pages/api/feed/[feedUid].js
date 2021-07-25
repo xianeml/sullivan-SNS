@@ -43,8 +43,9 @@ async function deleteFeed(feedUid, userId) {
   const newFeedList = userFeedList.filter((feed) => {
     return feed.feedId !== feedUid;
   });
+
   const newLikeFeeds = userLikeFeeds.filter((feed) => {
-    return feed === feedUid;
+    return feed !== feedUid;
   });
 
   await userRef.update({

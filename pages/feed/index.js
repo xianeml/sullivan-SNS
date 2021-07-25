@@ -37,7 +37,7 @@ const feed = () => {
       {feeds.map((feed, index) => (
         <MainFeed key={index} user={user} feed={feed} />
       ))}
-      {message && <Snackbar retultMessage={message} durationProps={1400} />}
+      {message && <Snackbar resultMessage={message} durationProps={1400} />}
     </div>
   );
 };

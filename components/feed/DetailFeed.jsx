@@ -70,14 +70,11 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   });
 
   useEffect(() => {
-    for (const feedId of userLikedFeeds) {
-      if (feedId === uid) {
-        setLiked({
-          status: true,
-          num: like,
-        });
-        break;
-      }
+    if (userLikedFeeds.includes(uid)) {
+      setLiked({
+        status: true,
+        num: like,
+      });
     }
   }, []);
 
