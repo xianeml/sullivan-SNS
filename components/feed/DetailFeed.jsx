@@ -47,30 +47,18 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   if (!feed) {
     return <PageLoading />;
   }
-
   const classes = useStyles();
-
-  const {
-    content,
-    like = 0,
-    photoUrl,
-    author,
-    tag,
-    create_at,
-    uid,
-    location,
-  } = feed;
 
   const [liked, setLiked] = useState({
     status: false,
-    num: like,
+    num: feed.like,
   });
 
   useEffect(() => {
-    if (userLikedFeeds.includes(uid)) {
+    if (userLikedFeeds.includes(feed.uid)) {
       setLiked({
         status: true,
-        num: like,
+        num: feed.like,
       });
     }
   }, []);
@@ -80,7 +68,7 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
       // 피드 좋아요 수 업데이트
       const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
 
-      await fetch(`/api/feed/${uid}`, {
+      await fetch(`/api/feed/${feed.uid}`, {
         method: "PATCH",
         body: JSON.stringify({ like: likeNum }),
         headers: {
@@ -91,9 +79,11 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
       // 사용자가 좋아요 한 피드 목록 업데이트
       let newUserLikeFeeds = [];
       if (liked.status) {
-        newUserLikeFeeds = userLikedFeeds.filter((feedId) => feedId !== uid);
+        newUserLikeFeeds = userLikedFeeds.filter(
+          (feedId) => feedId !== feed.uid
+        );
       } else {
-        newUserLikeFeeds = [...userLikedFeeds, uid];
+        newUserLikeFeeds = [...userLikedFeeds, feed.uid];
       }
 
       await fetch(`/api/user`, {
@@ -114,7 +104,7 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   }
 
   var t = new Date(1970, 0, 1);
-  t.setSeconds(create_at.seconds);
+  t.setSeconds(feed.create_at.seconds);
   const createAT =
     t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
 
@@ -126,26 +116,32 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
           avatar={
             <Avatar
               size={1}
-              photoUrl={author.photoUrl}
-              displayName={author.displayName}
+              photoUrl={feed.author.photoUrl}
+              displayName={feed.author.displayName}
             />
           }
-          action={<PopperMenu deleteHandler={deleteHandler} feedUid={uid} />}
-          title={author.displayName}
-          subheader={createAT + " " + location}
+          action={
+            <PopperMenu deleteHandler={deleteHandler} feedUid={feed.uid} />
+          }
+          title={feed.author.displayName}
+          subheader={createAT + " " + feed.location}
         />
-        {photoUrl && (
+        {feed.photoUrl && (
           <CardMedia className={classes.media}>
-            <img src={photoUrl} alt={content} className={classes.mediaImg} />
+            <img
+              src={feed.photoUrl}
+              alt={feed.content}
+              className={classes.mediaImg}
+            />
           </CardMedia>
         )}
         <CardContent className={classes.content}>
           <Typography variant="body1" component="p">
-            {content}
+            {feed.content}
           </Typography>
         </CardContent>
         <FeedIconBar
-          tag={tag}
+          tag={feed.tag}
           liked={liked}
           handleHeartClick={handleHeartClick}
         />

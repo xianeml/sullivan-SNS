@@ -36,28 +36,17 @@ const useStyles = makeStyles(() => ({
 const Feed = ({ feed, user }) => {
   const classes = useStyles();
 
-  const {
-    content,
-    like = 0,
-    photoUrl,
-    author,
-    tag,
-    create_at,
-    uid,
-    location,
-  } = feed;
-
   const [commentExpanded, setCommentExpanded] = useState(false);
   const [liked, setLiked] = useState({
     status: false,
-    num: like,
+    num: feed.like,
   });
 
   useEffect(() => {
-    if (user.likeFeeds.includes(uid)) {
+    if (user.likeFeeds.includes(feed.uid)) {
       setLiked({
         status: true,
-        num: like,
+        num: feed.like,
       });
     }
   }, []);
@@ -71,7 +60,7 @@ const Feed = ({ feed, user }) => {
       // 피드 좋아요 수 업데이트
       const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
 
-      await fetch(`/api/feed/${uid}`, {
+      await fetch(`/api/feed/${feed.uid}`, {
         method: "PATCH",
         body: JSON.stringify({ like: likeNum }),
         headers: {
@@ -82,9 +71,11 @@ const Feed = ({ feed, user }) => {
       // 사용자가 좋아요 한 피드 목록 업데이트
       let newUserLikeFeeds = [];
       if (liked.status) {
-        newUserLikeFeeds = user.likeFeeds.filter((feedId) => feedId !== uid);
+        newUserLikeFeeds = user.likeFeeds.filter(
+          (feedId) => feedId !== feed.uid
+        );
       } else {
-        newUserLikeFeeds = [...user.likeFeeds, uid];
+        newUserLikeFeeds = [...user.likeFeeds, feed.uid];
       }
 
       await fetch(`/api/user`, {
@@ -105,7 +96,7 @@ const Feed = ({ feed, user }) => {
   }
 
   let t = new Date(1970, 0, 1);
-  t.setSeconds(create_at.seconds);
+  t.setSeconds(feed.create_at.seconds);
   const createAT =
     t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();
 
@@ -113,16 +104,20 @@ const Feed = ({ feed, user }) => {
     <div className={classes.feed}>
       <Card className={classes.root}>
         <CardHeader
-          avatar={<Avatar size={1} photoUrl={author.photoUrl} />}
-          title={author.displayName}
-          subheader={createAT + " " + location}
+          avatar={<Avatar size={1} photoUrl={feed.author.photoUrl} />}
+          title={feed.author.displayName}
+          subheader={createAT + " " + feed.location}
         />
-        {photoUrl && <CardMedia className={classes.media} image={photoUrl} />}
+        {feed.photoUrl && (
+          <CardMedia className={classes.media} image={feed.photoUrl} />
+        )}
         <CardContent>
           <Typography variant="body1" component="p">
-            {content.length < 180 ? content : content.slice(0, 180) + "..."}
+            {feed.content.length < 180
+              ? feed.content
+              : feed.content.slice(0, 180) + "..."}
           </Typography>
-          <Link href={`/feed/${uid}`}>
+          <Link href={`/feed/${feed.uid}`}>
             <Typography
               variant="body2"
               color="textSecondary"
@@ -133,7 +128,7 @@ const Feed = ({ feed, user }) => {
           </Link>
         </CardContent>
         <FeedIconBar
-          tag={tag}
+          tag={feed.tag}
           liked={liked}
           commentExpanded={commentExpanded}
           handleHeartClick={handleHeartClick}
