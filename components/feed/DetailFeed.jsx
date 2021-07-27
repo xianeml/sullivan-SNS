@@ -49,16 +49,16 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   }
   const classes = useStyles();
 
-  const [liked, setLiked] = useState({
-    status: false,
-    num: feed.like,
+  const [likeBtn, setLikeBtn] = useState({
+    clicked: false,
+    displayNum: feed.like,
   });
 
   useEffect(() => {
     if (userLikedFeeds.includes(feed.uid)) {
-      setLiked({
-        status: true,
-        num: feed.like,
+      setLikeBtn({
+        clicked: true,
+        displayNum: feed.like,
       });
     }
   }, []);
@@ -66,7 +66,9 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   async function handleHeartClick() {
     try {
       // 피드 좋아요 수 업데이트
-      const likeNum = liked.status ? (liked.num -= 1) : (liked.num += 1);
+      const likeNum = likeBtn.clicked
+        ? (likeBtn.displayNum -= 1)
+        : (likeBtn.displayNum += 1);
 
       await fetch(`/api/feed/${feed.uid}`, {
         method: "PATCH",
@@ -78,7 +80,7 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
 
       // 사용자가 좋아요 한 피드 목록 업데이트
       let newUserLikeFeeds = [];
-      if (liked.status) {
+      if (likeBtn.clicked) {
         newUserLikeFeeds = userLikedFeeds.filter(
           (feedId) => feedId !== feed.uid
         );
@@ -94,9 +96,9 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
         },
       });
 
-      setLiked({
-        status: !liked.status,
-        num: likeNum,
+      setLikeBtn({
+        clicked: !likeBtn.clicked,
+        displayNum: likeNum,
       });
     } catch (e) {
       console.error(e);
@@ -142,7 +144,7 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
         </CardContent>
         <FeedIconBar
           tag={feed.tag}
-          liked={liked}
+          likeBtn={likeBtn}
           handleHeartClick={handleHeartClick}
         />
       </Card>
