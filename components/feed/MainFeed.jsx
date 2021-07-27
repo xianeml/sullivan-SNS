@@ -62,7 +62,7 @@ const Feed = ({ feed, user }) => {
     }
   }, []);
 
-  function handleExpandClick() {
+  function handleExpandComment() {
     setCommentExpanded(!commentExpanded);
   }
 
@@ -137,7 +137,7 @@ const Feed = ({ feed, user }) => {
           liked={liked}
           commentExpanded={commentExpanded}
           handleHeartClick={handleHeartClick}
-          handleExpandClick={handleExpandClick}
+          handleExpandComment={handleExpandComment}
           type={1}
         />
         <Collapse in={commentExpanded} timeout="auto" unmountOnExit>

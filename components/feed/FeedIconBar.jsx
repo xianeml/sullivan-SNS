@@ -14,7 +14,7 @@ const FeedIconBar = ({
   liked,
   commentExpanded,
   handleHeartClick,
-  handleExpandClick,
+  handleExpandComment,
   type,
 }) => {
   return (
@@ -26,7 +26,7 @@ const FeedIconBar = ({
       {type && (
         <IconButton
           aria-label="comment"
-          onClick={handleExpandClick}
+          onClick={handleExpandComment}
           aria-expanded={commentExpanded}
         >
           <ChatIcon />
