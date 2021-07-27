@@ -11,23 +11,27 @@ import {
 
 const FeedIconBar = ({
   tag,
-  liked,
-  expanded,
+  likeBtn,
+  commentExpanded,
   handleHeartClick,
-  handleExpandClick,
+  handleExpandComment,
   type,
 }) => {
   return (
     <CardActions disableSpacing>
       <IconButton aria-label="add to favorites" onClick={handleHeartClick}>
-        {liked.status ? <FavoriteIcon color="error" /> : <FavoriteIcon />}
+        {likeBtn.clicked ? <FavoriteIcon color="error" /> : <FavoriteIcon />}
       </IconButton>
-      <Typography>{liked.num <= 0 || !liked.num ? 0 : liked.num}</Typography>
+      <Typography>
+        {likeBtn.displayNum <= 0 || !likeBtn.displayNum
+          ? 0
+          : likeBtn.displayNum}
+      </Typography>
       {type && (
         <IconButton
           aria-label="comment"
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
+          onClick={handleExpandComment}
+          aria-expanded={commentExpanded}
         >
           <ChatIcon />
         </IconButton>
