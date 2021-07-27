@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import {
   CardHeader,
   CardMedia,
@@ -50,8 +49,6 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   }
 
   const classes = useStyles();
-  const router = useRouter();
-  const { feedUid } = router.query;
 
   const {
     content,
@@ -133,9 +130,7 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
               displayName={author.displayName}
             />
           }
-          action={
-            <PopperMenu deleteHandler={deleteHandler} feedUid={feedUid} />
-          }
+          action={<PopperMenu deleteHandler={deleteHandler} feedUid={uid} />}
           title={author.displayName}
           subheader={createAT + " " + location}
         />
