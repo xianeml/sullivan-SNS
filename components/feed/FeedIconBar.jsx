@@ -12,7 +12,7 @@ import {
 const FeedIconBar = ({
   tag,
   liked,
-  expanded,
+  commentExpanded,
   handleHeartClick,
   handleExpandClick,
   type,
@@ -27,7 +27,7 @@ const FeedIconBar = ({
         <IconButton
           aria-label="comment"
           onClick={handleExpandClick}
-          aria-expanded={expanded}
+          aria-expanded={commentExpanded}
         >
           <ChatIcon />
         </IconButton>

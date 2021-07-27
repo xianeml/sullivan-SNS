@@ -47,7 +47,7 @@ const Feed = ({ feed, user }) => {
     location,
   } = feed;
 
-  const [expanded, setExpanded] = useState(false);
+  const [commentExpanded, setCommentExpanded] = useState(false);
   const [liked, setLiked] = useState({
     status: false,
     num: like,
@@ -63,7 +63,7 @@ const Feed = ({ feed, user }) => {
   }, []);
 
   function handleExpandClick() {
-    setExpanded(!expanded);
+    setCommentExpanded(!commentExpanded);
   }
 
   async function handleHeartClick() {
@@ -135,12 +135,12 @@ const Feed = ({ feed, user }) => {
         <FeedIconBar
           tag={tag}
           liked={liked}
-          expanded={expanded}
+          commentExpanded={commentExpanded}
           handleHeartClick={handleHeartClick}
           handleExpandClick={handleExpandClick}
           type={1}
         />
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Collapse in={commentExpanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Comment user={user} feedType={"main"} />
           </CardContent>
