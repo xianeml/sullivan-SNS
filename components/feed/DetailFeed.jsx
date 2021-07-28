@@ -66,9 +66,12 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   async function handleHeartClick() {
     try {
       // 피드 좋아요 수 업데이트
-      const likeNum = likeBtn.clicked
-        ? (likeBtn.displayNum -= 1)
-        : (likeBtn.displayNum += 1);
+      let likeNum;
+      if (likeBtn.clicked) {
+        likeNum = likeBtn.displayNum -= 1;
+      } else {
+        likeNum = likeBtn.displayNum += 1;
+      }
 
       await fetch(`/api/feed/${feed.uid}`, {
         method: "PATCH",
@@ -105,7 +108,7 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
     }
   }
 
-  var t = new Date(1970, 0, 1);
+  let t = new Date(1970, 0, 1);
   t.setSeconds(feed.create_at.seconds);
   const createAT =
     t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate();

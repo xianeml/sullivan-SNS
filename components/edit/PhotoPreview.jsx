@@ -20,6 +20,7 @@ const useStyles = makeStyles(() => ({
     cursor: "pointer",
   },
   previewText: {
+    fontSize: "3rem",
     "&:hover": {
       cursor: "pointer",
       filter: "brightness(120%)",

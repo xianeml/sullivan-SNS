@@ -58,9 +58,12 @@ const Feed = ({ feed, user }) => {
   async function handleHeartClick() {
     try {
       // 피드 좋아요 수 업데이트
-      const likeNum = likeBtn.clicked
-        ? (likeBtn.displayNum -= 1)
-        : (likeBtn.displayNum += 1);
+      let likeNum;
+      if (likeBtn.clicked) {
+        likeNum = likeBtn.displayNum -= 1;
+      } else {
+        likeNum = likeBtn.displayNum += 1;
+      }
 
       await fetch(`/api/feed/${feed.uid}`, {
         method: "PATCH",
