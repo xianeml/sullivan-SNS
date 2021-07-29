@@ -34,8 +34,8 @@ const feed = () => {
   if (loading) return <PageLoading />;
   return (
     <div>
-      {feeds.map((feed, index) => (
-        <MainFeed key={index} user={user} feed={feed} />
+      {feeds.map((feed) => (
+        <MainFeed key={feed.uid} user={user} feed={feed} />
       ))}
       {message && <Snackbar resultMessage={message} durationProps={1400} />}
     </div>

@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { Grid, makeStyles } from "@material-ui/core";
 import { useRouter } from "next/router";
 import DetailFeed from "../../components/feed/DetailFeed";
 import Comment from "../../components/feed/Comment";
-import PageLoading from "../../components/common/PageLoading";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -15,33 +13,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const detail = () => {
+export const getServerSideProps = async (context) => {
+  const { feedUid } = context.query;
+
+  const fetchUserInfo = await fetch("http://localhost:3000/api/user");
+  const user = await fetchUserInfo.json();
+
+  const fetchFeedDetail = await fetch(
+    `http://localhost:3000/api/feed/${feedUid}`
+  );
+  const feedDetail = await fetchFeedDetail.json();
+
+  return {
+    props: {
+      feedUid,
+      user,
+      feedDetail,
+    },
+  };
+};
+
+const detail = ({ feedUid, user, feedDetail }) => {
   const classes = useStyles();
   const router = useRouter();
-  const { feedUid } = router.query;
-
-  const [user, setUser] = useState({});
-  const [feedDetail, setFeedDetail] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (feedUid) return fetchData();
-  }, []);
-
-  async function fetchData() {
-    try {
-      const fetchUserInfo = await fetch("/api/user");
-      const userInfo = await fetchUserInfo.json();
-      setUser(userInfo);
-
-      const fetchFeedDetail = await fetch(`/api/feed/${feedUid}`);
-      const feedInfo = await fetchFeedDetail.json();
-      setFeedDetail(feedInfo);
-      setLoading(false);
-    } catch (e) {
-      console.error(e);
-    }
-  }
 
   async function deleteFeed() {
     try {
@@ -62,15 +56,10 @@ const detail = () => {
     }
   }
 
-  if (loading) return <PageLoading />;
   return (
     <Grid container className={classes.container}>
       <Grid item xs={8} className={classes.feed}>
-        <DetailFeed
-          feed={feedDetail}
-          deleteHandler={deleteFeed}
-          userLikedFeeds={user.likeFeeds}
-        />
+        <DetailFeed feed={feedDetail} deleteHandler={deleteFeed} user={user} />
       </Grid>
       <Grid item xs={4}>
         <Comment user={user} feedType={"detail"} />

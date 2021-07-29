@@ -59,7 +59,7 @@ const Comment = ({ user, feedType }) => {
   return (
     <Paper className={classes.container}>
       {commentList.map((comment) => (
-        <CommentDetail key={comment.id} data={comment} />
+        <CommentDetail key={comment.id} detail={comment} />
       ))}
       <Grid container wrap="nowrap" spacing={2} justify="flex-start">
         <Grid item>
