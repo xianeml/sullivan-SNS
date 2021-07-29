@@ -43,7 +43,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
+const DetailFeed = ({ feed, deleteHandler, user }) => {
   if (!feed) {
     return <PageLoading />;
   }
@@ -55,7 +55,7 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
   });
 
   useEffect(() => {
-    if (userLikedFeeds.includes(feed.uid)) {
+    if (user.likeFeeds.includes(feed.uid)) {
       setLikeBtn({
         clicked: true,
         displayNum: feed.like,
@@ -84,11 +84,11 @@ const DetailFeed = ({ feed, deleteHandler, userLikedFeeds }) => {
       // 사용자가 좋아요 한 피드 목록 업데이트
       let newUserLikeFeeds = [];
       if (likeBtn.clicked) {
-        newUserLikeFeeds = userLikedFeeds.filter(
+        newUserLikeFeeds = user.likeFeeds.filter(
           (feedId) => feedId !== feed.uid
         );
       } else {
-        newUserLikeFeeds = [...userLikedFeeds, feed.uid];
+        newUserLikeFeeds = [...user.likeFeeds, feed.uid];
       }
 
       await fetch(`/api/user`, {
