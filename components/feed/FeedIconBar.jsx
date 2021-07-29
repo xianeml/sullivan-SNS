@@ -15,11 +15,19 @@ const FeedIconBar = ({
   type,
   handleExpandComment,
   commentExpanded,
+  likeFeeds,
+  setLikeFeeds,
 }) => {
   const [likeBtn, setLikeBtn] = useState({
     clicked: false,
     displayNum: feed.like,
   });
+  let likeFeedList = [];
+  if (type === "main") {
+    likeFeedList = [...likeFeeds];
+  } else {
+    likeFeedList = [...user.likeFeeds];
+  }
 
   useEffect(() => {
     if (user.likeFeeds && user.likeFeeds.includes(feed.uid)) {
@@ -49,11 +57,9 @@ const FeedIconBar = ({
       // 사용자가 좋아요 한 피드 목록 업데이트
       let newUserLikeFeeds = [];
       if (likeBtn.clicked) {
-        newUserLikeFeeds = user.likeFeeds.filter(
-          (feedId) => feedId !== feed.uid
-        );
+        newUserLikeFeeds = likeFeedList.filter((feedId) => feedId !== feed.uid);
       } else {
-        newUserLikeFeeds = [...user.likeFeeds, feed.uid];
+        newUserLikeFeeds = [...likeFeedList, feed.uid];
       }
       await fetch(`/api/user`, {
         method: "PATCH",
@@ -66,6 +72,9 @@ const FeedIconBar = ({
         clicked: !likeBtn.clicked,
         displayNum: likeNum,
       });
+      if (type === "main") {
+        setLikeFeeds(newUserLikeFeeds);
+      }
     } catch (e) {
       console.error(e);
     }
