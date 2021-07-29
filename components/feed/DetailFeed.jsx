@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {
   CardHeader,
   CardMedia,
@@ -9,7 +8,6 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "../common/Avatar";
 import PopperMenu from "./PopperMenu";
-import PageLoading from "../common/PageLoading";
 import FeedIconBar from "./FeedIconBar";
 
 const useStyles = makeStyles(() => ({
@@ -44,69 +42,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const DetailFeed = ({ feed, deleteHandler, user }) => {
-  if (!feed) {
-    return <PageLoading />;
-  }
   const classes = useStyles();
-
-  const [likeBtn, setLikeBtn] = useState({
-    clicked: false,
-    displayNum: feed.like,
-  });
-
-  useEffect(() => {
-    if (user.likeFeeds.includes(feed.uid)) {
-      setLikeBtn({
-        clicked: true,
-        displayNum: feed.like,
-      });
-    }
-  }, []);
-
-  async function handleHeartClick() {
-    try {
-      // 피드 좋아요 수 업데이트
-      let likeNum;
-      if (likeBtn.clicked) {
-        likeNum = likeBtn.displayNum -= 1;
-      } else {
-        likeNum = likeBtn.displayNum += 1;
-      }
-
-      await fetch(`/api/feed/${feed.uid}`, {
-        method: "PATCH",
-        body: JSON.stringify({ like: likeNum }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
-
-      // 사용자가 좋아요 한 피드 목록 업데이트
-      let newUserLikeFeeds = [];
-      if (likeBtn.clicked) {
-        newUserLikeFeeds = user.likeFeeds.filter(
-          (feedId) => feedId !== feed.uid
-        );
-      } else {
-        newUserLikeFeeds = [...user.likeFeeds, feed.uid];
-      }
-
-      await fetch(`/api/user`, {
-        method: "PATCH",
-        body: JSON.stringify({ likeFeeds: newUserLikeFeeds }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
-
-      setLikeBtn({
-        clicked: !likeBtn.clicked,
-        displayNum: likeNum,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  }
 
   let t = new Date(1970, 0, 1);
   t.setSeconds(feed.create_at.seconds);
@@ -145,11 +81,7 @@ const DetailFeed = ({ feed, deleteHandler, user }) => {
             {feed.content}
           </Typography>
         </CardContent>
-        <FeedIconBar
-          tag={feed.tag}
-          likeBtn={likeBtn}
-          handleHeartClick={handleHeartClick}
-        />
+        <FeedIconBar feed={feed} user={user} />
       </Card>
     </div>
   );
