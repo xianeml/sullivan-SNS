@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Feed = ({ feed, user }) => {
+const Feed = ({ feed, user, likeFeeds, setLikeFeeds }) => {
   const classes = useStyles();
 
   const [commentExpanded, setCommentExpanded] = useState(false);
@@ -79,6 +79,8 @@ const Feed = ({ feed, user }) => {
           user={user}
           commentExpanded={commentExpanded}
           handleExpandComment={handleExpandComment}
+          likeFeeds={likeFeeds}
+          setLikeFeeds={setLikeFeeds}
           type={"main"}
         />
         <Collapse in={commentExpanded} timeout="auto" unmountOnExit>

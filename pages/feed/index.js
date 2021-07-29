@@ -10,6 +10,7 @@ const feed = () => {
 
   const [feeds, setFeeds] = useState(null);
   const [user, setUser] = useState(null);
+  const [likeFeeds, setLikeFeeds] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ const feed = () => {
       const fetchUserInfo = await fetch("/api/user");
       const userInfo = await fetchUserInfo.json();
       setUser(userInfo);
+      setLikeFeeds(userInfo.likeFeeds);
 
       const fetchFeedList = await fetch("/api/feed");
       const feedList = await fetchFeedList.json();
@@ -35,7 +37,13 @@ const feed = () => {
   return (
     <div>
       {feeds.map((feed) => (
-        <MainFeed key={feed.uid} user={user} feed={feed} />
+        <MainFeed
+          key={feed.uid}
+          user={user}
+          feed={feed}
+          likeFeeds={likeFeeds}
+          setLikeFeeds={setLikeFeeds}
+        />
       ))}
       {message && <Snackbar resultMessage={message} durationProps={1400} />}
     </div>
