@@ -3,15 +3,14 @@ import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Link from "next/link";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   imgContainer: {
     overflow: "hidden",
-    width: "400px",
-    height: "400px",
+    width: "100%",
+    height: "100%",
   },
   feedImg: {
-    padding: theme.spacing(1),
-    maxWidth: "100%",
+    margin: "0 auto",
     height: "400px",
     width: "400px",
     display: "block",
