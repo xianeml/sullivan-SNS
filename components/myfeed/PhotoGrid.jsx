@@ -5,15 +5,7 @@ import PhotoItem from "./PhotoItem";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    [theme.breakpoints.down("lg")]: {
-      padding: theme.spacing(0, 30),
-    },
-    [theme.breakpoints.down("md")]: {
-      padding: theme.spacing(0, 2),
-    },
-    [theme.breakpoints.down("sm")]: {
-      padding: 0,
-    },
+    padding: "20px 50px",
   },
 }));
 

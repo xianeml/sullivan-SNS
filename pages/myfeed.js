@@ -40,7 +40,7 @@ const myfeed = () => {
   if (loading) return <PageLoading />;
   return (
     <>
-      <Profile user={user} feedList={feedList} getUserInfo={getUserInfo} />
+      <Profile user={user} getUserInfo={getUserInfo} />
       <Divider variant="middle" light className={classes.divider} />
       <PhotoGrid feedList={feedList} />
     </>
