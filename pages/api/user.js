@@ -1,6 +1,6 @@
 import firebase from "../../firestores/firebase";
 
-const userId = "SFCKJmd9KzCpO5H77wz1";
+const userId = "Xg1W0jvZWl6887BsqsWI";
 const db = firebase.firestore();
 
 /*
@@ -11,7 +11,7 @@ const db = firebase.firestore();
 async function getUserInfo() {
   const userRef = db.collection("myuser").doc(userId);
   const userDoc = await userRef.get();
-  const userInfo = await userDoc.data();
+  const userInfo = userDoc.data();
   return userInfo;
 }
 
