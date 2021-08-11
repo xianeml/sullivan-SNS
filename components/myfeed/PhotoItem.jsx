@@ -32,15 +32,13 @@ const PhotoItem = ({ feed }) => {
             {feed.photoUrl ? (
               <img
                 src={feed.photoUrl}
-                alt={feed.photoUrl}
+                alt={feed.uid}
                 className={classes.feedImg}
               />
             ) : (
               <img
-                width="100%"
-                height="100%"
-                src={feed.author.photoUrl}
-                alt={feed.photoUrl}
+                src="images/sullivan.png"
+                alt={feed.uid}
                 className={classes.feedImg}
               />
             )}

@@ -139,8 +139,8 @@ const UploadForm = ({ feedUid }) => {
       location,
       tag,
       author,
+      photoUrl,
     };
-
     try {
       const updateResult = await fetch(`/api/feed/${feedUid}`, {
         method: "PATCH",
