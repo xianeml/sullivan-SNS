@@ -1,5 +1,7 @@
 import { Grid, makeStyles } from "@material-ui/core";
 import { useRouter } from "next/router";
+import { getFeedDetail } from "../api/feed/[feedUid].js";
+import { getUserInfo } from "../api/user";
 import DetailFeed from "../../components/feed/DetailFeed";
 import Comment from "../../components/feed/Comment";
 
@@ -16,13 +18,8 @@ const useStyles = makeStyles((theme) => ({
 export const getServerSideProps = async (context) => {
   const { feedUid } = context.query;
 
-  const fetchUserInfo = await fetch("http://localhost:3000/api/user");
-  const user = await fetchUserInfo.json();
-
-  const fetchFeedDetail = await fetch(
-    `http://localhost:3000/api/feed/${feedUid}`
-  );
-  const feedDetail = await fetchFeedDetail.json();
+  const user = await getUserInfo();
+  const feedDetail = await getFeedDetail(feedUid);
 
   return {
     props: {
