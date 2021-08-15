@@ -28,6 +28,9 @@ const useStyles = makeStyles(() => ({
   formGroup: {
     padding: "2rem",
   },
+  fileInput: {
+    display: "none",
+  },
   label: {
     fontWeight: "bold",
   },
@@ -58,6 +61,10 @@ const ProfileUpdatePopup = ({ user, getUserInfo }) => {
   }
   function closePopup() {
     setOpen(false);
+  }
+
+  function attachFile() {
+    fileButton.current.click();
   }
 
   async function getPhotoUrl() {
@@ -132,13 +139,17 @@ const ProfileUpdatePopup = ({ user, getUserInfo }) => {
               ) : (
                 <Avatar displayName={displayName} photoUrl={photoUrl} />
               )}
-              <Typography className={classes.popupBtn} color="primary">
+              <Typography
+                className={classes.popupBtn}
+                color="primary"
+                onClick={attachFile}
+              >
                 프로필 사진 바꾸기
                 <input
                   type="file"
-                  hidden
                   ref={fileButton}
                   onChange={getPhotoUrl}
+                  className={classes.fileInput}
                 />
               </Typography>
             </Grid>
