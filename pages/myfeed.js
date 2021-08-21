@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Divider } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import Profile from "../components/myFeed/Profile";
-import PhotoGrid from "../components/myFeed/PhotoGrid";
+import Profile from "../components/myfeed/Profile";
+import PhotoGrid from "../components/myfeed/PhotoGrid";
 import PageLoading from "../components/common/PageLoading";
 
 const useStyles = makeStyles((theme) => ({
