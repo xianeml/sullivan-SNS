@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import {
   IconButton,
   Grow,
@@ -21,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
 
 const PopperMenu = ({ deleteHandler, feedUid }) => {
   const classes = useStyles();
-  const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
